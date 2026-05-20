@@ -1,0 +1,19 @@
+{
+  "name": "ck-agent-skills",
+  "owner": {
+    "name": "chengkj99"
+  },
+  "metadata": {
+    "description": "康健个人技能包：Wiki 沉淀、AI 日报、内容创作、AI 编程周报；兼容 Claude Code 插件与 Cursor 单 skill 复制。"
+  },
+  "plugins": [
+    {
+      "name": "ck-skills",
+      "source": {
+        "source": "github",
+        "repo": "chengkj99/ck-skills"
+      },
+      "description": "wiki-doc-sink、ai-daily-brief、content-creator、weekly-report、markdown-format。"
+    }
+  ]
+}

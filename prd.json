@@ -1,0 +1,58 @@
+{
+  "title": "ck-skills Claude 插件化与开源分发",
+  "stories": [
+    {
+      "id": "US-001",
+      "title": ".claude-plugin 元数据完整且可被文档引用",
+      "acceptanceCriteria": [
+        "存在 .claude-plugin/marketplace.json 与 .claude-plugin/plugin.json，JSON 语法正确",
+        "marketplace 的 name 与 plugins[].name 与 plugin.json 的 name 与 README 中的 /plugin install 命令一致"
+      ],
+      "passes": true
+    },
+    {
+      "id": "US-002",
+      "title": "四个 skill 目录与 SKILL.md 就绪",
+      "acceptanceCriteria": [
+        "skills/wiki-doc-sink、skills/ai-daily-brief、skills/content-creator、skills/weekly-report 均含 SKILL.md",
+        "wiki-doc-sink 含面向 fork 使用者的路径说明（不依赖仅作者本机路径）"
+      ],
+      "passes": true
+    },
+    {
+      "id": "US-003",
+      "title": "ai-daily-brief 含脚本与 references",
+      "acceptanceCriteria": [
+        "skills/ai-daily-brief/scripts/ 下存在 parse_accounts.py 与 build_daily_report.py",
+        "skills/ai-daily-brief/references/ 下存在 implementation.md 与 scoring-rubric.md"
+      ],
+      "passes": true
+    },
+    {
+      "id": "US-004",
+      "title": "weekly-report 含 references 与 assets",
+      "acceptanceCriteria": [
+        "skills/weekly-report/references/sources.md 与 output-templates.md 存在",
+        "skills/weekly-report/assets/manual-input-template.md 存在"
+      ],
+      "passes": true
+    },
+    {
+      "id": "US-005",
+      "title": "content-creator references 齐全",
+      "acceptanceCriteria": [
+        "skills/content-creator/references/ 下至少包含人设.md、去AI味指南.md、深度论证框架.md"
+      ],
+      "passes": true
+    },
+    {
+      "id": "US-006",
+      "title": "README 覆盖 Claude 双安装方式与 Cursor 指引",
+      "acceptanceCriteria": [
+        "根 README.md 含 /plugin marketplace add、/plugin install 与 git clone + claude --plugin-dir 示例",
+        "docs/cursor-setup.md 说明如何从本仓库复制 skill 到 Cursor"
+      ],
+      "passes": true
+    }
+  ]
+}
