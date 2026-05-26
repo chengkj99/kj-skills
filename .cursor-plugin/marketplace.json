@@ -4,7 +4,7 @@
     "name": "chengkj99"
   },
   "metadata": {
-    "description": "康健个人技能包：Wiki 沉淀、AI 日报、内容创作、AI 编程周报、Git 提交推送；兼容 Claude Code 插件与 Cursor 单 skill 复制。"
+    "description": "康健个人技能包：Wiki 沉淀、AI 日报、内容创作、AI 编程周报、Git 提交推送；兼容 Cursor 插件与 Claude Code 插件。"
   },
   "plugins": [
     {

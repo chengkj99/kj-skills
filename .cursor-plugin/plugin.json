@@ -1,5 +1,6 @@
 {
   "name": "ck-skills",
+  "displayName": "CK Skills",
   "description": "康健技能包：Wiki 沉淀、AI 日报、内容创作、周报、Markdown 格式化、Git 提交推送。",
   "version": "0.1.1",
   "author": {
@@ -8,6 +9,14 @@
   "homepage": "https://github.com/chengkj99/ck-skills",
   "repository": "https://github.com/chengkj99/ck-skills",
   "license": "MIT",
-  "commands": "./.claude/commands",
-  "skills": "./skills"
+  "keywords": [
+    "skills",
+    "wiki",
+    "content",
+    "weekly-report",
+    "markdown",
+    "git"
+  ],
+  "skills": "./skills",
+  "commands": "./.claude/commands"
 }
