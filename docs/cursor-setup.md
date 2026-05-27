@@ -41,7 +41,7 @@ ln -s /path/to/ck-skills ~/.cursor/plugins/local/ck-skills
 ### 项目级（推荐团队协作）
 
 1. 在项目根创建 `.cursor/skills/`（若不存在）。
-2. 将 `skills/<skill-name>/` **整目录**复制到 `.cursor/skills/<skill-name>/`。
+2. 将 `skills/<skill-name>/` **整目录**复制到 `.cursor/skills/<skill-name>/`（含子目录，例如 `wiki-doc-sink/references/`）。
 3. 在对话里 **@** 该 skill，或依赖 `SKILL.md` 中的 `description` 自动触发。
 
 ### 全局（个人所有项目）
@@ -63,7 +63,7 @@ ln -s /path/to/ck-skills ~/.cursor/plugins/local/ck-skills
 
 | 目录 | 说明 |
 |------|------|
-| `wiki-doc-sink` | 讨论沉淀到个人 Wiki |
+| `wiki-doc-sink` | 讨论沉淀到个人 Wiki（含 `references/personal-wiki-bridge.md`、`routing-notes.md`） |
 | `ai-daily-brief` | 每日 AI 情报日报 |
 | `content-creator` | 长文 / 短视频 / 小红书等工作流 |
 | `weekly-report` | AI 编程周报 |

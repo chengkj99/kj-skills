@@ -1,7 +1,7 @@
 {
   "name": "ck-skills",
   "description": "康健技能包：Wiki 沉淀、AI 日报、内容创作、周报、Markdown 格式化、Git 提交推送。",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "chengkj99"
   },
