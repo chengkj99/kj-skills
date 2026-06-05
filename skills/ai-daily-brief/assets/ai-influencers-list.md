@@ -152,7 +152,7 @@
 
 以下账号由 **`follow-builders`** 技能中央清单同步而来，已写入仓库内 JSON，**日报脚本会默认与上文主名单合并去重**，无需在本 Markdown 重复抄写。
 
-- 数据文件：`docs/strategy/follow-builders-x-handles.json`
-- 上游参考：`~/.claude/skills/follow-builders/config/default-sources.json` 中的 `x_accounts`
+- 数据文件：skill 内置 `assets/follow-builders-x-handles.json`
+- 上游参考：`follow-builders` 技能 `config/default-sources.json` 中的 `x_accounts`
 - 更新方式：上游名单变更后，把 `x_accounts` 同步到上述 JSON，再跑日报解析即可。
 
