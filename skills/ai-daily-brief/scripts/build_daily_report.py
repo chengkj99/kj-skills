@@ -17,6 +17,7 @@ from zoneinfo import ZoneInfo
 
 from account_merge import (
     default_follow_builders_json,
+    default_source_md,
     load_extra_handles_from_json,
     merge_handle_lists,
 )
@@ -520,7 +521,11 @@ def render_draft_markdown(
 def main() -> None:
     parser = argparse.ArgumentParser(description="生成 AI 日报")
     parser.add_argument("--accounts", default="output/ai-daily-brief/accounts.json")
-    parser.add_argument("--source-md", default="docs/strategy/AI大佬名单.md")
+    parser.add_argument(
+        "--source-md",
+        default=None,
+        help="主名单 Markdown（不传则用 skill 内置 assets/AI大佬名单.md）",
+    )
     parser.add_argument("--output-dir", default="output/ai-daily-brief")
     parser.add_argument("--report-date", default=os.getenv("REPORT_DATE"))
     parser.add_argument("--tz", default=os.getenv("REPORT_TZ", "Asia/Shanghai"))
@@ -544,7 +549,8 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     day, start_utc, end_utc = resolve_window(args.report_date, args.tz)
-    handles = load_handles(Path(args.accounts), Path(args.source_md))
+    source_md = Path(args.source_md).expanduser() if args.source_md else default_source_md()
+    handles = load_handles(Path(args.accounts), source_md)
     bearer = os.getenv("X_BEARER_TOKEN", "").strip()
 
     all_signals: list[Signal] = []

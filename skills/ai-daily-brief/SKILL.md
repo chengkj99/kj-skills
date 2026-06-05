@@ -1,6 +1,6 @@
 ---
 name: ai-daily-brief
-description: 每日 AI 情报日报（采集 + 可读定稿）。汇总 `docs/strategy/AI大佬名单.md` 与 `docs/strategy/follow-builders-x-handles.json` 中 X 账号昨日动态，经去重、评分、P0/P1/P2 分级后输出中文可读日报。触发：「AI 日报」「每日情报」「6点自动汇总」「X 昨日动态」「根据 raw 写可读版」「ai-daily-brief 定稿」。阶段 1 用脚本（X API / Nitter / Web 回退）；阶段 2 由本技能 Agent 读 raw 覆盖 MD（必读 compose-readable-daily.md）。
+description: 每日 AI 情报日报（采集 + 可读定稿）。汇总 skill 内置账号名单（`assets/AI大佬名单.md` 与 `assets/follow-builders-x-handles.json`）中 X 账号昨日动态，经去重、评分、P0/P1/P2 分级后输出中文可读日报。触发：「AI 日报」「每日情报」「6点自动汇总」「X 昨日动态」「根据 raw 写可读版」「ai-daily-brief 定稿」。阶段 1 用脚本（X API / Nitter / Web 回退）；阶段 2 由本技能 Agent 读 raw 覆盖 MD（必读 compose-readable-daily.md）。
 ---
 
 # AI 日报生成技能
@@ -31,10 +31,10 @@ description: 每日 AI 情报日报（采集 + 可读定稿）。汇总 `docs/st
 
 ## 输入约定
 
-- 账号主名单：`docs/strategy/AI大佬名单.md`
-- **follow-builders 扩展名单（默认合并）**：`docs/strategy/follow-builders-x-handles.json`（`parse_accounts.py` 与主名单按小写去重合并，主名单顺序优先）
+- 账号主名单：**skill 内置** `assets/AI大佬名单.md`（随 skill 分发，自包含）。可用 `--input <路径>` 覆盖为自己的名单。
+- **follow-builders 扩展名单（默认合并）**：**skill 内置** `assets/follow-builders-x-handles.json`（`parse_accounts.py` 与主名单按小写去重合并，主名单顺序优先）。可用 `--merge-json <路径>` 覆盖，或 `--no-merge` 跳过。
 - 时间窗口：默认北京时间昨日 00:00:00–23:59:59
-- 输出目录：`output/ai-daily-brief/`
+- 输出目录：`output/ai-daily-brief/`（相对运行时当前目录）
 
 ### 环境变量（阶段 1）
 
@@ -80,7 +80,7 @@ description: 每日 AI 情报日报（采集 + 可读定稿）。汇总 `docs/st
 |------|------|
 | `output/ai-daily-brief/daily_{YYYYMMDD}.raw.json` | `all_candidates`、`observation_top_n`、`selected`、`stats` |
 | `references/scoring-rubric.md` | 分级与去重 |
-| `docs/strategy/AI大佬名单.md`（可选） | 账号身份一句语境 |
+| `assets/AI大佬名单.md`（可选） | 账号身份一句语境 |
 
 **步骤**：
 
@@ -136,4 +136,4 @@ description: 每日 AI 情报日报（采集 + 可读定稿）。汇总 `docs/st
 | `pnpm daily:generate` | 仅阶段 1（定时 / 晨报脚本用） |
 | 激活 **ai-daily-brief** 技能 | 默认阶段 1（若需要）+ **阶段 2 定稿** |
 
-设计说明：`docs/superpowers/specs/2026-05-17-ai-daily-readable-skill-design.md`
+> 注：`pnpm daily:generate` 是宿主项目可选的便捷封装；skill 本身用 `python3 scripts/...` 即可独立运行。

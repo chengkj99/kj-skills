@@ -1,0 +1,31 @@
+{
+  "_comment": "与 follow-builders 技能（.claude/skills/follow-builders/config/default-sources.json）中的 x_accounts 对齐，供 AI 日报 parse_accounts 合并抓取。上游更新时请同步本文件。",
+  "_upstream_path": "follow-builders/config/default-sources.json",
+  "x_accounts": [
+    { "name": "Andrej Karpathy", "handle": "karpathy" },
+    { "name": "Swyx", "handle": "swyx" },
+    { "name": "Josh Woodward", "handle": "joshwoodward" },
+    { "name": "Kevin Weil", "handle": "kevinweil" },
+    { "name": "Peter Yang", "handle": "petergyang" },
+    { "name": "Nan Yu", "handle": "thenanyu" },
+    { "name": "Madhu Guru", "handle": "realmadhuguru" },
+    { "name": "Amanda Askell", "handle": "AmandaAskell" },
+    { "name": "Cat Wu", "handle": "_catwu" },
+    { "name": "Thariq", "handle": "trq212" },
+    { "name": "Google Labs", "handle": "GoogleLabs" },
+    { "name": "Amjad Masad", "handle": "amasad" },
+    { "name": "Guillermo Rauch", "handle": "rauchg" },
+    { "name": "Alex Albert", "handle": "alexalbert__" },
+    { "name": "Aaron Levie", "handle": "levie" },
+    { "name": "Ryo Lu", "handle": "ryolu_" },
+    { "name": "Garry Tan", "handle": "garrytan" },
+    { "name": "Matt Turck", "handle": "mattturck" },
+    { "name": "Zara Zhang", "handle": "zarazhangrui" },
+    { "name": "Nikunj Kothari", "handle": "nikunj" },
+    { "name": "Peter Steinberger", "handle": "steipete" },
+    { "name": "Dan Shipper", "handle": "danshipper" },
+    { "name": "Aditya Agarwal", "handle": "adityaag" },
+    { "name": "Sam Altman", "handle": "sama" },
+    { "name": "Claude", "handle": "claudeai" }
+  ]
+}

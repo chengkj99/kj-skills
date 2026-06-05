@@ -5,13 +5,24 @@ import json
 from pathlib import Path
 
 
-def repo_root() -> Path:
-    """本文件位于 .claude/skills/ai-daily-brief/scripts/，仓库根为其上五级。"""
-    return Path(__file__).resolve().parents[4]
+def skill_root() -> Path:
+    """本文件位于 <skill>/scripts/，skill 根为其上两级。skill 自包含，不依赖外部仓库。"""
+    return Path(__file__).resolve().parents[1]
+
+
+def assets_dir() -> Path:
+    """skill 内置数据目录（账号名单等随 skill 分发）。"""
+    return skill_root() / "assets"
+
+
+def default_source_md() -> Path:
+    """主名单 Markdown：默认用 skill 内置副本（assets/AI大佬名单.md）。"""
+    return assets_dir() / "AI大佬名单.md"
 
 
 def default_follow_builders_json() -> Path:
-    return repo_root() / "docs" / "strategy" / "follow-builders-x-handles.json"
+    """follow-builders 扩展名单：默认用 skill 内置副本。"""
+    return assets_dir() / "follow-builders-x-handles.json"
 
 
 def load_extra_handles_from_json(path: Path) -> list[str]:

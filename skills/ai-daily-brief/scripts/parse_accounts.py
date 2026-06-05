@@ -6,9 +6,9 @@ from pathlib import Path
 
 from account_merge import (
     default_follow_builders_json,
+    default_source_md,
     load_extra_handles_from_json,
     merge_handle_lists,
-    repo_root,
 )
 
 
@@ -34,13 +34,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="从 AI 大佬名单 Markdown 提取 X 账号")
     parser.add_argument(
         "--input",
-        default="docs/strategy/AI大佬名单.md",
-        help="输入 Markdown 文件路径（相对路径时相对仓库根）",
+        default=None,
+        help="输入 Markdown 文件路径（不传则用 skill 内置 assets/AI大佬名单.md；相对路径相对当前目录）",
     )
     parser.add_argument(
         "--output",
         default="output/ai-daily-brief/accounts.json",
-        help="输出 JSON 文件路径",
+        help="输出 JSON 文件路径（相对路径相对当前目录）",
     )
     parser.add_argument(
         "--merge-json",
@@ -54,19 +54,18 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    root = repo_root()
-    input_path = Path(args.input)
+    input_path = Path(args.input).expanduser() if args.input else default_source_md()
     if not input_path.is_absolute():
-        input_path = (root / input_path).resolve()
+        input_path = (Path.cwd() / input_path).resolve()
     if not input_path.exists():
         raise FileNotFoundError(f"输入文件不存在: {input_path}")
 
     text = input_path.read_text(encoding="utf-8")
     handles = extract_handles(text)
 
-    merge_path = Path(args.merge_json) if args.merge_json else default_follow_builders_json()
+    merge_path = Path(args.merge_json).expanduser() if args.merge_json else default_follow_builders_json()
     if not merge_path.is_absolute():
-        merge_path = (root / merge_path).resolve()
+        merge_path = (Path.cwd() / merge_path).resolve()
 
     merged_from_file = False
     if args.no_merge:
@@ -84,9 +83,9 @@ def main() -> None:
     else:
         print(f"未找到合并文件 {merge_path}，跳过 follow-builders 扩展名单")
 
-    output_path = Path(args.output)
+    output_path = Path(args.output).expanduser()
     if not output_path.is_absolute():
-        output_path = (root / output_path).resolve()
+        output_path = (Path.cwd() / output_path).resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
         json.dumps(
