@@ -12,10 +12,11 @@
 
 ## 与 ai-programming-guide 网站集成
 
-### 已集成项目
+### 集成说明
 
-- 网站：`/Users/didi/didi-work-loan/demo-hub/apps/ai-programming-guide`
-- 线上地址：`https://guide.kangjianai.cn/daily`
+- 网站项目根目录用占位符 `<APP_DIR>` 表示（例：`<你的仓库>/apps/ai-programming-guide`）。使用前设置为你自己的绝对路径。
+- 维护者线上地址示例：`https://guide.kangjianai.cn/daily`
+- 本 skill **不内置网站代码**；以下集成步骤仅在你需要「自动发布到自己的站点」时启用，否则跳过（见上文「独立使用」）。
 
 ### 目录结构
 
@@ -38,7 +39,7 @@ apps/ai-programming-guide/
 # <APP_DIR>/content/daily/YYYY-MM-DD.md
 
 # 更新网站数据
-APP_DIR="/Users/didi/didi-work-loan/demo-hub/apps/ai-programming-guide"
+APP_DIR="<你的仓库>/apps/ai-programming-guide"   # 改成你的绝对路径
 DATE=$(date +%Y-%m-%d)
 node "$APP_DIR/scripts/update-daily-digest.mjs" --date "$DATE"
 ```
@@ -46,7 +47,7 @@ node "$APP_DIR/scripts/update-daily-digest.mjs" --date "$DATE"
 ### 手动部署
 
 ```bash
-cd /Users/didi/didi-work-loan/demo-hub/apps/ai-programming-guide
+cd "$APP_DIR"           # 你的 apps/ai-programming-guide 绝对路径
 pnpm daily:deploy       # 更新数据 → 构建 → rsync 到阿里云 ECS
 ```
 

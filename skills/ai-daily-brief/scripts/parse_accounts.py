@@ -35,7 +35,7 @@ def main() -> None:
     parser.add_argument(
         "--input",
         default=None,
-        help="输入 Markdown 文件路径（不传则用 skill 内置 assets/AI大佬名单.md；相对路径相对当前目录）",
+        help="输入 Markdown 文件路径（不传则用 skill 内置 assets/ai-influencers-list.md；相对路径相对当前目录）",
     )
     parser.add_argument(
         "--output",

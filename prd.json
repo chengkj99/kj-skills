@@ -41,7 +41,7 @@
       "id": "US-005",
       "title": "content-creator references 齐全",
       "acceptanceCriteria": [
-        "skills/content-creator/references/ 下至少包含人设.md、去AI味指南.md、深度论证框架.md"
+        "skills/content-creator/references/ 下至少包含人设.md、remove-ai-tone-guide.md、深度论证框架.md"
       ],
       "passes": true
     },

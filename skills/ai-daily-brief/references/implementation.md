@@ -24,7 +24,7 @@
 ```mermaid
 flowchart LR
   subgraph inputs [输入]
-    MD[assets/AI大佬名单.md]
+    MD[assets/ai-influencers-list.md]
     ACC[accounts.json 可选]
     ENV[环境变量 Secrets]
   end
@@ -94,7 +94,7 @@ flowchart LR
 
 ## 4. 账号解析（parse_accounts.py + account_merge.py）
 
-**原理**：用正则从 `assets/AI大佬名单.md` 抽取两类模式：
+**原理**：用正则从 `assets/ai-influencers-list.md` 抽取两类模式：
 
 1. 链接形态：`twitter.com/{handle}`（忽略大小写，handle 长度 1–15，符合 X 规则）。
 2. 正文形态：`@handle`（使用负向后顾，避免匹配邮箱等片段）。
@@ -278,11 +278,11 @@ selected = [s for s in deduped if s.score >= min_score][:top_n]
 
 ```bash
 python .claude/skills/ai-daily-brief/scripts/parse_accounts.py \
-  --input assets/AI大佬名单.md --output output/ai-daily-brief/accounts.json
+  --input assets/ai-influencers-list.md --output output/ai-daily-brief/accounts.json
 
 python .claude/skills/ai-daily-brief/scripts/build_daily_report.py \
   --accounts output/ai-daily-brief/accounts.json \
-  --source-md assets/AI大佬名单.md \
+  --source-md assets/ai-influencers-list.md \
   --output-dir output/ai-daily-brief
 ```
 

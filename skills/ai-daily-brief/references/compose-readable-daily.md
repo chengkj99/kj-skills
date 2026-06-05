@@ -11,7 +11,7 @@
 |------|------|
 | `output/ai-daily-brief/daily_{YYYYMMDD}.raw.json` | 候选全文、分数、链接、`observation_top_n` |
 | `references/scoring-rubric.md` | 分级与去重原则 |
-| `assets/AI大佬名单.md`（可选） | 账号身份语境 |
+| `assets/ai-influencers-list.md`（可选） | 账号身份语境 |
 
 **禁止修改** `*.raw.json`。
 

@@ -524,7 +524,7 @@ def main() -> None:
     parser.add_argument(
         "--source-md",
         default=None,
-        help="主名单 Markdown（不传则用 skill 内置 assets/AI大佬名单.md）",
+        help="主名单 Markdown（不传则用 skill 内置 assets/ai-influencers-list.md）",
     )
     parser.add_argument("--output-dir", default="output/ai-daily-brief")
     parser.add_argument("--report-date", default=os.getenv("REPORT_DATE"))

@@ -16,8 +16,8 @@ def assets_dir() -> Path:
 
 
 def default_source_md() -> Path:
-    """主名单 Markdown：默认用 skill 内置副本（assets/AI大佬名单.md）。"""
-    return assets_dir() / "AI大佬名单.md"
+    """主名单 Markdown：默认用 skill 内置副本（assets/ai-influencers-list.md）。"""
+    return assets_dir() / "ai-influencers-list.md"
 
 
 def default_follow_builders_json() -> Path:
