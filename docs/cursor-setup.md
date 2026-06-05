@@ -54,7 +54,7 @@ ln -s /path/to/kj-skills ~/.cursor/plugins/local/kj-skills
 |------|--------|-------------|
 | 清单目录 | `.cursor-plugin/` | `.claude-plugin/` |
 | 添加市场源 | 团队市场 Import / 官方审核 | `/plugin marketplace add owner/repo` |
-| 安装插件 | `/add-plugin kj-skills` 或插件面板 | `/plugin install kj-skills@ck-agent-skills` |
+| 安装插件 | `/add-plugin kj-skills` 或插件面板 | `/plugin install kj-skills@kj-agent-skills` |
 | 本地调试 | `~/.cursor/plugins/local/` | `claude --plugin-dir /path/to/kj-skills` |
 
 **注意**：不要在 Cursor 里使用 `/plugin marketplace add`（那是 Claude Code 命令）；在 Cursor 插件 UI 里搜索 `chengkj99/kj-skills` 会显示 **No matching plugins**，因为那是按插件名过滤，不是添加 Git 市场源。

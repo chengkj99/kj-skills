@@ -251,7 +251,7 @@ PPT N · 认知篇
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
 │ 01 清单报告   │ │ 02 个人管理   │ │ 03 团队管理   │
 │ npm: skill-  │ │ GitHub:      │ │ GitLab:      │
-│ registry     │ │ ck-skills    │ │ mfe-skills   │
+│ registry     │ │ kj-skills    │ │ mfe-skills   │
 │ • npx ...    │ │ • drafts/    │ │ • submodule  │
 └──────────────┘ └──────────────┘ └──────────────┘
 ```

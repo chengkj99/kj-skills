@@ -71,17 +71,17 @@ ls /Users/you/llm-wiki/SCHEMA.md /Users/you/llm-wiki/CLAUDE.md
 
 ```text
 /plugin marketplace add chengkj99/kj-skills
-/plugin install kj-skills@ck-agent-skills
+/plugin install kj-skills@kj-agent-skills
 ```
 
 若 marketplace 克隆走 SSH 报错，可改用 HTTPS 添加源：
 
 ```text
 /plugin marketplace add https://github.com/chengkj99/kj-skills.git
-/plugin install kj-skills@ck-agent-skills
+/plugin install kj-skills@kj-agent-skills
 ```
 
-安装后可使用插件命令 **`/ck-help`** 快速查看各 skill 路径。
+安装后可使用插件命令 **`/kj-help`** 快速查看各 skill 路径。
 
 ## Claude Code：本地克隆 + 插件目录
 
