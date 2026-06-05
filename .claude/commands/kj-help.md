@@ -1,5 +1,5 @@
 ---
-description: 列出 ck-skills 插件内各 skill 的用途与 skills/ 下的路径
+description: 列出 kj-skills 插件内各 skill 的用途与 skills/ 下的路径
 ---
 
 本插件根目录下 `skills/` 包含：

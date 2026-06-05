@@ -15,6 +15,11 @@ from urllib.parse import parse_qs, quote, unquote, urlencode, urlparse
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
+from account_merge import (
+    default_follow_builders_json,
+    load_extra_handles_from_json,
+    merge_handle_lists,
+)
 
 X_API_BASE = "https://api.x.com/2"
 
@@ -34,8 +39,20 @@ class Signal:
     timeliness: float
     score: float
     priority: str
-    value_comment: str
-    action_suggestion: str
+
+
+TOPIC_HINT_KEYWORDS: dict[str, list[str]] = {
+    "agent": ["agent", "agentic", "agents"],
+    "mcp": ["mcp"],
+    "codex": ["codex"],
+    "cursor": ["cursor"],
+    "claude": ["claude"],
+    "release": ["release", "launch", "shipped", "announced"],
+    "open_source": ["open source", "open-source", "mit license"],
+    "benchmark": ["benchmark", "sota", "eval"],
+    "model": ["model", "llm", "gpt", "opus"],
+    "workflow": ["workflow", "fde", "forward deployed"],
+}
 
 
 def http_get_json(url: str, headers: Optional[Dict[str, str]] = None, timeout: int = 8) -> Any:
@@ -172,7 +189,16 @@ def load_handles(accounts_file: Path, source_markdown: Path) -> list[str]:
         if handles:
             return handles
     text = source_markdown.read_text(encoding="utf-8")
-    return extract_handles(text)
+    handles = extract_handles(text)
+    # 与 parse_accounts 一致：无 accounts.json 时仍合并 follow-builders 扩展名单
+    merge_path = default_follow_builders_json()
+    if merge_path.exists():
+        try:
+            extra = load_extra_handles_from_json(merge_path)
+            handles = merge_handle_lists(handles, extra)
+        except Exception as e:
+            print(f"[ai-daily-brief] 合并 follow-builders 名单失败: {e}", flush=True)
+    return handles
 
 
 def resolve_window(report_date: Optional[str], tz_name: str):
@@ -339,23 +365,20 @@ def score_text(text: str) -> tuple[float, float, float, float, float]:
     return relevance, actionable, novelty, impact, timeliness
 
 
-def make_value_comment(score: float) -> str:
-    if score >= 9:
-        return "这是高优先级信号，建议今天安排验证或试用。"
-    if score >= 8:
-        return "这是中高价值动态，建议本周纳入技术跟踪清单。"
-    return "这是补充性动态，可作为趋势参考。"
+def text_preview(text: str, max_len: int = 120) -> str:
+    t = re.sub(r"\s+", " ", text.replace("\n", " ")).strip()
+    if len(t) > max_len:
+        return t[: max_len - 1] + "…"
+    return t
 
 
-def make_action_suggestion(text: str) -> str:
+def topic_hints(text: str) -> list[str]:
     t = text.lower()
-    if "release" in t or "launch" in t:
-        return "关注官方发布说明，拉一条升级评估清单。"
-    if "open source" in t or "repo" in t:
-        return "拉取仓库跑最小示例，记录可复用组件。"
-    if "benchmark" in t or "sota" in t:
-        return "对照现有方案做小样本对比测试。"
-    return "加入日报追踪，等待更多上下文后再决策。"
+    hints: list[str] = []
+    for label, words in TOPIC_HINT_KEYWORDS.items():
+        if any(w in t for w in words):
+            hints.append(label)
+    return hints
 
 
 def compute_priority(score: float) -> str:
@@ -384,9 +407,29 @@ def to_signal(handle: str, item: dict[str, str]) -> Signal:
         timeliness=round(timeliness, 2),
         score=score,
         priority=compute_priority(score),
-        value_comment=make_value_comment(score),
-        action_suggestion=make_action_suggestion(item["text"]),
     )
+
+
+def signal_to_candidate_dict(s: Signal) -> dict[str, Any]:
+    d = asdict(s)
+    d["text_preview"] = text_preview(s.text)
+    d["topic_hints"] = topic_hints(s.text)
+    return d
+
+
+def build_observation_top_n(signals: list[Signal], n: int = 15) -> list[dict[str, Any]]:
+    top = sorted(signals, key=lambda x: x.score, reverse=True)[:n]
+    return [
+        {
+            "handle": s.handle,
+            "score": s.score,
+            "priority": s.priority,
+            "url": s.url,
+            "text_preview": text_preview(s.text),
+            "topic_hints": topic_hints(s.text),
+        }
+        for s in top
+    ]
 
 
 def md_table_cell(text: str, max_len: int = 72) -> str:
@@ -409,8 +452,9 @@ def deduplicate(signals: list[Signal]) -> list[Signal]:
     return result
 
 
-def render_markdown(
+def render_draft_markdown(
     day: str,
+    day_compact: str,
     start_utc: datetime,
     end_utc: datetime,
     selected: list[Signal],
@@ -418,12 +462,18 @@ def render_markdown(
     deduped: list[Signal],
     min_score: float,
     top_n: int,
-    appendix_limit: int,
+    index_limit: int = 30,
 ) -> str:
+    """阶段 1 草稿 MD：统计 + 候选索引；可读定稿由 ai-daily-brief 技能（阶段 2）覆盖本文件。"""
     lines: list[str] = []
-    lines.append(f"# AI 日报（{day}）")
+    lines.append(f"# AI 日报草稿（{day}）")
     lines.append("")
-    lines.append("## 执行摘要")
+    lines.append(
+        "> 本文件为采集草稿。请在 Cursor **激活 ai-daily-brief 技能**（默认会读"
+        f"`daily_{day_compact}.raw.json` 并覆盖本文件为可读定稿）。"
+    )
+    lines.append("")
+    lines.append("## 采集摘要")
     lines.append("")
     lines.append(f"- 统计窗口（UTC）：`{start_utc.isoformat()}` ~ `{end_utc.isoformat()}`")
     lines.append(f"- 覆盖账号数：`{stats['handles_total']}`")
@@ -431,110 +481,46 @@ def render_markdown(
     lines.append(f"- Nitter RSS 命中：`{stats.get('nitter_hits', 0)}`")
     lines.append(f"- Web 搜索回退命中：`{stats['fallback_hits']}`")
     if stats.get("api_abort_reason"):
-        lines.append(f"- API 提前结束：`{stats['api_abort_reason']}`（避免无效请求与限流）")
+        lines.append(f"- API 提前结束：`{stats['api_abort_reason']}`")
     tr = stats.get("translation") or {}
     if tr:
-        cfg = "已配置 `OPENROUTER_API_KEY`" if tr.get("api_configured") else "未配置密钥（`text_zh` 为空）"
-        lines.append(
-            f"- 中文译文：{cfg}；`text_zh` 非空：`{tr.get('text_zh_non_empty', 0)}` / `{len(deduped)}`"
-            + (f"；模型：`{tr.get('model')}`" if tr.get("model") else "")
-        )
+        cfg = "已配置 `OPENROUTER_API_KEY`" if tr.get("api_configured") else "未配置（`text_zh` 为空）"
+        lines.append(f"- 译文：{cfg}；`text_zh` 非空：`{tr.get('text_zh_non_empty', 0)}` / `{len(deduped)}`")
     eligible = [s for s in deduped if s.score >= min_score]
-    below = [s for s in deduped if s.score < min_score]
-    bumped = eligible[top_n:] if len(eligible) > top_n else []
-    lines.append(f"- 去重候选总数：`{len(deduped)}`（与 JSON 中 `all_candidates` 一致）")
-    lines.append(f"- 达到分数线（≥ `{min_score}`）：`{len(eligible)}` 条；取前 `{top_n}` 条写入下文「高价值条目」→ **最终入选：`{len(selected)}`**")
-    lines.append(f"- 未达分数线：`{len(below)}` 条（摘要见文末附录或见 JSON）")
-    if bumped:
-        lines.append(f"- 已达线但因 TOP_N 截断未展开：`{len(bumped)}` 条（见文末附录）")
+    lines.append(f"- 去重候选：`{len(deduped)}`；达线（≥ `{min_score}`）：`{len(eligible)}`；脚本入选：`{len(selected)}`")
+    lines.append(f"- 事实包：`output/ai-daily-brief/daily_{day_compact}.raw.json`")
+    lines.append("")
+    lines.append("## 候选索引（按分数降序）")
+    lines.append("")
+    lines.append("| 分数 | 账号 | 主题 | 预览 | 链接 |")
+    lines.append("| --- | --- | --- | --- | --- |")
+    for s in sorted(deduped, key=lambda x: x.score, reverse=True)[:index_limit]:
+        hints = ", ".join(topic_hints(s.text)) or "—"
+        lines.append(
+            f"| {s.score} | @{s.handle} | {md_table_cell(hints, 24)} | "
+            f"{md_table_cell(text_preview(s.text), 48)} | {s.url} |"
+        )
+    if len(deduped) > index_limit:
+        lines.append("")
+        lines.append(f"> 另有 `{len(deduped) - index_limit}` 条见 raw JSON 的 `all_candidates`。")
+    lines.append("")
+    lines.append("## 下一步（ai-daily-brief 技能定稿）")
+    lines.append("")
+    lines.append("在 Cursor **激活 ai-daily-brief 技能**（或说「生成 AI 日报」），将自动读 raw 并覆盖本文件。")
+    lines.append("")
+    lines.append("仅补跑定稿时可以说：")
+    lines.append("")
     lines.append(
-        "- **说明**：`daily_*.json` 含每条完整 `text` 与 `text_zh`；`daily_*.md` 标题约 100 字便于扫读，完整正文下附中文译文。"
+        f"```\n根据 output/ai-daily-brief/daily_{day_compact}.raw.json 写今日可读 AI 日报，覆盖 daily_{day_compact}.md\n```"
     )
     lines.append("")
-    if not selected:
-        lines.append("## 结果")
-        lines.append("")
-        lines.append("今日无高价值更新（无条目达到当前 `min_score` 或未进入 `top_n`）。")
-        lines.append("")
-
-    if selected:
-        lines.append("## 高价值条目")
-        lines.append("")
-        for level in ["P0", "P1", "P2"]:
-            grouped = [s for s in selected if s.priority == level]
-            if not grouped:
-                continue
-            lines.append(f"### {level}")
-            lines.append("")
-            for s in grouped:
-                headline = s.text.replace("\n", " ").strip()
-                if len(headline) > 100:
-                    headline = headline[:100] + "..."
-                lines.append(f"- **{headline}**")
-                lines.append(f"  - 账号：`@{s.handle}` | 分数：`{s.score}` | 来源：`{s.source}`")
-                lines.append(f"  - 时间：`{s.published_at}`")
-                lines.append(f"  - 链接：{s.url}")
-                lines.append(f"  - 价值点评：{s.value_comment}")
-                lines.append(f"  - 行动建议：{s.action_suggestion}")
-                # 入选条在 MD 中附全文（与 JSON 一致）
-                body = s.text.replace("\n", "\n  ").strip()
-                lines.append("  - 完整正文：")
-                lines.append("")
-                lines.append(f"    {body}")
-                lines.append("")
-                zh_body = (s.text_zh or "").strip()
-                if zh_body:
-                    zh_fmt = zh_body.replace("\n", "\n  ").strip()
-                    lines.append("  - 中文译文：")
-                    lines.append("")
-                    lines.append(f"    {zh_fmt}")
-                else:
-                    lines.append("  - 中文译文：（未配置 `OPENROUTER_API_KEY` 或接口失败时为空，见 JSON `text_zh`）")
-                lines.append("")
-            lines.append("")
-
-    # 附录：未达 min_score 的候选（与 JSON all_candidates 对齐，仅列部分避免 MD 过长）
-    if below:
-        lines.append("## 附录：未达分数线的候选")
-        lines.append("")
-        lines.append(
-            f"以下共列出至多 {appendix_limit} 条（按分数降序），其余请打开同目录 JSON 的 `all_candidates` 查看。"
-        )
-        lines.append("")
-        lines.append("| 账号 | 分数 | 摘要 | 链接 |")
-        lines.append("| --- | --- | --- | --- |")
-        for s in sorted(below, key=lambda x: x.score, reverse=True)[:appendix_limit]:
-            lines.append(
-                f"| @{s.handle} | {s.score} | {md_table_cell(s.text)} | {s.url} |"
-            )
-        if len(below) > appendix_limit:
-            lines.append("")
-            lines.append(f"> 另有 `{len(below) - appendix_limit}` 条未展示，见 JSON。")
-        lines.append("")
-
-    if bumped:
-        lines.append("## 附录：已达线但未进入 TOP_N")
-        lines.append("")
-        lines.append(f"分数 ≥ `{min_score}` 但超出本次 `top_n={top_n}` 的条目（至多列 {appendix_limit} 条）：")
-        lines.append("")
-        lines.append("| 账号 | 分数 | 摘要 | 链接 |")
-        lines.append("| --- | --- | --- | --- |")
-        for s in bumped[:appendix_limit]:
-            lines.append(
-                f"| @{s.handle} | {s.score} | {md_table_cell(s.text)} | {s.url} |"
-            )
-        if len(bumped) > appendix_limit:
-            lines.append("")
-            lines.append(f"> 另有 `{len(bumped) - appendix_limit}` 条未展示，见 JSON `all_candidates`。")
-        lines.append("")
-
     return "\n".join(lines).strip() + "\n"
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="生成 AI 日报")
     parser.add_argument("--accounts", default="output/ai-daily-brief/accounts.json")
-    parser.add_argument("--source-md", default="docs/AI大佬名单.md")
+    parser.add_argument("--source-md", default="docs/strategy/AI大佬名单.md")
     parser.add_argument("--output-dir", default="output/ai-daily-brief")
     parser.add_argument("--report-date", default=os.getenv("REPORT_DATE"))
     parser.add_argument("--tz", default=os.getenv("REPORT_TZ", "Asia/Shanghai"))
@@ -636,14 +622,41 @@ def main() -> None:
     }
 
     selected = [s for s in deduped if s.score >= args.min_score][: args.top_n]
+    observation_n = int(os.getenv("OBSERVATION_TOP_N", "15"))
+    observation_top_n = build_observation_top_n(deduped, observation_n)
 
     day_compact = day.replace("-", "")
+    raw_path = output_dir / f"daily_{day_compact}.raw.json"
     md_path = output_dir / f"daily_{day_compact}.md"
-    json_path = output_dir / f"daily_{day_compact}.json"
 
+    raw_payload: dict[str, Any] = {
+        "schema": "ai-daily-brief-raw-v1",
+        "date": day,
+        "window_utc": {
+            "start": start_utc.isoformat(),
+            "end": end_utc.isoformat(),
+        },
+        "params": {
+            "top_n": args.top_n,
+            "min_score": args.min_score,
+            "timezone": args.tz,
+        },
+        "stats": stats,
+        "selected": [signal_to_candidate_dict(s) for s in selected],
+        "observation_top_n": observation_top_n,
+        "all_candidates": [signal_to_candidate_dict(s) for s in deduped],
+        "compose_hint": (
+            f"在 Cursor 激活 ai-daily-brief 技能，读取本文件并覆盖 daily_{day_compact}.md（见 SKILL.md 阶段 2）"
+        ),
+    }
+    raw_path.write_text(
+        json.dumps(raw_payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     md_path.write_text(
-        render_markdown(
+        render_draft_markdown(
             day,
+            day_compact,
             start_utc,
             end_utc,
             selected,
@@ -651,34 +664,12 @@ def main() -> None:
             deduped,
             args.min_score,
             args.top_n,
-            max(0, args.md_appendix_limit),
         ),
         encoding="utf-8",
     )
-    json_path.write_text(
-        json.dumps(
-            {
-                "date": day,
-                "window_utc": {
-                    "start": start_utc.isoformat(),
-                    "end": end_utc.isoformat(),
-                },
-                "params": {
-                    "top_n": args.top_n,
-                    "min_score": args.min_score,
-                    "timezone": args.tz,
-                },
-                "stats": stats,
-                "selected": [asdict(s) for s in selected],
-                "all_candidates": [asdict(s) for s in deduped],
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
-    print(f"日报已生成: {md_path}")
-    print(f"明细已生成: {json_path}")
+    print(f"事实包已生成: {raw_path}")
+    print(f"草稿 MD 已生成: {md_path}")
+    print("可读定稿：在 Cursor 激活 ai-daily-brief 技能（见草稿 MD 底部提示）")
 
 
 if __name__ == "__main__":

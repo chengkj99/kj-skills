@@ -6,11 +6,12 @@
 
 ## 1. 目标与边界
 
-**目标**：在指定「本地日历日」时间窗内，从一批 X（Twitter）账号拉取动态，经**规则评分、去重、可选英译中**后，产出一份可读的 Markdown 日报与一份可程序消费的 JSON 明细。
+**目标**：在指定「本地日历日」时间窗内，从一批 X（Twitter）账号拉取动态，经**规则评分、去重、可选英译中**后，产出事实包；再由 **`ai-daily-brief` 技能阶段 2**（Agent 读 raw，见 `compose-readable-daily.md`）覆盖为可读 Markdown 日报。
 
 **明确不做的事**：
 
-- 不使用大模型做「采集」或「评分」（采集走 HTTP/RSS/搜索 HTML；评分为确定性关键词规则）。
+- 阶段 1 **不使用**大模型做「采集」或「评分」（采集走 HTTP/RSS/搜索 HTML；评分为确定性关键词规则）。
+- 阶段 1 **不使用**大模型生成价值点评（点评由技能阶段 2 的 Agent 撰写）。
 - 不保证 Nitter 实例、DuckDuckGo HTML 结构长期稳定（第三方页面变化会导致回退路径失效）。
 - 不在仓库内持久化翻译缓存文件（仅单次运行内对相同正文做内存 hash 复用）。
 
@@ -23,7 +24,7 @@
 ```mermaid
 flowchart LR
   subgraph inputs [输入]
-    MD[docs/AI大佬名单.md]
+    MD[docs/strategy/AI大佬名单.md]
     ACC[accounts.json 可选]
     ENV[环境变量 Secrets]
   end
@@ -38,8 +39,13 @@ flowchart LR
     LLM[OpenRouter 等 OpenAI 兼容接口]
   end
   subgraph outputs [输出]
-    OUTMD[daily_YYYYMMDD.md]
-    OUTJSON[daily_YYYYMMDD.json]
+    RAW[daily_YYYYMMDD.raw.json]
+    DRAFT[daily_YYYYMMDD.md 草稿]
+    OUTMD[daily_YYYYMMDD.md 定稿]
+    OUTJSON[daily_YYYYMMDD.json 可选]
+  end
+  subgraph skill [ai-daily-brief 技能阶段 2]
+    AGENT[Cursor Agent]
   end
   MD --> PA
   PA --> ACC
@@ -50,8 +56,11 @@ flowchart LR
   BR --> NIT
   BR --> DDG
   BR --> LLM
-  BR --> OUTMD
-  BR --> OUTJSON
+  BR --> RAW
+  BR --> DRAFT
+  RAW --> AGENT
+  AGENT --> OUTMD
+  AGENT --> OUTJSON
 ```
 
 **分层理解**：
@@ -63,7 +72,8 @@ flowchart LR
 | 归一化与评分 | `to_signal`：字典 → `Signal`，附五维子分与加权总分 |
 | 去重 | 按正文前缀规范化 key，保留高分优先 |
 | 翻译增强 | 对去重后全集填 `text_zh`（可选） |
-| 裁剪与渲染 | `min_score` + `top_n` 得到 `selected`；MD 含附录控制长度 |
+| 裁剪与渲染 | `min_score` + `top_n` 得到 `selected`；写 raw + 草稿 MD |
+| 可读定稿（技能） | Agent 读 raw，按 `compose-readable-daily.md` 覆盖 MD |
 
 ---
 
@@ -72,32 +82,35 @@ flowchart LR
 | 路径 | 职责 |
 |------|------|
 | `SKILL.md` | 技能元数据、触发场景、环境变量与产出格式约定 |
-| `scripts/parse_accounts.py` | 从名单 Markdown 提取 `twitter.com/{handle}` 与 `@handle` |
+| `scripts/parse_accounts.py` | 从名单 Markdown 提取 handle，并合并 follow-builders JSON |
+| `scripts/account_merge.py` | 共用：加载扩展 JSON、与主名单去重合并 |
 | `scripts/build_daily_report.py` | 主流程：采集、评分、去重、翻译、写 MD/JSON |
 | `references/scoring-rubric.md` | 评分维度、权重、P0/P1/P2 阈值的**产品层说明**（与代码公式应对照维护） |
 | `references/implementation.md` | 本文档：架构与原理 |
-| 仓库 `.github/workflows/ai-daily-brief.yml` | 定时与手动触发，串联上述脚本并上传 Artifact |
+| `references/compose-readable-daily.md` | 技能阶段 2：定稿 MD 结构与质量门禁 |
+| 仓库 `.github/workflows/ai-daily-brief.yml` | 手动触发阶段 1，上传 Artifact；定稿在 Cursor 走技能 |
 
 ---
 
-## 4. 账号解析（parse_accounts.py）
+## 4. 账号解析（parse_accounts.py + account_merge.py）
 
-**原理**：用正则从 `docs/AI大佬名单.md` 抽取两类模式：
+**原理**：用正则从 `docs/strategy/AI大佬名单.md` 抽取两类模式：
 
 1. 链接形态：`twitter.com/{handle}`（忽略大小写，handle 长度 1–15，符合 X 规则）。
 2. 正文形态：`@handle`（使用负向后顾，避免匹配邮箱等片段）。
 
-合并后按首次出现顺序去重，输出：
+合并后按首次出现顺序去重，再与 **`docs/strategy/follow-builders-x-handles.json`**（与 follow-builders 技能 `x_accounts` 对齐）做 **小写去重合并**（主名单顺序优先；可用 `--no-merge` 跳过）。输出：
 
 ```json
 {
   "source_file": "...",
+  "merge_json": "... 或 null",
   "total_handles": N,
   "handles": ["a", "b"]
 }
 ```
 
-`build_daily_report.py` 优先读 `accounts.json`；若不存在或 `handles` 为空，则回退为直接读 Markdown 并内联同一套 `extract_handles` 逻辑（与 `parse_accounts` 保持语义一致，避免 CI 与本地路径不一致时名单失效）。
+`build_daily_report.py` 优先读 `accounts.json`；若不存在或 `handles` 为空，则回退为直接读 Markdown 并 **同样合并** `follow-builders-x-handles.json`（与 `parse_accounts` 语义一致，逻辑在 `account_merge.py` 共用）。
 
 ---
 
@@ -165,7 +178,7 @@ flowchart LR
 
 - 身份与内容：`handle`、`text`（原文）、`text_zh`（译文，可空）、`url`、`published_at`、`source`。
 - 评分：`relevance`、`actionable`、`novelty`、`impact`、`timeliness`、`score`（加权总分）、`priority`（P0/P1/P2）。
-- 展示：`value_comment`、`action_suggestion`（基于分数与关键词模板的短文案）。
+- 展示辅助：`text_preview`、`topic_hints`（规则抽取）；**价值点评与行动建议由技能阶段 2 写入定稿 MD**，不在 raw 事实包中生成模板句。
 
 **设计意图**：采集适配器只负责产出「最小字典」；`to_signal` 统一补全评分与文案，后续去重、翻译、裁剪都只操作 `Signal`，避免管道里多种 dict 形状。
 
@@ -191,7 +204,7 @@ flowchart LR
 
 ### 8.3 价值点评与行动建议
 
-`make_value_comment` 仅按总分三档返回固定中文模板。`make_action_suggestion` 对正文做少量英文关键词分支（release/launch、open source/repo、benchmark/sota），否则给默认追踪建议。二者均为**可解释的启发式**，非 LLM 生成。
+阶段 1 **不再**生成 `value_comment` / `action_suggestion`（已移除易误导的固定模板）。可读点评由 **阶段 2**（`references/compose-readable-daily.md`，Cursor + 技能）根据 `daily_*.raw.json` 撰写并覆盖 `daily_*.md`。
 
 ---
 
@@ -237,16 +250,16 @@ selected = [s for s in deduped if s.score >= min_score][:top_n]
 - `min_score`：默认 6.0，过滤低分噪声。  
 - `top_n`：在达标条目中再截断长度，控制 MD 主文阅读量。
 
-### 11.2 Markdown vs JSON
+### 11.2 阶段 1 产物 vs 定稿 MD
 
-| 维度 | JSON | Markdown |
-|------|------|----------|
-| 入选条 | `selected` | 「高价值条目」展开全文 + 中文译文 |
-| 全量候选 | `all_candidates`（= 去重后全集） | 仅附录表格展示部分（`MD_APPENDIX_LIMIT`） |
-| 未达标 | 全在 `all_candidates` | 「附录：未达分数线的候选」至多 N 行 |
-| 达标被 top_n 截断 | 全在 `all_candidates` | 「附录：已达线但未进入 TOP_N」至多 N 行 |
+| 文件 | 写入方 | 内容 |
+|------|--------|------|
+| `daily_*.raw.json` | Python | 全量候选、分数、`observation_top_n`，无技能点评 |
+| `daily_*.md`（草稿） | Python | 采集摘要 + 候选索引表 + 技能定稿提示 |
+| `daily_*.md`（定稿） | **ai-daily-brief 技能** | 今日导读 / 精选 / 更多动态 / 采集说明（覆盖草稿） |
+| `daily_*.json`（可选） | 技能 | `composed_by`、精选与 `value_comment` 等 |
 
-**原理**：JSON 服务机器与审计；MD 服务人类速读，故主文只展开 `selected`，其余用表格摘要 + 引导回 JSON。
+**原理**：raw 供 Agent 只读推理；草稿 MD 供定时任务留痕；读者只看定稿 MD。
 
 ### 11.3 stats 与 translation 元数据
 
@@ -258,19 +271,18 @@ selected = [s for s in deduped if s.score >= min_score][:top_n]
 
 **工作流**（`.github/workflows/ai-daily-brief.yml`）：
 
-- 定时：UTC 22:00（对应北京时间次日清晨，具体以注释为准）。
-- `workflow_dispatch` 可传 `report_date`。
+- 仅 `workflow_dispatch` 手动触发（定时已改本机 launchd）；可传 `report_date`。
 - 注入 `X_BEARER_TOKEN`、`OPENROUTER_API_KEY` 等 Secrets；未配置的 secret 在 Actions 中为空字符串，行为与本地不导出变量一致。
 
 **本地典型命令**：
 
 ```bash
 python .claude/skills/ai-daily-brief/scripts/parse_accounts.py \
-  --input docs/AI大佬名单.md --output output/ai-daily-brief/accounts.json
+  --input docs/strategy/AI大佬名单.md --output output/ai-daily-brief/accounts.json
 
 python .claude/skills/ai-daily-brief/scripts/build_daily_report.py \
   --accounts output/ai-daily-brief/accounts.json \
-  --source-md docs/AI大佬名单.md \
+  --source-md docs/strategy/AI大佬名单.md \
   --output-dir output/ai-daily-brief
 ```
 
@@ -299,6 +311,18 @@ python .claude/skills/ai-daily-brief/scripts/build_daily_report.py \
 
 ---
 
-## 15. 版本维护建议
+## 15. 技能阶段 2（可读定稿）
 
-修改 `score_text` 权重或关键词时，请**同步更新** `references/scoring-rubric.md`，避免文档与代码漂移；反之亦然。新增环境变量时，同步 `SKILL.md` 与本文件「运维」小节。
+阶段 1 结束后，由 Cursor 激活 **`ai-daily-brief` 技能**（非 Python 脚本）：
+
+1. 读取 `daily_{YYYYMMDD}.raw.json`（禁止改写）。
+2. 遵循 `references/compose-readable-daily.md` 覆盖 `daily_{YYYYMMDD}.md`。
+3. 交付前执行 compose 文档中的质量门禁自检。
+
+用户说「生成 AI 日报」且未限定「只采集」时，Agent 应默认执行阶段 1（若 raw 不存在）并接着完成阶段 2。详见 `SKILL.md`「技能执行总则」。
+
+---
+
+## 16. 版本维护建议
+
+修改 `score_text` 权重或关键词时，请**同步更新** `references/scoring-rubric.md`，避免文档与代码漂移；反之亦然。新增环境变量或定稿结构变更时，同步 `SKILL.md`、`compose-readable-daily.md` 与本文件。

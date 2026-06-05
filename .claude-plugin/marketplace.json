@@ -8,9 +8,9 @@
   },
   "plugins": [
     {
-      "name": "ck-skills",
+      "name": "kj-skills",
       "source": "./",
-      "description": "wiki-doc-sink、ai-daily-brief、content-creator、weekly-report、markdown-format、git-push。"
+      "description": "wiki-doc-sink、ai-daily-brief、content-creator、weekly-report、markdown-format、git-push、kangjian-skill。"
     }
   ]
 }

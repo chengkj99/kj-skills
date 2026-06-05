@@ -1,79 +1,139 @@
 ---
 name: ai-daily-brief
-description: 每日 AI 情报日报生成技能。用于每天汇总 `docs/AI大佬名单.md` 中 X 账号在昨日的动态，完成去重、价值识别、P0/P1/P2 分级和中文输出。当用户提到「AI 日报」「每日情报」「6点自动汇总」「X 昨日动态」等场景时使用。支持 X API 优先、Nitter RSS 与 Web 搜索回退。
+description: 每日 AI 情报日报（采集 + 可读定稿）。汇总 `docs/strategy/AI大佬名单.md` 与 `docs/strategy/follow-builders-x-handles.json` 中 X 账号昨日动态，经去重、评分、P0/P1/P2 分级后输出中文可读日报。触发：「AI 日报」「每日情报」「6点自动汇总」「X 昨日动态」「根据 raw 写可读版」「ai-daily-brief 定稿」。阶段 1 用脚本（X API / Nitter / Web 回退）；阶段 2 由本技能 Agent 读 raw 覆盖 MD（必读 compose-readable-daily.md）。
 ---
 
 # AI 日报生成技能
 
 ## 目标
 
-把「昨日值得关注的 AI 动态」压缩成可执行、可复盘、可转发的一页日报，避免信息噪声。
+把「昨日值得关注的 AI 动态」压缩成**可执行、可复盘、可转发**的一页中文日报，避免信息噪声与模板空话。
 
-**实现细节（架构、数据流、采集原理、评分与排错）**：见 [`references/implementation.md`](references/implementation.md)。价值维度与权重文字说明见 [`references/scoring-rubric.md`](references/scoring-rubric.md)。
+**实现细节**：[`references/implementation.md`](references/implementation.md)  
+**评分规则**：[`references/scoring-rubric.md`](references/scoring-rubric.md)  
+**阶段 2 定稿规范（必读）**：[`references/compose-readable-daily.md`](references/compose-readable-daily.md)
+
+---
+
+## 技能执行总则（Agent 必读）
+
+激活本技能后，默认交付物是 **`output/ai-daily-brief/daily_{YYYYMMDD}.md` 可读定稿**，不是草稿 MD。
+
+| 用户意图 | 你要做的 |
+|----------|----------|
+| 「生成 / 写 / 出 AI 日报」（未限定只要采集） | **阶段 1 → 阶段 2** 一气呵成 |
+| 「根据 raw 写可读版」「覆盖 daily_*.md」「定稿」 | 仅 **阶段 2**（前提：对应 `*.raw.json` 已存在） |
+| 「只采集」「只要事实包」「skip compose」 | 仅 **阶段 1**，并明确告知用户 MD 仍为草稿 |
+
+**禁止**：阶段 1 跑完后把草稿 MD 当终稿交给用户；**禁止**修改 `*.raw.json`。
+
+---
 
 ## 输入约定
 
-- 账号源文件：`docs/AI大佬名单.md`
-- 时间窗口：默认「北京时间昨日 00:00:00 - 23:59:59」
+- 账号主名单：`docs/strategy/AI大佬名单.md`
+- **follow-builders 扩展名单（默认合并）**：`docs/strategy/follow-builders-x-handles.json`（`parse_accounts.py` 与主名单按小写去重合并，主名单顺序优先）
+- 时间窗口：默认北京时间昨日 00:00:00–23:59:59
 - 输出目录：`output/ai-daily-brief/`
 
-可选环境变量：
+### 环境变量（阶段 1）
 
-- `X_BEARER_TOKEN`：X API 令牌（主采集路径；若接口返回 402 等表示当前套餐不可用，将自动走回退）
-- `NITTER_HOSTS`：Nitter 实例列表，逗号分隔（默认 `nitter.net`）
-- `REPORT_DATE`：指定统计日期（格式 `YYYY-MM-DD`，不传则自动取昨日）
-- `REPORT_TZ`：时区（默认 `Asia/Shanghai`）
-- `TOP_N`：最多输出条目数（默认 20）
-- `MIN_SCORE`：最低分阈值（默认 6.0）
-- `MD_APPENDIX_LIMIT`：Markdown 附录表格行数上限（默认 40，未达分数线与 TOP_N 截断项）
-- **英译中（可选）**
-  - `OPENROUTER_API_KEY`：配置后会对去重后的每条候选调用 OpenRouter（OpenAI 兼容 `chat/completions`）生成 `text_zh`；未配置时 `text_zh` 为空字符串
-  - `OPENROUTER_MODEL`：默认 `openai/gpt-4o-mini`
-  - `OPENROUTER_BASE_URL`：默认 `https://openrouter.ai/api/v1`
-  - `OPENROUTER_HTTP_REFERER` 或 `SITE_URL`：OpenRouter 建议填站点 URL（可选）
-  - `TRANSLATE_MAX_CHARS`：单条正文最多翻译字符数（默认 8000，超出部分截断并附说明）
-  - `TRANSLATE_SLEEP_SEC`：两次翻译请求间隔秒数（默认 0.15，减轻限流）
-  - `SKIP_TRANSLATE=1`：强制跳过翻译（与脚本 `--skip-translate` 等价）
+- `X_BEARER_TOKEN`、`NITTER_HOSTS`、`REPORT_DATE`、`REPORT_TZ`
+- `TOP_N`（默认 20）、`MIN_SCORE`（默认 6.0）、`MD_APPENDIX_LIMIT`
+- 英译中（可选）：`OPENROUTER_API_KEY`、`OPENROUTER_MODEL`、`OPENROUTER_BASE_URL`、`TRANSLATE_*`、`SKIP_TRANSLATE=1`
+
+---
 
 ## 执行流程
 
-1. 运行 `scripts/parse_accounts.py`，从名单中提取有效 `@handle`。
-2. 运行 `scripts/build_daily_report.py`，执行以下流程：
-   - 按时间窗口采集帖子（X API 优先；若连续遇到 401/402 则跳过后续 API 请求，避免限流）。
-   - API 无结果时，按时间窗过滤 **Nitter RSS**；仍无结果时再尝试 Web 搜索回退。
-   - 基于 `references/scoring-rubric.md` 评分并分级（P0/P1/P2）。
-   - 去重后对候选批量填充 `text_zh`（相同正文按 hash 复用译文）。
-   - 按 `MIN_SCORE` 与 `TOP_N` 裁剪入选条。
-   - 输出 Markdown 与 JSON 两份结果。
+```text
+┌─────────────────────────────────────────────────────────┐
+│ 1. 解析日期 → daily_{YYYYMMDD}.raw.json 是否存在？       │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+         不存在 / 用户要求重采 ──► 阶段 1（pnpm daily:generate）
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ 2. 阶段 2：读 raw + rubric（+ 可选名单语境）              │
+│    按 compose-readable-daily.md 覆盖 daily_*.md        │
+│    交付前跑质量门禁自检                                   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### 阶段 1：采集与事实包（headless，无点评 LLM）
+
+1. 仓库根执行：`pnpm daily:generate`（或等价调用 `scripts/run-daily-brief.sh`）。
+2. 产出：
+   - `daily_{YYYYMMDD}.raw.json`（事实包，`schema: ai-daily-brief-raw-v1`）
+   - `daily_{YYYYMMDD}.md`（**草稿**，待本技能覆盖）
+
+脚本内部：`parse_accounts.py` → `build_daily_report.py`（X API → Nitter RSS → Web 搜索；规则评分、去重；可选英译中）。
+
+### 阶段 2：可读定稿（本技能内置，Agent 执行）
+
+**开始前**：完整阅读 [`references/compose-readable-daily.md`](references/compose-readable-daily.md)。
+
+**输入（只读）**：
+
+| 文件 | 用途 |
+|------|------|
+| `output/ai-daily-brief/daily_{YYYYMMDD}.raw.json` | `all_candidates`、`observation_top_n`、`selected`、`stats` |
+| `references/scoring-rubric.md` | 分级与去重 |
+| `docs/strategy/AI大佬名单.md`（可选） | 账号身份一句语境 |
+
+**步骤**：
+
+1. 读 raw 的 `date`、`stats`、`selected`、`observation_top_n`；再按需扫 `all_candidates` 全文。
+2. 选材：优先 `selected` + `observation_top_n`；从 `all_candidates` 按分数与 `topic_hints` 补至 **10–15 条**「今日精选」。若全体 `< min_score`，导读写明「今日信号偏弱 / 观察级」，精选仍可低于分数线。
+3. **覆盖写入** `daily_{YYYYMMDD}.md`，结构见 compose 文档（今日导读 → 今日精选 → 更多动态 ≤30 条 → 采集说明）。
+4. **质量门禁**（交付前逐项自检，见 compose 文档）：
+   - 无「补充性动态，可作为趋势参考」等空话
+   - 无「加入日报追踪，等待更多上下文」除非正文确实不足且写明缺什么
+   - 「建议下一步」与正文一致（不因出现 `repo` 就建议 clone）
+   - 不编造 url、时间、账号；同事件只保留一条
+5. **可选**：回写 `daily_{YYYYMMDD}.json`，含 `composed_by: ai-daily-brief-skill`、`composed_at`、精选条目的 `headline_zh` / `value_comment` / `action_suggestion`。
+
+**对用户回复**：说明定稿路径、精选条数、是否低分观察日、是否跳过阶段 1。
+
+---
 
 ## 输出格式
 
-### Markdown 日报
+### 终稿：`daily_{YYYYMMDD}.md`（阶段 2 覆盖）
 
-文件：`output/ai-daily-brief/daily_[YYYYMMDD].md`
+读者 3–5 分钟可掌握「昨日 AI 编程圈值得盯什么、能做什么」。结构细则见 `compose-readable-daily.md`。
 
-必须包含：
+### 事实包：`daily_{YYYYMMDD}.raw.json`（阶段 1，只读）
 
-- 执行摘要（采集账号数、命中条数、数据来源占比）
-- 高价值条目（按 P0 -> P1 -> P2）
-- 每条含：事件标题、账号、时间、原文链接、价值点评、行动建议、分数、完整正文、**中文译文**（有密钥且成功时）
-- 空结果时明确写出「今日无高价值更新」
+- `selected`：达 `MIN_SCORE` 的脚本入选（可为空）
+- `observation_top_n`：低分日优先阅读列表
+- `all_candidates`：无 `value_comment` / `action_suggestion`
 
-### JSON 明细
+### 草稿：`daily_{YYYYMMDD}.md`（阶段 1，将被覆盖）
 
-文件：`output/ai-daily-brief/daily_[YYYYMMDD].json`
+采集摘要 + 候选索引 + 技能定稿提示。
 
-必须包含：
+### 可选：`daily_{YYYYMMDD}.json`
 
-- 运行参数与时间窗口
-- 采集统计（API/回退数量、失败原因）
-- 全量候选条目与评分明细（每条含原文 `text` 与 `text_zh`）
-- 最终入选条目列表
-- `stats.translation`：是否配置密钥、`text_zh` 非空条数、所用模型
+机器可读精选 + 技能点评字段。
+
+---
 
 ## 质量要求
 
 - 不编造链接、发布时间、账号信息。
-- 价值点评必须落到「程序员下一步能做什么」。
+- 价值说明必须落到「程序员下一步能做什么」。
 - 相同事件多来源只保留一条，优先官方链接。
-- 输出使用中文，术语保留英文。
+- 输出中文，专业术语保留英文。
+
+---
+
+## 与本仓库命令的关系
+
+| 命令 | 作用 |
+|------|------|
+| `pnpm daily:generate` | 仅阶段 1（定时 / 晨报脚本用） |
+| 激活 **ai-daily-brief** 技能 | 默认阶段 1（若需要）+ **阶段 2 定稿** |
+
+设计说明：`docs/superpowers/specs/2026-05-17-ai-daily-readable-skill-design.md`

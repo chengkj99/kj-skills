@@ -4,6 +4,13 @@ import json
 import re
 from pathlib import Path
 
+from account_merge import (
+    default_follow_builders_json,
+    load_extra_handles_from_json,
+    merge_handle_lists,
+    repo_root,
+)
+
 
 def extract_handles(markdown_text: str) -> list[str]:
     # 优先从链接中提取 handle，准确率更高。
@@ -27,29 +34,69 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="从 AI 大佬名单 Markdown 提取 X 账号")
     parser.add_argument(
         "--input",
-        default="docs/AI大佬名单.md",
-        help="输入 Markdown 文件路径",
+        default="docs/strategy/AI大佬名单.md",
+        help="输入 Markdown 文件路径（相对路径时相对仓库根）",
     )
     parser.add_argument(
         "--output",
         default="output/ai-daily-brief/accounts.json",
         help="输出 JSON 文件路径",
     )
+    parser.add_argument(
+        "--merge-json",
+        default=None,
+        help="合并用的 JSON；默认使用仓库内 follow-builders 同步文件",
+    )
+    parser.add_argument(
+        "--no-merge",
+        action="store_true",
+        help="不合并 follow-builders 扩展 JSON，仅使用主名单 Markdown",
+    )
     args = parser.parse_args()
 
+    root = repo_root()
     input_path = Path(args.input)
+    if not input_path.is_absolute():
+        input_path = (root / input_path).resolve()
     if not input_path.exists():
         raise FileNotFoundError(f"输入文件不存在: {input_path}")
 
     text = input_path.read_text(encoding="utf-8")
     handles = extract_handles(text)
 
+    merge_path = Path(args.merge_json) if args.merge_json else default_follow_builders_json()
+    if not merge_path.is_absolute():
+        merge_path = (root / merge_path).resolve()
+
+    merged_from_file = False
+    if args.no_merge:
+        print("已指定 --no-merge，跳过扩展 JSON 合并")
+    elif merge_path.exists():
+        extra = load_extra_handles_from_json(merge_path)
+        before = len(handles)
+        handles = merge_handle_lists(handles, extra)
+        added = len(handles) - before
+        merged_from_file = True
+        if added:
+            print(f"已从 {merge_path} 合并 {added} 个新账号（去重后共 {len(handles)} 个）")
+        else:
+            print(f"已读取 {merge_path}，无新增账号（与主名单全部重复，共 {len(handles)} 个）")
+    else:
+        print(f"未找到合并文件 {merge_path}，跳过 follow-builders 扩展名单")
+
     output_path = Path(args.output)
+    if not output_path.is_absolute():
+        output_path = (root / output_path).resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
         json.dumps(
             {
                 "source_file": str(input_path),
+                "merge_json": (
+                    None
+                    if args.no_merge or not merged_from_file
+                    else str(merge_path)
+                ),
                 "total_handles": len(handles),
                 "handles": handles,
             },

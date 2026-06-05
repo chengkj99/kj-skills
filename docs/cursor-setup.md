@@ -1,4 +1,4 @@
-# Cursor 中使用 ck-skills
+# Cursor 中使用 kj-skills
 
 本仓库同时提供 **Cursor 插件**（`.cursor-plugin/`）与 **Claude Code 插件**（`.claude-plugin/`），skills 内容共用 `skills/` 目录。
 
@@ -9,7 +9,7 @@
 向 Cursor 提交开源插件审核后，用户可在 Agent 对话或插件面板安装：
 
 ```text
-/add-plugin ck-skills
+/add-plugin kj-skills
 ```
 
 提交入口：[cursor.com/marketplace/publish](https://cursor.com/marketplace/publish)
@@ -19,17 +19,17 @@
 管理员在 **Dashboard → Settings → Plugins → Team Marketplaces → Import** 粘贴仓库地址：
 
 ```text
-https://github.com/chengkj99/ck-skills
+https://github.com/chengkj99/kj-skills
 ```
 
-团队成员在 Cursor 插件面板中即可看到并安装 `ck-skills`。
+团队成员在 Cursor 插件面板中即可看到并安装 `kj-skills`。
 
 ### C. 本地调试（开发或未上架时）
 
 将仓库链到 Cursor 本地插件目录后重启 Cursor（或 **Developer: Reload Window**）：
 
 ```bash
-ln -s /path/to/ck-skills ~/.cursor/plugins/local/ck-skills
+ln -s /path/to/kj-skills ~/.cursor/plugins/local/kj-skills
 ```
 
 然后在 Cursor 设置 → Rules 中确认 skills 已加载，或在对话里 **@** 对应 skill。
@@ -54,10 +54,10 @@ ln -s /path/to/ck-skills ~/.cursor/plugins/local/ck-skills
 |------|--------|-------------|
 | 清单目录 | `.cursor-plugin/` | `.claude-plugin/` |
 | 添加市场源 | 团队市场 Import / 官方审核 | `/plugin marketplace add owner/repo` |
-| 安装插件 | `/add-plugin ck-skills` 或插件面板 | `/plugin install ck-skills@ck-agent-skills` |
-| 本地调试 | `~/.cursor/plugins/local/` | `claude --plugin-dir /path/to/ck-skills` |
+| 安装插件 | `/add-plugin kj-skills` 或插件面板 | `/plugin install kj-skills@ck-agent-skills` |
+| 本地调试 | `~/.cursor/plugins/local/` | `claude --plugin-dir /path/to/kj-skills` |
 
-**注意**：不要在 Cursor 里使用 `/plugin marketplace add`（那是 Claude Code 命令）；在 Cursor 插件 UI 里搜索 `chengkj99/ck-skills` 会显示 **No matching plugins**，因为那是按插件名过滤，不是添加 Git 市场源。
+**注意**：不要在 Cursor 里使用 `/plugin marketplace add`（那是 Claude Code 命令）；在 Cursor 插件 UI 里搜索 `chengkj99/kj-skills` 会显示 **No matching plugins**，因为那是按插件名过滤，不是添加 Git 市场源。
 
 ## 包含的 Skills
 
