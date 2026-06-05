@@ -24,7 +24,7 @@
 ```mermaid
 flowchart LR
   subgraph inputs [输入]
-    MD[docs/strategy/AI大佬名单.md]
+    MD[assets/AI大佬名单.md]
     ACC[accounts.json 可选]
     ENV[环境变量 Secrets]
   end
@@ -94,12 +94,12 @@ flowchart LR
 
 ## 4. 账号解析（parse_accounts.py + account_merge.py）
 
-**原理**：用正则从 `docs/strategy/AI大佬名单.md` 抽取两类模式：
+**原理**：用正则从 `assets/AI大佬名单.md` 抽取两类模式：
 
 1. 链接形态：`twitter.com/{handle}`（忽略大小写，handle 长度 1–15，符合 X 规则）。
 2. 正文形态：`@handle`（使用负向后顾，避免匹配邮箱等片段）。
 
-合并后按首次出现顺序去重，再与 **`docs/strategy/follow-builders-x-handles.json`**（与 follow-builders 技能 `x_accounts` 对齐）做 **小写去重合并**（主名单顺序优先；可用 `--no-merge` 跳过）。输出：
+合并后按首次出现顺序去重，再与 **`assets/follow-builders-x-handles.json`**（与 follow-builders 技能 `x_accounts` 对齐）做 **小写去重合并**（主名单顺序优先；可用 `--no-merge` 跳过）。输出：
 
 ```json
 {
@@ -278,11 +278,11 @@ selected = [s for s in deduped if s.score >= min_score][:top_n]
 
 ```bash
 python .claude/skills/ai-daily-brief/scripts/parse_accounts.py \
-  --input docs/strategy/AI大佬名单.md --output output/ai-daily-brief/accounts.json
+  --input assets/AI大佬名单.md --output output/ai-daily-brief/accounts.json
 
 python .claude/skills/ai-daily-brief/scripts/build_daily_report.py \
   --accounts output/ai-daily-brief/accounts.json \
-  --source-md docs/strategy/AI大佬名单.md \
+  --source-md assets/AI大佬名单.md \
   --output-dir output/ai-daily-brief
 ```
 
