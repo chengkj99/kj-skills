@@ -131,6 +131,20 @@ ls /Users/you/llm-wiki/SCHEMA.md /Users/you/llm-wiki/CLAUDE.md
 
 若你同时维护**组织/公司业务 Wiki**（例如信贷前端专用库），公司库路由请保留在本机 `~/.claude/rules/`，本仓库 skill 仅覆盖个人 `<WIKI_ROOT>`。
 
+## 本地 Skills 同步（`sync-skills.sh`）
+
+`~/.claude/skills/` 通过 symlink 指向本仓库的 `skills/` 子目录。**新增 skill 后**需运行一次同步脚本，让全局 Claude 立即可见：
+
+```bash
+./sync-skills.sh
+```
+
+脚本会自动扫描 `skills/` 下所有目录与 `.skill` 文件，对缺失的 symlink 进行补建，已存在的跳过不动。
+
+> **修改已有 skill 内容**无需运行脚本，symlink 实时生效。只有**新增** skill 目录时才需要执行一次。
+
+---
+
 ## Claude Code：Marketplace 安装（推荐）
 
 将下列 `chengkj99/kj-skills` 换成你 fork 后的 `owner/repo`，并同步修改 `.claude-plugin/marketplace.json` 里 `plugins[0].source.repo`（否则 marketplace 仍指向原仓库）：
