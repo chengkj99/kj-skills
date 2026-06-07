@@ -14,6 +14,7 @@ import argparse
 import re
 import time
 from pathlib import Path
+from typing import Optional
 from urllib.parse import urlparse
 
 from playwright.sync_api import sync_playwright
@@ -198,7 +199,7 @@ def get_lesson_title(page, sidebar_title: str = "") -> str:
     return title or "Untitled"
 
 
-def get_next_url(page, course_slug: str, base_url: str) -> str | None:
+def get_next_url(page, course_slug: str, base_url: str) -> Optional[str]:
     """获取下一课时的 URL（通过 Next 按钮）。"""
     raw = page.evaluate("""() => {
         for (const a of document.querySelectorAll('a[href]')) {
