@@ -1,0 +1,14 @@
+{
+  "wiki_path": "~/path/to/your/wiki",
+  "collab_notes_path": "raw/notes/ai-collab",
+  "quality_threshold": 7,
+  "knowledge_threshold": 6,
+  "high_value_intents": ["设计", "分析", "规划", "架构", "方案", "design", "analyze", "plan", "architecture", "review"],
+  "analysis_model": "claude-haiku-4-5-20251001",
+  "enabled": true,
+  "prompt_check_enabled": true,
+  "knowledge_capture_enabled": true,
+  "prompt_collection_enabled": true,
+  "prompt_collection_path": "wiki/playbooks/prompts",
+  "min_prompt_length": 20
+}
