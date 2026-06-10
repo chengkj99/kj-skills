@@ -86,6 +86,22 @@ grep -r "<关键词>" "/Users/chengkangjian/Library/Mobile Documents/iCloud~md~o
 - 该上表格上表格（对比 / 选型），该上代码上代码（可运行、带必要注释），该上步骤上步骤。
 - **图文并茂**：在「看图比看文字更快懂」的位置插入视觉元素。代码块直接写进正文；截图 / 流程图 / 录屏 用标准占位标记注明，格式和放置逻辑详见 [references/chapter-blueprint.md「视觉元素指南」](references/chapter-blueprint.md)。
 
+### 第 3.5 步：生成可自动化的视觉元素（SVG）
+
+打开 [references/image-protocol.md](references/image-protocol.md)，扫描本章正文中所有 `<!-- [流程图] -->` 和 `<!-- [对比图] -->` 占位，逐一处理：
+
+1. 取出注释里的**描述文本**，填入 image-protocol.md 第 5 节的提示词模板中的 `{描述}` 位置。
+2. 按模板生成 SVG 代码，用 Write 工具写入 `assets/lessons-claudecode/<编号>-<slug>.svg`（命名规则见 image-protocol.md 第 3 节）。
+3. 用 Bash 工具执行 `open <svg路径>` 本地预览，确认渲染正常。
+4. 按 **A 方案**在注释下方紧接插入图片引用（**保留注释，不删**）：
+   ```markdown
+   <!-- [流程图] 描述：... -->
+   ![alt 文字](../../../../assets/lessons-claudecode/xxx.svg)
+   ```
+5. `[截图]` 和 `[录屏建议]` **原样保留**，不处理。
+
+> 每章通常 1-2 张，不会显著影响写章节节奏。若描述不够清晰导致 SVG 难以准确表达，告知用户并跳过该张（保留占位）。
+
 ### 第 3 步：过质量门禁（强制，不能跳）
 
 写完对照 [references/style-and-gate.md](references/style-and-gate.md) 的检查清单逐条自查：去 AI 味、康健味在场、课程有效性（学员真能学会吗 / 有没有可操作的产出）。不通过就改，改到通过再交付。
