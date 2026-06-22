@@ -202,6 +202,8 @@ ls /Users/you/llm-wiki/SCHEMA.md /Users/you/llm-wiki/CLAUDE.md
 
 > **修改已有 skill 内容**无需运行脚本，symlink 实时生效。只有**新增** skill 目录时才需要执行一次。
 
+新增 skill 时，请同步更新本 README 的「包含的 Skills」清单；若会影响协作流程、安装方式或命令帮助，也要同步更新「Skills 协作关系」、安装说明和 `.claude/commands/kj-help.md` 等相关文档。贡献前可对照 [CONTRIBUTING.md](CONTRIBUTING.md) 的新增 skill 检查项。
+
 ## Codex：本地 Skills 注册
 
 Codex 用户级 skills 默认位于 `~/.codex/skills/`（若设置了 `CODEX_HOME`，则为 `$CODEX_HOME/skills/`）。运行脚本可把本仓库 `skills/` 下的目录或 `.skill` 文件软链过去：
