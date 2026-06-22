@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Claude / Cursor Agent Skills 集合：AI 编程内容创作全链路",
   "scripts": {
-    "sync": "bash sync-skills.sh"
+    "sync": "bash sync-skills.sh",
+    "sync:claude": "bash sync-skills.sh",
+    "sync:codex": "bash sync-codex-skills.sh",
+    "sync:all": "bash sync-skills.sh && bash sync-codex-skills.sh"
   },
   "license": "MIT"
 }

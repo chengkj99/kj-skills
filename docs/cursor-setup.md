@@ -64,7 +64,7 @@ ln -s /path/to/kj-skills ~/.cursor/plugins/local/kj-skills
 | 目录 | 说明 |
 |------|------|
 | `wiki-doc-sink` | 讨论沉淀到个人 Wiki（含 `references/personal-wiki-bridge.md`、`routing-notes.md`） |
-| `ai-daily-brief` | 每日 AI 情报日报 |
+| `ai-daily-from-x` | 每日 AI 情报日报 |
 | `content-creator` | 长文 / 短视频 / 小红书等工作流 |
 | `weekly-report` | AI 编程周报 |
 | `markdown-format` | Markdown / Obsidian 格式化 |

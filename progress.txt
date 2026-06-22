@@ -6,3 +6,9 @@
 - 自 kangjian-ai-hub 同步 ai-daily-brief、content-creator、weekly-report（含 references/scripts/assets）。
 - wiki-doc-sink 改为 `<WIKI_ROOT>` 占位，便于 fork。
 - 插件 id：`ck-skills@ck-agent-skills`；GitHub 占位 repo：`chengkj99/ck-skills`（发布前可改 marketplace.json）。
+
+## 2026-06-22
+
+- 两个 AI 日报 skill 按数据源分工改名：`ai-daily-brief` → `ai-daily-from-x`（X 账号深度），`daily-ai-digest` → `ai-daily-websearch`（全网搜索 + 网站发布）。
+- 触发词去重：通用「AI 日报」归 ai-daily-websearch；ai-daily-from-x 仅在明确提 X / 深度时触发。
+- 连带更新：目录名、输出路径 `output/ai-daily-from-x/`、schema id、`composed_by` 标记、互相引用表、README、marketplace.json、kj-help、cursor-setup、prd.json。

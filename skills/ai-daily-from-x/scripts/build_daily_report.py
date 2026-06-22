@@ -161,7 +161,7 @@ def enrich_signals_zh(
             if len(s.text) > max_chars:
                 zh = zh + "\n\n（原文过长，仅翻译前 {0} 字）".format(max_chars)
         except Exception as e:
-            print(f"[ai-daily-brief] 翻译失败 @{s.handle}: {type(e).__name__}: {e}", flush=True)
+            print(f"[ai-daily-from-x] 翻译失败 @{s.handle}: {type(e).__name__}: {e}", flush=True)
             zh = ""
         cache[key] = zh
         out.append(replace(s, text_zh=zh))
@@ -198,7 +198,7 @@ def load_handles(accounts_file: Path, source_markdown: Path) -> list[str]:
             extra = load_extra_handles_from_json(merge_path)
             handles = merge_handle_lists(handles, extra)
         except Exception as e:
-            print(f"[ai-daily-brief] 合并 follow-builders 名单失败: {e}", flush=True)
+            print(f"[ai-daily-from-x] 合并 follow-builders 名单失败: {e}", flush=True)
     return handles
 
 
@@ -465,12 +465,12 @@ def render_draft_markdown(
     top_n: int,
     index_limit: int = 30,
 ) -> str:
-    """阶段 1 草稿 MD：统计 + 候选索引；可读定稿由 ai-daily-brief 技能（阶段 2）覆盖本文件。"""
+    """阶段 1 草稿 MD：统计 + 候选索引；可读定稿由 ai-daily-from-x 技能（阶段 2）覆盖本文件。"""
     lines: list[str] = []
     lines.append(f"# AI 日报草稿（{day}）")
     lines.append("")
     lines.append(
-        "> 本文件为采集草稿。请在 Cursor **激活 ai-daily-brief 技能**（默认会读"
+        "> 本文件为采集草稿。请在 Cursor **激活 ai-daily-from-x 技能**（默认会读"
         f"`daily_{day_compact}.raw.json` 并覆盖本文件为可读定稿）。"
     )
     lines.append("")
@@ -489,7 +489,7 @@ def render_draft_markdown(
         lines.append(f"- 译文：{cfg}；`text_zh` 非空：`{tr.get('text_zh_non_empty', 0)}` / `{len(deduped)}`")
     eligible = [s for s in deduped if s.score >= min_score]
     lines.append(f"- 去重候选：`{len(deduped)}`；达线（≥ `{min_score}`）：`{len(eligible)}`；脚本入选：`{len(selected)}`")
-    lines.append(f"- 事实包：`output/ai-daily-brief/daily_{day_compact}.raw.json`")
+    lines.append(f"- 事实包：`output/ai-daily-from-x/daily_{day_compact}.raw.json`")
     lines.append("")
     lines.append("## 候选索引（按分数降序）")
     lines.append("")
@@ -505,14 +505,14 @@ def render_draft_markdown(
         lines.append("")
         lines.append(f"> 另有 `{len(deduped) - index_limit}` 条见 raw JSON 的 `all_candidates`。")
     lines.append("")
-    lines.append("## 下一步（ai-daily-brief 技能定稿）")
+    lines.append("## 下一步（ai-daily-from-x 技能定稿）")
     lines.append("")
-    lines.append("在 Cursor **激活 ai-daily-brief 技能**（或说「生成 AI 日报」），将自动读 raw 并覆盖本文件。")
+    lines.append("在 Cursor **激活 ai-daily-from-x 技能**（或说「生成 AI 日报」），将自动读 raw 并覆盖本文件。")
     lines.append("")
     lines.append("仅补跑定稿时可以说：")
     lines.append("")
     lines.append(
-        f"```\n根据 output/ai-daily-brief/daily_{day_compact}.raw.json 写今日可读 AI 日报，覆盖 daily_{day_compact}.md\n```"
+        f"```\n根据 output/ai-daily-from-x/daily_{day_compact}.raw.json 写今日可读 AI 日报，覆盖 daily_{day_compact}.md\n```"
     )
     lines.append("")
     return "\n".join(lines).strip() + "\n"
@@ -520,13 +520,13 @@ def render_draft_markdown(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="生成 AI 日报")
-    parser.add_argument("--accounts", default="output/ai-daily-brief/accounts.json")
+    parser.add_argument("--accounts", default="output/ai-daily-from-x/accounts.json")
     parser.add_argument(
         "--source-md",
         default=None,
         help="主名单 Markdown（不传则用 skill 内置 assets/ai-influencers-list.md）",
     )
-    parser.add_argument("--output-dir", default="output/ai-daily-brief")
+    parser.add_argument("--output-dir", default="output/ai-daily-from-x")
     parser.add_argument("--report-date", default=os.getenv("REPORT_DATE"))
     parser.add_argument("--tz", default=os.getenv("REPORT_TZ", "Asia/Shanghai"))
     parser.add_argument("--top-n", type=int, default=int(os.getenv("TOP_N", "20")))
@@ -636,7 +636,7 @@ def main() -> None:
     md_path = output_dir / f"daily_{day_compact}.md"
 
     raw_payload: dict[str, Any] = {
-        "schema": "ai-daily-brief-raw-v1",
+        "schema": "ai-daily-from-x-raw-v1",
         "date": day,
         "window_utc": {
             "start": start_utc.isoformat(),
@@ -652,7 +652,7 @@ def main() -> None:
         "observation_top_n": observation_top_n,
         "all_candidates": [signal_to_candidate_dict(s) for s in deduped],
         "compose_hint": (
-            f"在 Cursor 激活 ai-daily-brief 技能，读取本文件并覆盖 daily_{day_compact}.md（见 SKILL.md 阶段 2）"
+            f"在 Cursor 激活 ai-daily-from-x 技能，读取本文件并覆盖 daily_{day_compact}.md（见 SKILL.md 阶段 2）"
         ),
     }
     raw_path.write_text(
@@ -675,7 +675,7 @@ def main() -> None:
     )
     print(f"事实包已生成: {raw_path}")
     print(f"草稿 MD 已生成: {md_path}")
-    print("可读定稿：在 Cursor 激活 ai-daily-brief 技能（见草稿 MD 底部提示）")
+    print("可读定稿：在 Cursor 激活 ai-daily-from-x 技能（见草稿 MD 底部提示）")
 
 
 if __name__ == "__main__":

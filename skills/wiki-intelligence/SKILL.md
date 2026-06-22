@@ -3,7 +3,7 @@ name: wiki-intelligence
 description: >-
   Claude Code hook 系统：在发送提示词前自动评估质量（好提示词存入 wiki，差提示词给出建议），
   回答结束后分析对话价值并引导知识沉淀。适用于任何基于 Markdown 的个人知识库。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Wiki Intelligence

@@ -39,7 +39,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--output",
-        default="output/ai-daily-brief/accounts.json",
+        default="output/ai-daily-from-x/accounts.json",
         help="输出 JSON 文件路径（相对路径相对当前目录）",
     )
     parser.add_argument(

@@ -1,12 +1,12 @@
-# AI 日报技能（ai-daily-brief）实现说明
+# AI 日报技能（ai-daily-from-x）实现说明
 
-本文档描述 `.claude/skills/ai-daily-brief` 的**技术方案、数据流、模块职责与实现原理**，便于维护、排错与二次扩展。执行入口与参数速查仍以根目录 `SKILL.md` 为准。
+本文档描述 `.claude/skills/ai-daily-from-x` 的**技术方案、数据流、模块职责与实现原理**，便于维护、排错与二次扩展。执行入口与参数速查仍以根目录 `SKILL.md` 为准。
 
 ---
 
 ## 1. 目标与边界
 
-**目标**：在指定「本地日历日」时间窗内，从一批 X（Twitter）账号拉取动态，经**规则评分、去重、可选英译中**后，产出事实包；再由 **`ai-daily-brief` 技能阶段 2**（Agent 读 raw，见 `compose-readable-daily.md`）覆盖为可读 Markdown 日报。
+**目标**：在指定「本地日历日」时间窗内，从一批 X（Twitter）账号拉取动态，经**规则评分、去重、可选英译中**后，产出事实包；再由 **`ai-daily-from-x` 技能阶段 2**（Agent 读 raw，见 `compose-readable-daily.md`）覆盖为可读 Markdown 日报。
 
 **明确不做的事**：
 
@@ -44,7 +44,7 @@ flowchart LR
     OUTMD[daily_YYYYMMDD.md 定稿]
     OUTJSON[daily_YYYYMMDD.json 可选]
   end
-  subgraph skill [ai-daily-brief 技能阶段 2]
+  subgraph skill [ai-daily-from-x 技能阶段 2]
     AGENT[Cursor Agent]
   end
   MD --> PA
@@ -88,7 +88,7 @@ flowchart LR
 | `references/scoring-rubric.md` | 评分维度、权重、P0/P1/P2 阈值的**产品层说明**（与代码公式应对照维护） |
 | `references/implementation.md` | 本文档：架构与原理 |
 | `references/compose-readable-daily.md` | 技能阶段 2：定稿 MD 结构与质量门禁 |
-| 仓库 `.github/workflows/ai-daily-brief.yml` | 手动触发阶段 1，上传 Artifact；定稿在 Cursor 走技能 |
+| 仓库 `.github/workflows/ai-daily-from-x.yml` | 手动触发阶段 1，上传 Artifact；定稿在 Cursor 走技能 |
 
 ---
 
@@ -256,7 +256,7 @@ selected = [s for s in deduped if s.score >= min_score][:top_n]
 |------|--------|------|
 | `daily_*.raw.json` | Python | 全量候选、分数、`observation_top_n`，无技能点评 |
 | `daily_*.md`（草稿） | Python | 采集摘要 + 候选索引表 + 技能定稿提示 |
-| `daily_*.md`（定稿） | **ai-daily-brief 技能** | 今日导读 / 精选 / 更多动态 / 采集说明（覆盖草稿） |
+| `daily_*.md`（定稿） | **ai-daily-from-x 技能** | 今日导读 / 精选 / 更多动态 / 采集说明（覆盖草稿） |
 | `daily_*.json`（可选） | 技能 | `composed_by`、精选与 `value_comment` 等 |
 
 **原理**：raw 供 Agent 只读推理；草稿 MD 供定时任务留痕；读者只看定稿 MD。
@@ -269,7 +269,7 @@ selected = [s for s in deduped if s.score >= min_score][:top_n]
 
 ## 12. CI/CD 与本地运行
 
-**工作流**（`.github/workflows/ai-daily-brief.yml`）：
+**工作流**（`.github/workflows/ai-daily-from-x.yml`）：
 
 - 仅 `workflow_dispatch` 手动触发（定时已改本机 launchd）；可传 `report_date`。
 - 注入 `X_BEARER_TOKEN`、`OPENROUTER_API_KEY` 等 Secrets；未配置的 secret 在 Actions 中为空字符串，行为与本地不导出变量一致。
@@ -277,13 +277,13 @@ selected = [s for s in deduped if s.score >= min_score][:top_n]
 **本地典型命令**：
 
 ```bash
-python .claude/skills/ai-daily-brief/scripts/parse_accounts.py \
-  --input assets/ai-influencers-list.md --output output/ai-daily-brief/accounts.json
+python .claude/skills/ai-daily-from-x/scripts/parse_accounts.py \
+  --input assets/ai-influencers-list.md --output output/ai-daily-from-x/accounts.json
 
-python .claude/skills/ai-daily-brief/scripts/build_daily_report.py \
-  --accounts output/ai-daily-brief/accounts.json \
+python .claude/skills/ai-daily-from-x/scripts/build_daily_report.py \
+  --accounts output/ai-daily-from-x/accounts.json \
   --source-md assets/ai-influencers-list.md \
-  --output-dir output/ai-daily-brief
+  --output-dir output/ai-daily-from-x
 ```
 
 **依赖**：标准库即可（`urllib`、`json`、`re`、`zoneinfo`、`dataclasses` 等），无需 `pip install` 额外包。
@@ -313,7 +313,7 @@ python .claude/skills/ai-daily-brief/scripts/build_daily_report.py \
 
 ## 15. 技能阶段 2（可读定稿）
 
-阶段 1 结束后，由 Cursor 激活 **`ai-daily-brief` 技能**（非 Python 脚本）：
+阶段 1 结束后，由 Cursor 激活 **`ai-daily-from-x` 技能**（非 Python 脚本）：
 
 1. 读取 `daily_{YYYYMMDD}.raw.json`（禁止改写）。
 2. 遵循 `references/compose-readable-daily.md` 覆盖 `daily_{YYYYMMDD}.md`。

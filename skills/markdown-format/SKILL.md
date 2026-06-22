@@ -4,7 +4,7 @@ description: >-
   将 Pandoc/Word 导出的 Markdown 或杂乱 GFM 整理为 Obsidian 友好格式：标题层级、GFM 表格分隔行、
   引用块提示框、围栏代码块与缩进、列表与编号修复。在用户要求「格式化 Markdown」「优化 md 可读性」、
   Obsidian 表格不显示、或处理 raw/papers 与 docx 转换稿时使用；不默认删减正文，删改须用户确认。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Markdown 格式化（Obsidian / GFM）

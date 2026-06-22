@@ -14,17 +14,17 @@
       "id": "US-002",
       "title": "四个 skill 目录与 SKILL.md 就绪",
       "acceptanceCriteria": [
-        "skills/wiki-doc-sink、skills/ai-daily-brief、skills/content-creator、skills/weekly-report 均含 SKILL.md",
+        "skills/wiki-doc-sink、skills/ai-daily-from-x、skills/content-creator、skills/weekly-report 均含 SKILL.md",
         "wiki-doc-sink 含面向 fork 使用者的路径说明（不依赖仅作者本机路径）"
       ],
       "passes": true
     },
     {
       "id": "US-003",
-      "title": "ai-daily-brief 含脚本与 references",
+      "title": "ai-daily-from-x 含脚本与 references",
       "acceptanceCriteria": [
-        "skills/ai-daily-brief/scripts/ 下存在 parse_accounts.py 与 build_daily_report.py",
-        "skills/ai-daily-brief/references/ 下存在 implementation.md 与 scoring-rubric.md"
+        "skills/ai-daily-from-x/scripts/ 下存在 parse_accounts.py 与 build_daily_report.py",
+        "skills/ai-daily-from-x/references/ 下存在 implementation.md 与 scoring-rubric.md"
       ],
       "passes": true
     },

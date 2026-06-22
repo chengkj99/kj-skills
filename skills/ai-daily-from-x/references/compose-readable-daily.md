@@ -1,6 +1,6 @@
 # AI 日报阶段 2：可读定稿
 
-> **本文件是 `ai-daily-brief` 技能的内置阶段，不是独立技能。**  
+> **本文件是 `ai-daily-from-x` 技能的内置阶段，不是独立技能。**  
 > 技能激活且用户未明确要求「只采集」时，Agent **必须**在阶段 1 之后执行本节流程，**覆盖** `daily_{YYYYMMDD}.md`。
 
 阶段 1（`pnpm daily:generate`）只产出 **事实包** 与 **草稿 MD**。
@@ -9,7 +9,7 @@
 
 | 文件 | 用途 |
 |------|------|
-| `output/ai-daily-brief/daily_{YYYYMMDD}.raw.json` | 候选全文、分数、链接、`observation_top_n` |
+| `output/ai-daily-from-x/daily_{YYYYMMDD}.raw.json` | 候选全文、分数、链接、`observation_top_n` |
 | `references/scoring-rubric.md` | 分级与去重原则 |
 | `assets/ai-influencers-list.md`（可选） | 账号身份语境 |
 
@@ -19,8 +19,8 @@
 
 | 文件 | 说明 |
 |------|------|
-| `output/ai-daily-brief/daily_{YYYYMMDD}.md` | **覆盖**为可读定稿 |
-| `output/ai-daily-brief/daily_{YYYYMMDD}.json`（可选） | 含 `composed_by`、`selected`、每条 `headline_zh` / `value_comment` / `action_suggestion` |
+| `output/ai-daily-from-x/daily_{YYYYMMDD}.md` | **覆盖**为可读定稿 |
+| `output/ai-daily-from-x/daily_{YYYYMMDD}.json`（可选） | 含 `composed_by`、`selected`、每条 `headline_zh` / `value_comment` / `action_suggestion` |
 
 ## 定稿 Markdown 结构（必须）
 

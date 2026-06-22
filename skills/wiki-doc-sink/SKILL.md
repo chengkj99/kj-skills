@@ -5,7 +5,7 @@ description: >-
   在用户显式 @ 本 skill、或说出「沉淀到文档」「沉淀到知识库」「沉淀内容到文档」「个人 wiki」「kj-llm-wiki」等同义语且意图为个人 Wiki 时使用；
   若用户明确指定「写在当前仓库 / 某路径」则按用户指定落点执行。
   组织/公司业务专用 Wiki 不在本 skill 范围内。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Wiki 文档沉淀（个人知识库）
