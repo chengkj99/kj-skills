@@ -1,16 +1,26 @@
 ---
-description: 列出 kj-skills 插件内各 skill 的用途与 skills/ 下的路径
+description: 自动扫描并列出 kj-skills 插件内所有 skill 的用途与 skills/ 下的路径
 ---
 
-本插件根目录下 `skills/` 包含：
+扫描本插件 `skills/` 目录下的所有 skill，动态生成清单（不要使用任何写死的列表）。
 
-| 目录 | 用途 |
-|------|------|
-| `wiki-doc-sink` | 个人 Wiki 沉淀（`references/` 路由 + SCHEMA/CLAUDE 约束；非当前项目 docs） |
-| `ai-daily-from-x` | 每日 AI 情报日报（名单 + 采集脚本） |
-| `content-creator` | 长文 / 短视频 / 小红书等内容创作工作流 |
-| `weekly-report` | AI 编程领域周报采集与多格式输出 |
-| `markdown-format` | Pandoc/Word 导出稿整理为 Obsidian 友好 GFM（表格分隔行、代码块、标题） |
-| `git-push` | 用户明确要求时：暂存、生成 Conventional Commits 说明、提交并推送 |
+执行步骤：
 
-请用 **Read** 打开对应目录中的 `SKILL.md` 再执行。若用户未 @ 某 skill，wiki-doc-sink 可能带 `disable-model-invocation`，以各 SKILL frontmatter 为准。
+1. 运行以下命令，逐个读取每个 skill 的 `description`：
+
+   ```bash
+   for f in skills/*/SKILL.md; do
+     d=$(basename "$(dirname "$f")")
+     desc=$(awk '/^description:/{flag=1; sub(/^description:[ ]*/,""); print; next} flag&&/^[a-zA-Z_-]+:/{exit} flag{print}' "$f" | tr '\n' ' ' | sed 's/^[">|-]*[ ]*//')
+     echo "$d :: $desc"
+   done
+   ```
+
+2. 把结果整理成 Markdown 表格，按目录名排序，`用途` 取 description 的核心意图，精简到一句话（约 30–40 字）：
+
+   | 目录 | 用途 |
+   |------|------|
+
+3. 表格下方追加一行提示：「请用 **Read** 打开对应目录的 `SKILL.md` 再执行；若某 skill 带 `disable-model-invocation`，需用户显式 @ 才会触发，以各 SKILL frontmatter 为准。」
+
+4. 若发现异常（某目录缺 `SKILL.md`、`name` 与目录名不一致、描述为空），在表格后用一行 ⚠️ 单独指出，便于维护。
