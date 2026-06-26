@@ -288,6 +288,24 @@ codex plugin add kj-skills@kj-agent-skills
 
 ## 单 skill 安装
 
+### 不克隆仓库（推荐）
+
+发布到 npm 后，任意机器一条命令搞定：
+
+```bash
+# 默认安装到 Claude Code
+npx kj-skills install git-push
+
+# 指定平台
+npx kj-skills install git-push --for cursor
+npx kj-skills install git-push --for codex
+npx kj-skills install git-push --for claude
+```
+
+内部通过 `degit` 只下载该 skill 子目录，无需 clone 整个仓库。
+
+### 已克隆仓库
+
 只需某一目录时，按平台选一条：
 
 | 平台 | 命令 | 目标路径 |

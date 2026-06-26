@@ -1,7 +1,29 @@
 {
   "name": "kj-skills",
   "version": "1.0.0",
-  "description": "Claude / Cursor Agent Skills 集合：AI 编程内容创作全链路",
+  "description": "Claude / Cursor / Codex Agent Skills 集合：AI 编程内容创作全链路",
+  "bin": {
+    "kj-skills": "./bin/kj-skills.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "cursor",
+    "codex",
+    "agent",
+    "skills",
+    "ai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chengkj99/kj-skills.git"
+  },
+  "homepage": "https://github.com/chengkj99/kj-skills#readme",
   "scripts": {
     "sync": "bash sync-claude-skills.sh",
     "sync:claude": "bash sync-claude-skills.sh",
