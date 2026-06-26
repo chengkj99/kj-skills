@@ -1,7 +1,7 @@
 {
   "name": "kj-skills",
-  "version": "0.1.2",
-  "description": "康健技能包：Wiki 沉淀、AI 日报、内容创作、周报、Markdown 格式化、Git 提交推送。",
+  "version": "0.1.2+codex.20260622021524",
+  "description": "\u5eb7\u5065\u6280\u80fd\u5305\uff1a\u8bfe\u7a0b\u6293\u53d6\u3001Wiki \u6c89\u6dc0\u3001AI \u65e5\u62a5\u3001\u5185\u5bb9\u521b\u4f5c\u3001\u5468\u62a5\u3001Markdown \u683c\u5f0f\u5316\u3001Git \u63d0\u4ea4\u63a8\u9001\u3002",
   "author": {
     "name": "chengkj99",
     "url": "https://github.com/chengkj99"
@@ -13,6 +13,9 @@
     "skills",
     "wiki",
     "content",
+    "course-scraper",
+    "course",
+    "scraper",
     "weekly-report",
     "markdown",
     "git"
@@ -20,8 +23,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "KJ Skills",
-    "shortDescription": "Personal writing, wiki, digest, and engineering skills.",
-    "longDescription": "KJ Skills packages reusable Codex skills for personal Wiki capture, AI daily briefs, content creation, weekly reports, Markdown cleanup, and Git commit workflows.",
+    "shortDescription": "Personal course scraping, writing, wiki, digest, and engineering skills.",
+    "longDescription": "KJ Skills packages reusable Codex skills for course and web page scraping, personal Wiki capture, AI daily briefs, content creation, weekly reports, Markdown cleanup, and Git commit workflows.",
     "developerName": "chengkj99",
     "category": "Productivity",
     "capabilities": [
@@ -31,6 +34,7 @@
     ],
     "websiteURL": "https://github.com/chengkj99/kj-skills",
     "defaultPrompt": [
+      "Use course-scraper to fetch a course or link list into Markdown",
       "Use my content creator skill",
       "Write an AI daily brief",
       "Format this Markdown draft"

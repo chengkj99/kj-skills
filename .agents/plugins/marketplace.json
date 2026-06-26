@@ -8,7 +8,7 @@
       "name": "kj-skills",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/kj-skills"
       },
       "policy": {
         "installation": "AVAILABLE",
