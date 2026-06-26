@@ -190,12 +190,24 @@ ls /Users/you/llm-wiki/SCHEMA.md /Users/you/llm-wiki/CLAUDE.md
 
 ---
 
-## 本地 Skills 同步（`sync-skills.sh`）
+## 本地 Skills 同步（`sync-claude-skills.sh`）
 
 `~/.claude/skills/` 通过 symlink 指向本仓库的 `skills/` 子目录。**新增 skill 后**需运行一次同步脚本，让全局 Claude 立即可见：
 
 ```bash
-./sync-skills.sh
+# 全量同步
+npm run sync
+# 或直接运行脚本
+./sync-claude-skills.sh
+```
+
+只安装某个（或某几个）skill：
+
+```bash
+npm run sync:one:claude -- content-creator
+npm run sync:one:claude -- content-creator git-push course-generator
+# 或直接运行脚本
+./sync-claude-skills.sh content-creator git-push
 ```
 
 脚本会自动扫描 `skills/` 下所有目录与 `.skill` 文件，对缺失的 symlink 进行补建，已存在的跳过不动。
@@ -276,10 +288,13 @@ codex plugin add kj-skills@kj-agent-skills
 
 ## 单 skill 安装
 
-只需某一目录时：
+只需某一目录时，按平台选一条：
 
-- Cursor：将 `skills/<skill-name>/` **整个文件夹**复制到 Cursor 项目 `.cursor/skills/<skill-name>/` 或全局 skills 目录（见 `docs/cursor-setup.md`）。
-- Codex：运行 `./sync-codex-skills.sh <skill-name>` 注册到 `~/.codex/skills/`。
+| 平台 | 命令 | 目标路径 |
+|------|------|---------|
+| Claude Code | `npm run sync:one:claude -- <skill-name>` | `~/.claude/skills/` |
+| Codex | `npm run sync:one:codex -- <skill-name>` | `~/.codex/skills/` |
+| Cursor | `npm run sync:one:cursor -- <skill-name>` | `~/.cursor/skills/` |
 
 ## 许可证
 

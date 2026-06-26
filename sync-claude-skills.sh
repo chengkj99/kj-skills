@@ -2,8 +2,8 @@
 # 同步 kj-skills/skills/ 到 ~/.claude/skills/
 # 新增 skill 后运行一次，自动补齐缺失的 symlink
 # 用法：
-#   ./sync-skills.sh              # 同步全部
-#   ./sync-skills.sh skill-name   # 只同步单个 skill
+#   ./sync-claude-skills.sh              # 同步全部
+#   ./sync-claude-skills.sh skill-name   # 只同步单个 skill
 
 SKILLS_SRC="$(cd "$(dirname "$0")/skills" && pwd)"
 SKILLS_DST="$HOME/.claude/skills"
