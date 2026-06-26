@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "file=$(jq -r '.tool_input.file_path // empty'); if echo \"$file\" | grep -q \"^$PWD/skills/[^/]*/SKILL\\.md$\"; then skill=$(echo \"$file\" | sed \"s|$PWD/skills/\\([^/]*\\)/SKILL\\.md|\\1|\"); bash ./sync-claude-skills.sh \"$skill\"; fi",
+            "async": true,
+            "statusMessage": "同步新 skill 到 ~/.claude/skills/..."
+          }
+        ]
+      }
+    ]
+  }
+}
