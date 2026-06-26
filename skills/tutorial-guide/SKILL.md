@@ -571,3 +571,11 @@ ls -lh "/Users/didi/Library/Mobile Documents/iCloud~md~obsidian/Documents/kj-llm
 ```
 
 技能自动补全所有缺失信息，无需向用户询问细节。
+
+---
+
+## 完成后提示
+
+文档生成并验证通过后，在告知用户文件路径的同时，**主动提示**：
+
+> 📦 文档已生成完毕！如需为这篇教程准备公众号配套物料（前言、标题、摘要、封面图提示词、转发文案），可以说「帮我生成配套物料」或直接触发 `wechat-companion` 技能。
