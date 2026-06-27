@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知识地图</title>
+<style>
+  /* ============================================================
+     主题配色令牌 —— 切换 body 的 data-theme 即可整体换色
+     ============================================================ */
+  :root {
+    --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+    /* 6 个列/分组的强调色，按顺序循环使用 */
+    --c1: #3b82f6; /* 蓝 */
+    --c2: #22c55e; /* 绿 */
+    --c3: #a855f7; /* 紫 */
+    --c4: #f97316; /* 橙 */
+    --c5: #eab308; /* 金 */
+    --c6: #06b6d4; /* 青 */
+  }
+  body[data-theme="dark"] {
+    --bg-1: #0a0e1a;
+    --bg-2: #0d1528;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-1: #f1f5f9;
+    --text-2: #94a3b8;
+    --text-3: #64748b;
+    --panel-bg: rgba(255, 255, 255, 0.02);
+  }
+  body[data-theme="midnight"] {
+    --bg-1: #0b1020;
+    --bg-2: #141b34;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(148, 163, 184, 0.14);
+    --text-1: #e8edf7;
+    --text-2: #9aa7c0;
+    --text-3: #6b7894;
+    --panel-bg: rgba(255, 255, 255, 0.025);
+  }
+  body[data-theme="ink"] {
+    --bg-1: #141414;
+    --bg-2: #1d1d1f;
+    --card-bg: rgba(255, 255, 255, 0.035);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --text-1: #f5f5f7;
+    --text-2: #a1a1a6;
+    --text-3: #6e6e73;
+    --panel-bg: rgba(255, 255, 255, 0.02);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: radial-gradient(120% 120% at 50% 0%, var(--bg-2) 0%, var(--bg-1) 60%);
+    color: var(--text-1);
+    -webkit-font-smoothing: antialiased;
+    padding: 0;
+  }
+  #map {
+    width: 1200px;
+    margin: 0 auto;
+    padding: 48px 40px 32px;
+  }
+
+  /* ---------- 顶部标题 ---------- */
+  .km-header { text-align: center; margin-bottom: 28px; }
+  .km-title {
+    font-size: 40px; font-weight: 800; letter-spacing: 0.5px;
+    line-height: 1.25;
+    background: linear-gradient(90deg, var(--c1), var(--c3), var(--c4));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .km-subtitle { font-size: 15px; color: var(--text-2); margin-top: 12px; }
+
+  /* ---------- 阶段流程条 ---------- */
+  .km-flow {
+    display: flex; align-items: stretch; gap: 0;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 14px 8px; margin-bottom: 32px;
+  }
+  .km-flow-step {
+    flex: 1; display: flex; flex-direction: column; gap: 3px;
+    padding: 6px 14px; position: relative;
+  }
+  .km-flow-step:not(:last-child)::after {
+    content: "›"; position: absolute; right: -6px; top: 50%;
+    transform: translateY(-50%); color: var(--text-3);
+    font-size: 22px; font-weight: 700;
+  }
+  .km-flow-head { display: flex; align-items: center; gap: 7px; }
+  .km-flow-icon { font-size: 15px; opacity: 0.9; }
+  .km-flow-title { font-size: 14px; font-weight: 700; }
+  .km-flow-desc { font-size: 11px; color: var(--text-3); padding-left: 2px; }
+
+  /* ---------- 区块标题 ---------- */
+  .km-section-h {
+    font-size: 20px; font-weight: 800; margin: 4px 0 18px;
+  }
+  .km-section-h span { font-size: 14px; font-weight: 500; color: var(--text-3); }
+
+  /* ---------- 主网格 ---------- */
+  .km-grid {
+    display: grid; gap: 14px; margin-bottom: 36px;
+  }
+  .km-col {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--accent);
+    border-radius: 12px; padding: 16px 14px;
+  }
+  .km-col-h { text-align: center; margin-bottom: 14px; }
+  .km-col-title { font-size: 16px; font-weight: 800; color: var(--accent); }
+  .km-col-sub { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+  .km-item {
+    display: flex; gap: 9px; align-items: flex-start;
+    padding: 8px 0; border-top: 1px solid var(--card-border);
+  }
+  .km-item:first-of-type { border-top: none; }
+  .km-badge {
+    flex: none; width: 18px; height: 18px; border-radius: 5px;
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    color: var(--accent); font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .km-item-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+  .km-item-desc { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+  /* ---------- 增强标签 ---------- */
+  .km-tags { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 36px; }
+  .km-tag {
+    flex: 1 1 160px; min-width: 150px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .km-tag-title { font-size: 13px; font-weight: 700; }
+  .km-tag-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+  /* ---------- 工作流面板 ---------- */
+  .km-workflows { display: grid; gap: 14px; margin-bottom: 36px; }
+  .km-wf {
+    background: var(--panel-bg);
+    border: 1px solid var(--accent);
+    border-radius: 12px; padding: 16px 16px 14px;
+  }
+  .km-wf-title { font-size: 16px; font-weight: 800; color: var(--accent); text-align: center; }
+  .km-wf-flow { font-size: 11px; color: var(--text-3); text-align: center; margin: 6px 0 12px; }
+  .km-wf-step { display: flex; gap: 9px; align-items: center; padding: 4px 0; font-size: 13px; }
+  .km-wf-num { color: var(--accent); font-weight: 700; font-size: 12px; min-width: 16px; }
+
+  /* ---------- 底部建议框 ---------- */
+  .km-advice { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+  .km-ad {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 18px 18px;
+  }
+  .km-ad-title { font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+  .km-ad-item { display: flex; gap: 9px; align-items: flex-start; font-size: 13px; color: var(--text-2); padding: 5px 0; }
+  .km-ad-icon { flex: none; }
+
+  /* ---------- 页脚 ---------- */
+  .km-footer {
+    text-align: center; font-size: 14px; color: var(--text-2);
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 16px;
+  }
+</style>
+</head>
+<body data-theme="dark">
+  <div id="map"></div>
+
+<script>
+/* ============================================================
+   填充区：把内容替换成你调研后的真实数据即可。
+   - flow / columns / workflows / advice 的数量可变，框架自动排版。
+   - 强调色按 columns 顺序循环 c1..c6，无需手填颜色。
+   ============================================================ */
+const DATA = {
+  theme: "dark",                       // dark | midnight | ink
+  title: "一人公司 / AI 副业 / 技术 IP 最强 skills 组合",
+  subtitle: "从『想法 → 产品 → 内容 → 流量 → 变现 → 运营』全链路覆盖，1 个人 = 一个团队",
+
+  // 阶段流程条（建议 5-6 个）
+  flow: [
+    { icon: "🔍", index: "1", title: "机会洞察", desc: "发现需求 · 验证机会" },
+    { icon: "📦", index: "2", title: "产品打造", desc: "构建产品 · 技术实现" },
+    { icon: "✏️", index: "3", title: "内容生产", desc: "内容创作 · 知识输出" },
+    { icon: "📣", index: "4", title: "流量获取", desc: "SEO · 社媒 · 增长" },
+    { icon: "💰", index: "5", title: "商业变现", desc: "定价 · 营销 · 销售" },
+    { icon: "📈", index: "6", title: "运营优化", desc: "数据分析 · 迭代优化" }
+  ],
+
+  // 主网格区块标题 + 各列内容（列数可变，建议 4-6 列）
+  columnsHeading: "最强 Skills 组合",
+  columnsHeadingSub: "（20 个核心技能）",
+  columns: [
+    { index: "1", title: "机会洞察", sub: "洞察市场，找到好机会", items: [
+      { name: "trend-research", desc: "趋势研究" },
+      { name: "market-research", desc: "市场调研" },
+      { name: "competitor-analysis", desc: "竞品分析" },
+      { name: "pain-point-analysis", desc: "痛点分析" }
+    ]},
+    { index: "2", title: "产品打造", sub: "从想法到可用产品", items: [
+      { name: "product-strategy", desc: "产品策略" },
+      { name: "frontend-design", desc: "前端界面设计" },
+      { name: "fullstack-webapp", desc: "全栈 Web 应用开发" },
+      { name: "database-design", desc: "数据库设计与优化" }
+    ]},
+    { index: "3", title: "内容生产", sub: "打造影响力与信任", items: [
+      { name: "writing-plans", desc: "写作计划 / 大纲" },
+      { name: "long-form-writing", desc: "长文写作" },
+      { name: "twitter-thread-writer", desc: "推特长线程写作" },
+      { name: "slide-maker", desc: "PPT / 演示文稿制作" }
+    ]},
+    { index: "4", title: "流量获取", sub: "让更多人看到你", items: [
+      { name: "seo-audit", desc: "SEO 审计与优化" },
+      { name: "content-strategy", desc: "内容策略" },
+      { name: "social-media-growth", desc: "社媒增长策略" },
+      { name: "landing-page-creator", desc: "着陆页 / 转化页制作" }
+    ]},
+    { index: "5", title: "商业变现", sub: "把影响力变成收入", items: [
+      { name: "pricing-strategy", desc: "定价策略" },
+      { name: "offer-creation", desc: "产品 / 服务设计" },
+      { name: "email-marketing", desc: "邮件营销" },
+      { name: "sales-page-copy", desc: "销售文案撰写" }
+    ]},
+    { index: "6", title: "运营优化", sub: "持续优化与规模化", items: [
+      { name: "analytics-insights", desc: "数据分析洞察" },
+      { name: "a-b-testing", desc: "A/B 测试" },
+      { name: "feedback-loop", desc: "用户反馈循环" },
+      { name: "workflow-automation", desc: "自动化工作流" }
+    ]}
+  ],
+
+  // 可选增强标签（不需要可设为 []）
+  tagsHeading: "可选增强技能",
+  tagsHeadingSub: "（按需组合）",
+  tags: [
+    { title: "systematic-debugging", sub: "系统化调试" },
+    { title: "test-driven-development", sub: "测试驱动开发" },
+    { title: "api-integration", sub: "API 集成" },
+    { title: "supabase-best-practices", sub: "Supabase 最佳实践" },
+    { title: "github-actions-docs", sub: "GitHub Actions 自动化" },
+    { title: "vercel-deployment", sub: "Vercel 部署" }
+  ],
+
+  // 实战工作流（不需要可设为 []）
+  workflowsHeading: "高效工作流",
+  workflowsHeadingSub: "（实战组合）",
+  workflows: [
+    { title: "产品开发工作流", flow: "想法 → PRD → 设计 → 开发 → 测试 → 上线",
+      steps: ["product-strategy", "writing-plans", "frontend-design", "fullstack-webapp", "test-driven-development", "vercel-deployment"] },
+    { title: "内容创作工作流", flow: "选题 → 大纲 → 写作 → 排版 → 发布 → 分发",
+      steps: ["trend-research", "writing-plans", "long-form-writing", "slide-maker", "content-strategy", "twitter-thread-writer"] },
+    { title: "流量增长工作流", flow: "SEO → 内容 → 社媒 → 着陆页 → 转化",
+      steps: ["seo-audit", "content-strategy", "social-media-growth", "landing-page-creator", "a-b-testing", "analytics-insights"] },
+    { title: "变现增长工作流", flow: "定位 → 产品 → 定价 → 营销 → 销售 → 复购",
+      steps: ["offer-creation", "pricing-strategy", "sales-page-copy", "email-marketing", "feedback-loop", "workflow-automation"] }
+  ],
+
+  // 底部建议框（建议 3 个，icon 用 emoji）
+  advice: [
+    { icon: "✅", title: "使用建议", items: ["先聚焦：每阶段选 2-3 个核心技能，快速上手", "再扩展：验证有效后逐步补齐", "建系统：组合成可复制的工作流", "持续迭代：用数据和反馈驱动优化"] },
+    { icon: "⭐", title: "适用场景", items: ["一人公司：用 AI 替代团队，低成本验证运营", "AI 副业：利用碎片时间打造被动收入", "技术 IP：输出价值，建立影响力与品牌", "自由职业：提升交付效率，增加客户价值"] },
+    { icon: "🏆", title: "核心优势", items: ["全链路覆盖：从 0 到 1 再到 100 的完整闭环", "高杠杆：1 个人 = 10 人团队的产出", "可复制：标准化流程，快速复制到新项目", "可持续：内容 + 产品 + 流量的飞轮效应"] }
+  ],
+
+  footer: "🚀 「技能是工具，系统是杠杆，执行是关键。用 AI 放大你的能力，用系统成就你的事业！」"
+};
+
+/* ============================================================
+   渲染引擎 —— 一般无需改动
+   ============================================================ */
+const ACCENTS = ["var(--c1)", "var(--c2)", "var(--c3)", "var(--c4)", "var(--c5)", "var(--c6)"];
+const accent = i => ACCENTS[i % ACCENTS.length];
+const el = (html) => { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; };
+
+function render(d) {
+  document.body.setAttribute("data-theme", d.theme || "dark");
+  document.title = d.title || "知识地图";
+  const root = document.getElementById("map");
+  const parts = [];
+
+  // header
+  parts.push(`<div class="km-header">
+    <div class="km-title">${d.title || ""}</div>
+    ${d.subtitle ? `<div class="km-subtitle">${d.subtitle}</div>` : ""}
+  </div>`);
+
+  // flow
+  if (d.flow && d.flow.length) {
+    parts.push(`<div class="km-flow">${d.flow.map(s => `
+      <div class="km-flow-step">
+        <div class="km-flow-head"><span class="km-flow-icon">${s.icon || ""}</span>
+          <span class="km-flow-title">${s.index ? s.index + ". " : ""}${s.title || ""}</span></div>
+        ${s.desc ? `<div class="km-flow-desc">${s.desc}</div>` : ""}
+      </div>`).join("")}</div>`);
+  }
+
+  // grid
+  if (d.columns && d.columns.length) {
+    if (d.columnsHeading) parts.push(`<div class="km-section-h">${d.columnsHeading}<span>${d.columnsHeadingSub || ""}</span></div>`);
+    const cols = d.columns.map((c, i) => `
+      <div class="km-col" style="--accent:${accent(i)}">
+        <div class="km-col-h">
+          <div class="km-col-title">${c.index ? c.index + ". " : ""}${c.title || ""}</div>
+          ${c.sub ? `<div class="km-col-sub">${c.sub}</div>` : ""}
+        </div>
+        ${(c.items || []).map((it, j) => `
+          <div class="km-item">
+            <div class="km-badge">${j + 1}</div>
+            <div><div class="km-item-name">${it.name || ""}</div>
+            ${it.desc ? `<div class="km-item-desc">${it.desc}</div>` : ""}</div>
+          </div>`).join("")}
+      </div>`).join("");
+    parts.push(`<div class="km-grid" style="grid-template-columns:repeat(${d.columns.length},1fr)">${cols}</div>`);
+  }
+
+  // tags
+  if (d.tags && d.tags.length) {
+    if (d.tagsHeading) parts.push(`<div class="km-section-h">${d.tagsHeading}<span>${d.tagsHeadingSub || ""}</span></div>`);
+    parts.push(`<div class="km-tags">${d.tags.map((t, i) => `
+      <div class="km-tag" style="--accent:${accent(i)}">
+        <div class="km-tag-title">${t.title || ""}</div>
+        ${t.sub ? `<div class="km-tag-sub">${t.sub}</div>` : ""}
+      </div>`).join("")}</div>`);
+  }
+
+  // workflows
+  if (d.workflows && d.workflows.length) {
+    if (d.workflowsHeading) parts.push(`<div class="km-section-h">${d.workflowsHeading}<span>${d.workflowsHeadingSub || ""}</span></div>`);
+    const wfs = d.workflows.map((w, i) => `
+      <div class="km-wf" style="--accent:${accent(i)}">
+        <div class="km-wf-title">${w.title || ""}</div>
+        ${w.flow ? `<div class="km-wf-flow">${w.flow}</div>` : ""}
+        ${(w.steps || []).map((s, j) => `<div class="km-wf-step"><span class="km-wf-num">${j + 1}</span>${s}</div>`).join("")}
+      </div>`).join("");
+    parts.push(`<div class="km-workflows" style="grid-template-columns:repeat(${d.workflows.length},1fr)">${wfs}</div>`);
+  }
+
+  // advice
+  if (d.advice && d.advice.length) {
+    parts.push(`<div class="km-advice">${d.advice.map(a => `
+      <div class="km-ad">
+        <div class="km-ad-title">${a.icon || ""} ${a.title || ""}</div>
+        ${(a.items || []).map(it => `<div class="km-ad-item"><span class="km-ad-icon">▸</span><span>${it}</span></div>`).join("")}
+      </div>`).join("")}</div>`);
+  }
+
+  // footer
+  if (d.footer) parts.push(`<div class="km-footer">${d.footer}</div>`);
+
+  root.innerHTML = parts.join("");
+}
+
+render(DATA);
+</script>
+</body>
+</html>
