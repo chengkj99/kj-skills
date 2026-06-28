@@ -49,9 +49,9 @@ kangjian-skill（风格润色）
 本地视频/音频
         ↓
 local-stt-transcription（medium/large-v3 + 术语校对）
-        ↓ 最终校对文字稿
-raw/studio/transcripts（复盘已发布内容 + 规划后续选题）
-        ↓ 选题线索
+        ↓ 已发布内容的最终校对文字稿
+raw/studio/transcripts（已发布短视频内容资产）
+        ↓ 连载选题规划：系列主题 / 下一集角度 / 未展开分支
 content-creator / kangjian-skill
         ↓
     发布（短视频 / 公众号 / 小红书）

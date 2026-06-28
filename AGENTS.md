@@ -34,7 +34,7 @@ Git 历史遵循 Conventional Commits，例如 `feat(skills): add multiple new s
 - `skills/local-stt-transcription/` 是本地音视频转最终校对文字稿的统一 skill。
 - 该 skill 的脚本和校对规则必须保持在 skill 目录内；外部仅依赖 `/Users/chengkangjian/work/stt` 这类 `jianchang512/stt` runtime 和模型目录。
 - 新电脑或 runtime 缺失时，先使用 `skills/local-stt-transcription/scripts/bootstrap_stt_runtime.sh` 初始化。
-- 对接 `kj-llm-wiki` 时，短视频输出目录为 `raw/studio/transcripts/`，该目录用于已发布内容复盘和后续选题规划。
+- 对接 `kj-llm-wiki` 时，短视频输出目录为 `raw/studio/transcripts/`。该目录是已发布短视频的文字稿资产库，用于复盘已发布内容并做连载选题规划；规划结果应标注来源文字稿、所属系列和下一集角度。
 
 ## 语言规范
 
