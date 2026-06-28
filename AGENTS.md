@@ -29,6 +29,13 @@ Git 历史遵循 Conventional Commits，例如 `feat(skills): add multiple new s
 
 涉及信贷前端、滴水贷或信用购问题时，先读取 `/Users/didi/ai_space/loanfe-llm-wiki/wiki/index.md`，再查阅具体页面。完整的外部 wiki 规则见 `/Users/didi/ai_space/loanfe-llm-wiki/AGENTS.md`。
 
+## local-stt-transcription 说明
+
+- `skills/local-stt-transcription/` 是本地音视频转最终校对文字稿的统一 skill。
+- 该 skill 的脚本和校对规则必须保持在 skill 目录内；外部仅依赖 `/Users/chengkangjian/work/stt` 这类 `jianchang512/stt` runtime 和模型目录。
+- 新电脑或 runtime 缺失时，先使用 `skills/local-stt-transcription/scripts/bootstrap_stt_runtime.sh` 初始化。
+- 对接 `kj-llm-wiki` 时，短视频输出目录为 `raw/studio/transcripts/`，该目录用于已发布内容复盘和后续选题规划。
+
 ## 语言规范
 
 本仓库所有 `AGENTS.md` 文件（包括子目录下的）**必须使用中文**撰写。新增或修改 skill 时，若需为该 skill 创建 `AGENTS.md`，同样使用中文。技术术语、命令、代码标识符保持原文，说明文字用中文。
