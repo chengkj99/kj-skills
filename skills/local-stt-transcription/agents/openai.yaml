@@ -1,0 +1,4 @@
+interface:
+  display_name: "Local STT Transcription"
+  short_description: "Local STT with terminology-polished transcripts"
+  default_prompt: "Use $local-stt-transcription to convert this local video into a polished transcript, keeping only the final cleaned Markdown."
