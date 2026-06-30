@@ -144,7 +144,7 @@ hook 自动调用 AI 评分：
 
 ### 3. 会话状态清理
 
-每次启动新会话时，自动删除超过 24 小时的会话状态文件（`~/.claude/state/session-*.json`），避免磁盘堆积。
+每次启动新会话时，自动删除超过 24 小时的 wiki-intelligence 会话状态文件（`~/.claude/state/wiki-intelligence/session-*.json`），避免磁盘堆积，也避免误清理其他 Claude 工具放在 `~/.claude/state` 下的数据。
 
 ## 好提示词存储结构
 
@@ -213,7 +213,7 @@ wiki/playbooks/prompts/
 [SessionStart hook]
     │
     ▼
-清理 > 24h 的 session-*.json
+清理 > 24h 的 ~/.claude/state/wiki-intelligence/session-*.json
 ```
 
 ### 安全设计

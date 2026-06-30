@@ -4,7 +4,7 @@
 
 WI_CONFIG="${WI_CONFIG:-${HOME}/.claude/wiki-intelligence.config.json}"
 WI_LOG="${WI_LOG:-${HOME}/.claude/wiki-intelligence.log}"
-WI_STATE_DIR="${WI_STATE_DIR:-${HOME}/.claude/state}"
+WI_STATE_DIR="${WI_STATE_DIR:-${HOME}/.claude/state/wiki-intelligence}"
 
 wi_log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$WI_LOG" 2>/dev/null || true
@@ -61,9 +61,9 @@ wi_load_config() {
 }
 
 wi_cleanup_stale_state() {
-  local state_dir="${WI_STATE_DIR:-${HOME}/.claude/state}"
+  local state_dir="${WI_STATE_DIR:-${HOME}/.claude/state/wiki-intelligence}"
   [ -d "$state_dir" ] || return 0
-  # Remove session state files older than 24 hours
+  # Remove wiki-intelligence session state files older than 24 hours.
   find "$state_dir" -maxdepth 1 -name 'session-*.json' -mtime +1 -delete 2>/dev/null || true
 }
 

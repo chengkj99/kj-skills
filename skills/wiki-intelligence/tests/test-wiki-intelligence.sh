@@ -2,7 +2,9 @@
 # Unit tests for wiki-intelligence lib
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../lib/wiki-intelligence.sh"
+export WI_CONFIG="${TMPDIR:-/tmp}/wiki-intelligence-test-missing-config.json"
+rm -f "$WI_CONFIG"
+source "${SCRIPT_DIR}/../hooks/lib/wiki-intelligence.sh"
 
 PASS=0
 FAIL=0
@@ -61,6 +63,7 @@ assert_equals "$WI_KNOWLEDGE_THRESHOLD" "6" "knowledge_threshold defaults to 6"
 assert_not_empty "$WI_WIKI_PATH" "wiki_path is not empty"
 assert_equals "${WI_WIKI_PATH:0:1}" "/" "wiki_path is fully expanded (no leading tilde)"
 assert_equals "$WI_ENABLED" "true" "enabled defaults to true"
+assert_equals "$WI_STATE_DIR" "${HOME}/.claude/state/wiki-intelligence" "state directory uses wiki-intelligence namespace"
 
 echo ""
 echo "--- Intent Detection ---"
