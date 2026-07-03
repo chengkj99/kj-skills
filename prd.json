@@ -14,7 +14,7 @@
       "id": "US-002",
       "title": "四个 skill 目录与 SKILL.md 就绪",
       "acceptanceCriteria": [
-        "skills/wiki-doc-sink、skills/ai-daily-from-x、skills/content-creator、skills/weekly-report 均含 SKILL.md",
+        "skills/wiki-doc-sink、skills/ai-daily-from-x、skills/content-creator、skills/ai-coding-weekly-report 均含 SKILL.md",
         "wiki-doc-sink 含面向 fork 使用者的路径说明（不依赖仅作者本机路径）"
       ],
       "passes": true
@@ -30,10 +30,10 @@
     },
     {
       "id": "US-004",
-      "title": "weekly-report 含 references 与 assets",
+      "title": "ai-coding-weekly-report 含 references 与 assets",
       "acceptanceCriteria": [
-        "skills/weekly-report/references/sources.md 与 output-templates.md 存在",
-        "skills/weekly-report/assets/manual-input-template.md 存在"
+        "skills/ai-coding-weekly-report/references/sources.md 与 output-templates.md 存在",
+        "skills/ai-coding-weekly-report/assets/manual-input-template.md 存在"
       ],
       "passes": true
     },

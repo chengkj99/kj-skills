@@ -15,7 +15,7 @@
 
 ## 代码风格与命名规范
 
-skill 目录使用小写 kebab-case，例如 `skills/weekly-report`。入口文件固定命名为 `SKILL.md`，以 YAML frontmatter 开头，后接简洁的 Markdown 说明。Shell 脚本使用 Bash，路径加引号，新脚本优先使用 `set -euo pipefail`。Python 辅助脚本放在所属 skill 目录下，保持 CLI 风格、体积小巧。Markdown 标题要有描述性，示例要可直接运行，参考资料放在使用它的 skill 附近。
+skill 目录使用小写 kebab-case，例如 `skills/ai-coding-weekly-report`。入口文件固定命名为 `SKILL.md`，以 YAML frontmatter 开头，后接简洁的 Markdown 说明。Shell 脚本使用 Bash，路径加引号，新脚本优先使用 `set -euo pipefail`。Python 辅助脚本放在所属 skill 目录下，保持 CLI 风格、体积小巧。Markdown 标题要有描述性，示例要可直接运行，参考资料放在使用它的 skill 附近。
 
 ## 测试规范
 

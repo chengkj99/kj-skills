@@ -16,7 +16,7 @@
     "course-scraper",
     "course",
     "scraper",
-    "weekly-report",
+    "ai-coding-weekly-report",
     "markdown",
     "git"
   ],
@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "KJ Skills",
     "shortDescription": "Personal course scraping, writing, wiki, digest, and engineering skills.",
-    "longDescription": "KJ Skills packages reusable Codex skills for course and web page scraping, personal Wiki capture, AI daily briefs, content creation, weekly reports, Markdown cleanup, and Git commit workflows.",
+    "longDescription": "KJ Skills packages reusable Codex skills for course and web page scraping, personal Wiki capture, AI daily briefs, content creation, AI coding weekly reports, Markdown cleanup, and Git commit workflows.",
     "developerName": "chengkj99",
     "category": "Productivity",
     "capabilities": [

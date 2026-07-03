@@ -476,8 +476,8 @@ AI 生成幻灯片时按此文件选取对应模式，**直接复制模板并填
           <div class="role-name">其他职能</div>
           <ul class="role-skills">
             <li class="skill-row">
-              <code>/weekly-report</code>
-              <span class="skill-hint">周报生成</span>
+              <code>/ai-coding-weekly-report</code>
+              <span class="skill-hint">AI 编程中文周报</span>
             </li>
           </ul>
           <p class="role-more-coverage">还覆盖更多……</p>

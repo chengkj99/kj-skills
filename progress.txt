@@ -3,7 +3,7 @@
 ## 2026-05-15
 
 - 初始化 ck-skills：对齐 addyosmani/agent-skills 的 `.claude-plugin` + `skills/` 布局。
-- 自 kangjian-ai-hub 同步 ai-daily-brief、content-creator、weekly-report（含 references/scripts/assets）。
+- 自 kangjian-ai-hub 同步 ai-daily-brief、content-creator、ai-coding-weekly-report（含 references/scripts/assets）。
 - wiki-doc-sink 改为 `<WIKI_ROOT>` 占位，便于 fork。
 - 插件 id：`ck-skills@ck-agent-skills`；GitHub 占位 repo：`chengkj99/ck-skills`（发布前可改 marketplace.json）。
 
