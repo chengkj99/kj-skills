@@ -63,10 +63,18 @@ ln -s /path/to/kj-skills ~/.cursor/plugins/local/kj-skills
 
 | 目录 | 说明 |
 |------|------|
-| `wiki-doc-sink` | 讨论沉淀到个人 Wiki（含 `references/personal-wiki-bridge.md`、`routing-notes.md`） |
-| `ai-daily-from-x` | 每日 AI 情报日报 |
-| `content-creator` | 长文 / 短视频 / 小红书等工作流 |
+| `ai-daily-from-x` / `ai-daily-websearch` | AI 情报日报采集、筛选与发布 |
+| `ai-programming-topic-planner` | AI 编程选题策略与内容角度规划 |
+| `coding-session-to-tutorial` | 实战记录转结构化教程初稿 |
+| `course-scraper` / `course-generator` / `course-campaign` | 课程抓取、章节生成与批量编排 |
+| `content-creator` / `kangjian-skill` | 长文、短视频、小红书等内容生产与个人风格门禁 |
+| `content-illustrator` / `knowledge-map` / `web-slide` | 插图、知识地图和交互式演讲稿生成 |
+| `local-stt-transcription` | 本地音视频转最终校对文字稿 |
+| `kangjian-douyin-media` / `content-growth-review` | 抖音数据归档、增长诊断与选题池更新 |
+| `tutorial-guide` / `wechat-companion` | 新手指南 Word 文档和公众号配套物料生成 |
+| `paid-content-review` | 付费课程、专栏、文章上线前质检审查 |
 | `ai-coding-weekly-report` | AI 编程中文周报 |
+| `wiki-doc-sink` / `wiki-intelligence` | 个人 Wiki 沉淀与对话知识自动化 |
 | `markdown-format` | Markdown / Obsidian 格式化 |
 | `git-push` | 暂存、Conventional Commits 提交并推送 |
 
