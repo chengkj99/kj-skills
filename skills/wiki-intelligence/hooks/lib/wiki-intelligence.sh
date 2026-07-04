@@ -28,6 +28,10 @@ wi_load_config() {
     WI_PROMPT_COLLECTION_ENABLED=true
     WI_PROMPT_COLLECTION_PATH="wiki/playbooks/prompts"
     WI_MIN_PROMPT_LENGTH=20
+    WI_PROMPT_COLLECTION_MAX_ENTRY_CHARS=4000
+    WI_PROMPT_COLLECTION_MAX_ENTRY_LINES=120
+    WI_PROMPT_COLLECTION_MAX_FILE_BYTES=102400
+    WI_PROMPT_COLLECTION_MAX_REPEAT_COUNT=10
     return 0
   fi
 
@@ -44,6 +48,10 @@ wi_load_config() {
     WI_PROMPT_COLLECTION_ENABLED=true
     WI_PROMPT_COLLECTION_PATH="wiki/playbooks/prompts"
     WI_MIN_PROMPT_LENGTH=20
+    WI_PROMPT_COLLECTION_MAX_ENTRY_CHARS=4000
+    WI_PROMPT_COLLECTION_MAX_ENTRY_LINES=120
+    WI_PROMPT_COLLECTION_MAX_FILE_BYTES=102400
+    WI_PROMPT_COLLECTION_MAX_REPEAT_COUNT=10
     return 0
   fi
 
@@ -58,6 +66,10 @@ wi_load_config() {
   WI_PROMPT_COLLECTION_ENABLED=$(jq -r '.prompt_collection_enabled // true' "$WI_CONFIG")
   WI_PROMPT_COLLECTION_PATH=$(jq -r '.prompt_collection_path // "wiki/playbooks/prompts"' "$WI_CONFIG")
   WI_MIN_PROMPT_LENGTH=$(jq -r '.min_prompt_length // 20' "$WI_CONFIG")
+  WI_PROMPT_COLLECTION_MAX_ENTRY_CHARS=$(jq -r '.prompt_collection_max_entry_chars // 4000' "$WI_CONFIG")
+  WI_PROMPT_COLLECTION_MAX_ENTRY_LINES=$(jq -r '.prompt_collection_max_entry_lines // 120' "$WI_CONFIG")
+  WI_PROMPT_COLLECTION_MAX_FILE_BYTES=$(jq -r '.prompt_collection_max_file_bytes // 102400' "$WI_CONFIG")
+  WI_PROMPT_COLLECTION_MAX_REPEAT_COUNT=$(jq -r '.prompt_collection_max_repeat_count // 10' "$WI_CONFIG")
 }
 
 wi_cleanup_stale_state() {

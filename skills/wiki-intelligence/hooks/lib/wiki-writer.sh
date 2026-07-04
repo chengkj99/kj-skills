@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Wiki writer utility library
 
-WI_LOG="${HOME}/.claude/wiki-intelligence.log"
+WI_LOG="${WI_LOG:-${HOME}/.claude/wiki-intelligence.log}"
 
 ww_log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] [writer] $*" >> "$WI_LOG" 2>/dev/null || true
@@ -20,6 +20,51 @@ ww_intent_to_file() {
     *规划*|*plan*|*planning*|*方案*) echo "planning.md" ;;
     *) echo "general.md" ;;
   esac
+}
+
+ww_is_prompt_collection_safe() {
+  local prompt_text="$1"
+  local filepath="$2"
+  local prompt_len="${#prompt_text}"
+  local max_chars="${WI_PROMPT_COLLECTION_MAX_ENTRY_CHARS:-4000}"
+  local max_lines="${WI_PROMPT_COLLECTION_MAX_ENTRY_LINES:-120}"
+  local max_file_bytes="${WI_PROMPT_COLLECTION_MAX_FILE_BYTES:-102400}"
+  local max_repeat_count="${WI_PROMPT_COLLECTION_MAX_REPEAT_COUNT:-10}"
+  local line_count repeat_count current_bytes estimated_bytes
+
+  if [ "$prompt_len" -gt "$max_chars" ]; then
+    ww_log "Skipping prompt collection: entry too large (${prompt_len} > ${max_chars} chars)"
+    return 1
+  fi
+
+  line_count=$(printf '%s\n' "$prompt_text" | wc -l | tr -d ' ')
+  if [ "${line_count:-0}" -gt "$max_lines" ]; then
+    ww_log "Skipping prompt collection: too many lines (${line_count} > ${max_lines})"
+    return 1
+  fi
+
+  if printf '%s\n' "$prompt_text" | grep -qiE '你是一个提示词质量评审员|只返回 JSON|<prompt>|</prompt>|"score"[[:space:]]*:|score/issues/suggestion'; then
+    ww_log "Skipping prompt collection: looks like prompt-review evaluator text"
+    return 1
+  fi
+
+  repeat_count=$(printf '%s\n' "$prompt_text" | awk 'length($0) >= 20 { c[$0]++ } END { max=0; for (line in c) if (c[line] > max) max=c[line]; print max+0 }')
+  if [ "${repeat_count:-0}" -gt "$max_repeat_count" ]; then
+    ww_log "Skipping prompt collection: repeated line count too high (${repeat_count} > ${max_repeat_count})"
+    return 1
+  fi
+
+  current_bytes=0
+  if [ -f "$filepath" ]; then
+    current_bytes=$(wc -c < "$filepath" | tr -d ' ')
+  fi
+  estimated_bytes=$(( ${current_bytes:-0} + prompt_len + 128 ))
+  if [ "$estimated_bytes" -gt "$max_file_bytes" ]; then
+    ww_log "Skipping prompt collection: target file would exceed ${max_file_bytes} bytes (${estimated_bytes})"
+    return 1
+  fi
+
+  return 0
 }
 
 ww_save_good_prompt() {
@@ -45,6 +90,10 @@ ww_save_good_prompt() {
   local entry_date
   entry_date=$(date '+%Y-%m-%d')
   local entry_intent="${intent:-未分类}"
+
+  if ! ww_is_prompt_collection_safe "$prompt_text" "$filepath"; then
+    return 0
+  fi
 
   if [ ! -f "$filepath" ]; then
     echo "# ${target_file%.md} 类好提示词" > "$filepath"

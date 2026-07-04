@@ -1,0 +1,6 @@
+interface:
+  display_name: "Kangjian Douyin Media"
+  short_description: "增量归档程序员康健抖音作品和评论"
+  default_prompt: "Use $kangjian-douyin-media to incrementally update 程序员康健's Douyin media archive."
+policy:
+  allow_implicit_invocation: true

@@ -11,6 +11,8 @@ Course Scraper — 课程内容抓取脚本
 """
 
 import argparse
+import hashlib
+import mimetypes
 import re
 import time
 from pathlib import Path
@@ -184,6 +186,99 @@ def extract_content(page) -> str:
         return ""
 
 
+def ext_from_response(url: str, content_type: str) -> str:
+    ctype = (content_type or "").split(";", 1)[0].strip().lower()
+    ext = mimetypes.guess_extension(ctype) if ctype else ""
+    if ext == ".jpe":
+        ext = ".jpg"
+    if ext:
+        return ext
+    path_ext = Path(urlparse(url).path).suffix.lower()
+    if path_ext in {".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".avif"}:
+        return path_ext
+    return ".bin"
+
+
+def slug_text(text: str, fallback: str) -> str:
+    text = re.sub(r"[^a-zA-Z0-9._-]+", "-", (text or "").strip()).strip("-").lower()
+    return (text or fallback)[:48]
+
+
+def collect_image_candidates(page) -> list[dict]:
+    """收集正文区域可见图片 URL，过滤明显图标和 data/blob。"""
+    return page.evaluate("""() => {
+        const container = document.querySelector(
+            '.lesson-content, .course-content, .content-body, #lesson-content, .lesson-body, article, .main-content, main'
+        ) || document.body;
+        const out = [];
+        const seen = new Set();
+        for (const img of container.querySelectorAll('img')) {
+            const src = img.currentSrc || img.src || img.getAttribute('src') || '';
+            if (!src || src.startsWith('data:') || src.startsWith('blob:')) continue;
+            let url;
+            try { url = new URL(src, document.baseURI).href; } catch { continue; }
+            if (seen.has(url)) continue;
+            seen.add(url);
+            const rect = img.getBoundingClientRect();
+            const width = Math.round(img.naturalWidth || rect.width || 0);
+            const height = Math.round(img.naturalHeight || rect.height || 0);
+            if ((width && width < 32) || (height && height < 32)) continue;
+            out.push({
+                url,
+                alt: img.getAttribute('alt') || img.getAttribute('title') || '',
+                width,
+                height
+            });
+        }
+        return out;
+    }""")
+
+
+def download_images(context, page, output_dir: Path, page_slug: str, max_images: int = 80) -> tuple[list[dict], int]:
+    candidates = collect_image_candidates(page)[:max_images]
+    asset_dir = output_dir / "_assets" / page_slug
+    downloaded: list[dict] = []
+    seen_hashes = set()
+    for img in candidates:
+        url = img["url"]
+        try:
+            response = context.request.get(url, timeout=20000)
+            if not response.ok:
+                img["error"] = f"HTTP {response.status}"
+                continue
+            body = response.body()
+            if not body:
+                img["error"] = "empty"
+                continue
+            digest = hashlib.sha256(body).hexdigest()
+            if digest in seen_hashes:
+                continue
+            seen_hashes.add(digest)
+            asset_dir.mkdir(parents=True, exist_ok=True)
+            ext = ext_from_response(url, response.headers.get("content-type", ""))
+            name = f"{len(downloaded) + 1:02d}-{slug_text(img.get('alt', ''), 'image')}{ext}"
+            path = asset_dir / name
+            path.write_bytes(body)
+            img["local"] = f"_assets/{page_slug}/{name}"
+            downloaded.append(img)
+        except Exception as exc:
+            img["error"] = str(exc)[:120]
+    return downloaded, len(candidates)
+
+
+def append_image_gallery(content: str, images: list[dict]) -> str:
+    if not images:
+        return content
+    lines = ["", "", "## 图片 / Images", ""]
+    for img in images:
+        if not img.get("local"):
+            continue
+        alt = img.get("alt") or "image"
+        lines.append(f"![{alt}]({img['local']})")
+        lines.append("")
+    return content.rstrip() + "\n".join(lines).rstrip() + "\n"
+
+
 def get_lesson_title(page, sidebar_title: str = "") -> str:
     """获取课时标题，优先用侧边栏标题，其次用页面 h1。"""
     if sidebar_title:
@@ -309,9 +404,15 @@ def scrape(url: str, email: str, password: str, output_dir: Path, no_login: bool
 
             title = get_lesson_title(page, sidebar_title)
             content = extract_content(page)
-            print(f"    标题: {title} | 内容: {len(content)} 字符")
+            page_slug = f"{i+1:02d}-{slugify(title)}"
+            images, image_candidates = download_images(context, page, output_dir, page_slug)
+            content = append_image_gallery(content, images)
+            print(f"    标题: {title} | 内容: {len(content)} 字符 | 图片: {len(images)}/{image_candidates}")
 
-            all_lessons.append({'url': lesson_url, 'title': title, 'content': content})
+            all_lessons.append({
+                'url': lesson_url, 'title': title, 'content': content,
+                'images': len(images), 'image_candidates': image_candidates
+            })
 
         # ── Next 按钮补漏 ──
         if all_lessons and platform == 'skilljar':
@@ -327,9 +428,15 @@ def scrape(url: str, email: str, password: str, output_dir: Path, no_login: bool
                 goto(page, next_url)
                 title = get_lesson_title(page)
                 content = extract_content(page)
+                page_slug = f"{len(all_lessons)+1:02d}-{slugify(title)}"
+                images, image_candidates = download_images(context, page, output_dir, page_slug)
+                content = append_image_gallery(content, images)
                 if content:
-                    print(f"    补漏: {title} ({len(content)} 字符)")
-                    all_lessons.append({'url': next_url, 'title': title, 'content': content})
+                    print(f"    补漏: {title} ({len(content)} 字符, 图片 {len(images)}/{image_candidates})")
+                    all_lessons.append({
+                        'url': next_url, 'title': title, 'content': content,
+                        'images': len(images), 'image_candidates': image_candidates
+                    })
 
         browser.close()
 
@@ -357,9 +464,10 @@ def scrape(url: str, email: str, password: str, output_dir: Path, no_login: bool
         with open(output_dir / fname, 'w', encoding='utf-8') as f:
             f.write(f"# {lesson['title']}\n\n")
             f.write(f"来源：{lesson['url']}\n\n")
+            f.write(f"图片 / Images：{lesson.get('images', 0)}/{lesson.get('image_candidates', 0)}\n\n")
             f.write("---\n\n")
             f.write(lesson['content'])
-        print(f"  保存: {fname} ({len(lesson['content'])} 字符)")
+        print(f"  保存: {fname} ({len(lesson['content'])} 字符, 图片 {lesson.get('images', 0)}/{lesson.get('image_candidates', 0)})")
 
     print(f"\n完成！共 {len(all_lessons)} 个课时 → {output_dir}")
     return all_lessons

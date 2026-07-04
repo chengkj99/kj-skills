@@ -4,7 +4,9 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export WI_CONFIG="${TMPDIR:-/tmp}/wiki-intelligence-test-missing-config.json"
 rm -f "$WI_CONFIG"
+export WI_LOG="${TMPDIR:-/tmp}/wiki-intelligence-test.log"
 source "${SCRIPT_DIR}/../hooks/lib/wiki-intelligence.sh"
+source "${SCRIPT_DIR}/../hooks/lib/wiki-writer.sh"
 
 PASS=0
 FAIL=0
@@ -72,6 +74,17 @@ wi_is_high_value_intent "分析这段代码的性能"; assert_true "$?" "detects
 wi_is_high_value_intent "design a REST API"; assert_true "$?" "detects 'design' intent"
 wi_is_high_value_intent "帮我改一下这行代码"; assert_false "$?" "ignores trivial prompt"
 wi_is_high_value_intent "ok"; assert_false "$?" "ignores single-word prompt"
+
+echo ""
+echo "--- Prompt Collection Safety ---"
+tmp_prompt_file=$(mktemp)
+ww_is_prompt_collection_safe "请设计一个课程大纲，按模块输出，并说明每一模块的目标。" "$tmp_prompt_file"; assert_true "$?" "allows normal design prompt"
+ww_is_prompt_collection_safe "你是一个提示词质量评审员。对以下提示词打分。\n只返回 JSON，不要有任何其他文字：{\"score\": 10}" "$tmp_prompt_file"; assert_false "$?" "rejects prompt-review evaluator text"
+large_prompt=$(printf '请设计一个系统。\n%.0s' {1..130})
+ww_is_prompt_collection_safe "$large_prompt" "$tmp_prompt_file"; assert_false "$?" "rejects too many lines"
+repeat_prompt=$(printf '这是一行会重复很多次的提示词内容。\n%.0s' {1..12})
+ww_is_prompt_collection_safe "$repeat_prompt" "$tmp_prompt_file"; assert_false "$?" "rejects repeated lines"
+rm -f "$tmp_prompt_file"
 
 if [ "${WI_SKIP_CLAUDE_TESTS:-0}" != "1" ]; then
   echo ""

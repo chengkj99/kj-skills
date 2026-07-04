@@ -1,7 +1,8 @@
 ---
 name: course-scraper
 description: >-
-  抓取课程/网页正文并存为结构化 Markdown，可选翻译成中英双语（中文在前，英文原文用引用块紧随）。
+  抓取课程/网页正文和图片并存为结构化 Markdown（图片默认下载到本地 _assets/ 并改写链接），
+  可选翻译成中英双语（中文在前，英文原文用引用块紧随）。
   支持两种模式：①「单课程平台模式」——自动登录课程平台（如 Skilljar），遍历侧边栏课时（用 scripts/scrape.py）；
   ②「链接清单模式」——给一份含许多异构链接的清单（导航页、资源合集、Markdown 链接表），逐链 Playwright 渲染抓取
   （用 scripts/fetch_links.py），带 trafilatura→markdownify→WebFetch 反爬兜底阶梯与质量标记。
@@ -11,7 +12,7 @@ description: >-
 
 # Course Scraper — 课程抓取 & 双语翻译
 
-从在线课程平台抓取所有课时文字内容，存为结构化 Markdown，并翻译成中英对照格式。
+从在线课程平台抓取所有课时文字内容与图片，存为结构化 Markdown，并翻译成中英对照格式。
 
 ---
 
@@ -21,6 +22,21 @@ description: >-
 - 用户提供一份**链接清单/导航页/资源合集**（几十条跨域链接），想把这些链接的正文都抓下来 → **链接清单模式**
 - 需要将英文内容翻译成中英双语对照版本
 - 课程需要账号登录才能访问
+- 需要把网页/PDF/课程里的图片一并本地归档，避免 Markdown 依赖远程图片
+
+---
+
+## 图片抓取规则（默认开启）
+
+两个脚本都必须把图片作为正文资产的一部分处理：
+
+- 图片保存位置：每篇文章/课时旁边的 `_assets/<文件slug>/`
+- Markdown 写法：正文里的远程图片链接改成本地相对路径，例如 `![](./_assets/xx/01-image.png)` 或 `![](_assets/xx/01-image.png)`
+- 如果正文提取器没有保留图片位置，脚本会在文末追加 `## 图片 / Images` 区块，至少保证图片不丢。
+- 文件头或报告中记录图片数量：`图片 / Images: 已下载数/候选数`
+- 跳过 `data:`、`blob:` 与明显小图标；下载失败不阻塞正文抓取，但必须在报告中体现下载数量。
+
+> 经验教训：早期版本只抓正文，`scrape.py` 甚至只取 `inner_text()`，会把课程截图、流程图、UI 图全部丢掉。后续任何抓取都要把“图片本地化”作为验收项。
 
 ---
 
@@ -84,6 +100,7 @@ python3 <skill_dir>/scripts/scrape.py \
 - 登录账号
 - 从侧边栏收集所有课时链接
 - 逐一抓取每个课时的正文内容
+- 下载课时正文区域图片到 `_assets/<课时slug>/`，并在 Markdown 中追加本地图片引用
 - 按顺序保存为 `01-<slug>.md`、`02-<slug>.md` …
 - 生成 `00-index.md` 索引
 
@@ -149,7 +166,8 @@ python3 <skill_dir>/scripts/fetch_links.py \
 ```
 
 脚本会：解析清单里的链接（Markdown 表格自动取标题）→ 逐个 Playwright 渲染 → trafilatura 提取
-→ markdownify 兜底 → 存为 `01-<slug>.md` … → 写 `_fetch_report.json`（含每条 ok/thin/error）。
+→ markdownify 兜底 → 下载可见正文图片并本地化 Markdown 图片链接 → 存为 `01-<slug>.md` …
+→ 写 `_fetch_report.json`（含每条 ok/thin/error 与图片下载数量）。
 
 > 大清单建议 `run_in_background` 跑（几十页约 5–8 分钟），完成后读 `_fetch_report.json` 核对。
 
@@ -178,6 +196,14 @@ python3 <skill_dir>/scripts/fetch_links.py \
 写 `00-index.md`，按分节列出每个文件及**质量标记**，让用户一眼看清哪些可信、哪些要复核：
 
 > ✅ Playwright 完整原文 ｜ ◐ WebFetch 兜底（非逐字，已在文件头标注）｜ ⚠️ 部分失败 ｜ ❌ 链接失效 ｜ ⏳ 待处理（如登录墙）
+
+同时检查图片本地化：
+
+```bash
+rg -n '!\[[^\]]*\]\(https?://' <输出目录> --glob '*.md'
+```
+
+若有输出，说明仍有远程图片链接，需要补下载或在文件头标注原因。
 
 ### 第六步：翻译（可选，见下方「翻译为双语格式」）
 

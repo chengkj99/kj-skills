@@ -20,7 +20,7 @@
   2) 其它（.md/.txt）—— 自动抽取所有 https?:// 链接；若是 Markdown 表格行，
      取 URL 前第一个非空单元格作为标题；slug 由 URL 路径自动生成。
 """
-import sys, re, json, time, argparse
+import sys, re, json, time, argparse, hashlib, mimetypes
 from pathlib import Path
 from urllib.parse import urlparse
 from playwright.sync_api import sync_playwright
@@ -63,7 +63,7 @@ def parse_links(path):
 
 def extract_md(html, url):
     txt = trafilatura.extract(
-        html, output_format="markdown", include_links=True, include_tables=True,
+        html, output_format="markdown", include_links=True, include_images=True, include_tables=True,
         include_comments=False, include_formatting=True, favor_recall=True, url=url)
     if txt and len(txt.strip()) > 120:
         return txt, "trafilatura"
@@ -73,6 +73,111 @@ def extract_md(html, url):
         return body, "markdownify-fallback"
     except Exception:
         return (txt or ""), "trafilatura-thin"
+
+
+def ext_from_response(url, content_type):
+    ctype = (content_type or "").split(";", 1)[0].strip().lower()
+    ext = mimetypes.guess_extension(ctype) if ctype else ""
+    if ext == ".jpe":
+        ext = ".jpg"
+    if ext:
+        return ext
+    path_ext = Path(urlparse(url).path).suffix.lower()
+    if path_ext in {".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".avif"}:
+        return path_ext
+    return ".bin"
+
+
+def slug_text(text, fallback):
+    text = re.sub(r"[^a-zA-Z0-9._-]+", "-", (text or "").strip()).strip("-").lower()
+    return (text or fallback)[:48]
+
+
+def collect_image_candidates(page):
+    return page.evaluate("""() => {
+        const nodes = Array.from(document.querySelectorAll('main img, article img, [role="main"] img, body img'));
+        const out = [];
+        const seen = new Set();
+        for (const img of nodes) {
+            const src = img.currentSrc || img.src || img.getAttribute('src') || '';
+            if (!src || src.startsWith('data:') || src.startsWith('blob:')) continue;
+            let url;
+            try { url = new URL(src, document.baseURI).href; } catch { continue; }
+            if (seen.has(url)) continue;
+            seen.add(url);
+            const rect = img.getBoundingClientRect();
+            const width = Math.round(img.naturalWidth || rect.width || 0);
+            const height = Math.round(img.naturalHeight || rect.height || 0);
+            if ((width && width < 32) || (height && height < 32)) continue;
+            out.push({
+                url,
+                alt: img.getAttribute('alt') || img.getAttribute('title') || '',
+                width,
+                height
+            });
+        }
+        return out;
+    }""")
+
+
+def download_images(ctx, page, target_dir, page_slug, max_images=80):
+    candidates = collect_image_candidates(page)[:max_images]
+    asset_dir = target_dir / "_assets" / page_slug
+    downloaded = []
+    seen_hashes = set()
+    for img in candidates:
+        url = img["url"]
+        try:
+            response = ctx.request.get(url, timeout=20000)
+            if not response.ok:
+                img["error"] = f"HTTP {response.status}"
+                continue
+            body = response.body()
+            if not body:
+                img["error"] = "empty"
+                continue
+            digest = hashlib.sha256(body).hexdigest()
+            if digest in seen_hashes:
+                continue
+            seen_hashes.add(digest)
+            asset_dir.mkdir(parents=True, exist_ok=True)
+            ext = ext_from_response(url, response.headers.get("content-type", ""))
+            name = f"{len(downloaded) + 1:02d}-{slug_text(img.get('alt'), 'image')}{ext}"
+            path = asset_dir / name
+            path.write_bytes(body)
+            img["local"] = f"_assets/{page_slug}/{name}"
+            downloaded.append(img)
+        except Exception as exc:
+            img["error"] = str(exc)[:120]
+            continue
+    return downloaded, len(candidates)
+
+
+def localize_markdown_images(body, images):
+    body = body or ""
+    for img in images:
+        local = img.get("local")
+        if not local:
+            continue
+        remote = re.escape(img["url"])
+        body = re.sub(rf"!\[([^\]]*)\]\({remote}(?:\s+\"[^\"]*\")?\)", rf"![\1]({local})", body)
+        body = body.replace(img["url"], local)
+    return body
+
+
+def append_image_gallery(body, images):
+    if not images:
+        return body
+    if any(img.get("local") and img["local"] in (body or "") for img in images):
+        return body
+    lines = ["", "## 图片 / Images", ""]
+    for img in images:
+        if not img.get("local"):
+            continue
+        alt = img.get("alt") or "image"
+        lines.append(f"![{alt}]({img['local']})")
+        lines.append("")
+    return (body or "").rstrip() + "\n" + "\n".join(lines).rstrip() + "\n"
 
 
 def main():
@@ -109,13 +214,18 @@ def main():
                 target_dir = out_root / subdir if subdir else out_root
                 target_dir.mkdir(parents=True, exist_ok=True)
                 fpath = target_dir / f"{idx:02d}-{slug}.md"
+                page_slug = f"{idx:02d}-{slug}"
+                images, image_candidates = download_images(ctx, page, target_dir, page_slug)
+                body = append_image_gallery(localize_markdown_images(body, images), images)
                 flag = "OK" if n > 120 else "THIN"
                 header = (f"# {title}\n\n> 来源 / Source: {url}\n"
-                          f"> 抓取方式: Playwright + {method} | 字符数: {n} | 状态: {flag}\n\n---\n\n")
+                          f"> 抓取方式: Playwright + {method} | 字符数: {n} | 状态: {flag}\n"
+                          f"> 图片 / Images: {len(images)}/{image_candidates}\n\n---\n\n")
                 fpath.write_text(header + (body or "_[空 / empty —— 建议 WebFetch 兜底]_"), encoding="utf-8")
                 rec.update({"ok": n > 120, "chars": n, "method": method,
+                            "images": len(images), "image_candidates": image_candidates,
                             "file": str(fpath.relative_to(out_root))})
-                print(f"[{idx:02d}] {flag:<4} {n:>7}c  {method:<22} {url}")
+                print(f"[{idx:02d}] {flag:<4} {n:>7}c  img {len(images):>2}/{image_candidates:<2}  {method:<22} {url}")
             except Exception as e:
                 rec.update({"ok": False, "chars": 0, "method": "ERROR", "error": str(e)[:200]})
                 print(f"[{idx:02d}] ERR  {url}\n      {str(e)[:160]}")

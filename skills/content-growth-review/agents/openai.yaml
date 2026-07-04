@@ -1,0 +1,6 @@
+interface:
+  display_name: "Content Growth Review"
+  short_description: "Analyze creator data and plan next growth topics"
+  default_prompt: "Use $content-growth-review to analyze updated media data and plan the next content growth moves."
+policy:
+  allow_implicit_invocation: true
