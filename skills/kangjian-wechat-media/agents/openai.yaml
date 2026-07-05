@@ -1,0 +1,6 @@
+interface:
+  display_name: "Kangjian WeChat Media"
+  short_description: "Archive Official Account and Channels data"
+  default_prompt: "Use $kangjian-wechat-media to update 程序员康健's 公众号 and 视频号 media archive."
+policy:
+  allow_implicit_invocation: true
