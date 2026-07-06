@@ -75,6 +75,8 @@ ln -s /path/to/kj-skills ~/.cursor/plugins/local/kj-skills
 | `paid-content-review` | 付费课程、专栏、文章上线前质检审查 |
 | `ai-coding-weekly-report` | AI 编程中文周报 |
 | `wiki-doc-sink` / `wiki-intelligence` | 个人 Wiki 沉淀与对话知识自动化 |
+| `weekly-digest` | Git 周报生成器 |
+| `skills-repo-health-check` | Skills 仓库健康度检查与迭代计划 |
 | `markdown-format` | Markdown / Obsidian 格式化 |
 | `git-push` | 暂存、Conventional Commits 提交并推送 |
 

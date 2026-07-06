@@ -1,7 +1,7 @@
 {
   "name": "kj-skills",
   "displayName": "KJ Skills",
-  "description": "康健技能包：Wiki 沉淀、AI 日报、内容创作、课程生产、增长复盘、付费质检、Markdown 格式化、Git 提交推送。",
+  "description": "康健技能包：Wiki 沉淀、AI 日报、内容创作、AI 编程周报、Git 周报、Skills 仓库健康度检查、Markdown 格式化、Git 提交推送。",
   "version": "0.1.2",
   "author": {
     "name": "chengkj99"
@@ -17,6 +17,9 @@
     "course",
     "growth",
     "review",
+    "weekly-digest",
+    "skills-repo-health-check",
+    "health-check",
     "markdown",
     "git"
   ],

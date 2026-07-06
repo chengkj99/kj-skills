@@ -7,6 +7,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | 目录 | 说明 |
 |------|------|
 | [skills/ai-programming-topic-planner](skills/ai-programming-topic-planner/SKILL.md) | AI 编程内容选题策略：输入动态/痛点/想法，输出 3-5 个内容角度 + 推荐工作流 |
+| [skills/ai-learning-loop](skills/ai-learning-loop/SKILL.md) | AI 学习闭环：从主题/材料出发，生成真实问题、最小调研包、表达卡片、评审反馈和补卡决策 |
 | [skills/coding-session-to-tutorial](skills/coding-session-to-tutorial/SKILL.md) | 实战记录转教程：原始命令/报错/过程 → 结构化 AI 编程教程初稿 |
 | [skills/course-generator](skills/course-generator/SKILL.md) | 单章节课程正文生成：章节大纲 + 参考材料 → 可直接发布的课程正文（口语化、工程视角、无 AI 味）；写完后自动为 `[流程图]`/`[对比图]` 生成 SVG 插图 |
 | [skills/course-campaign](skills/course-campaign/SKILL.md) | 批量章节编排（工头）：按清单逐章调用 course-generator，负责顺序管理、上下文衔接、进度持久化、里程碑 compact、收尾图片规范化审计 |
@@ -25,6 +26,8 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/kangjian-douyin-media](skills/kangjian-douyin-media/SKILL.md) | 程序员康健抖音数据增量抓取、归档与评论/作品 Markdown 报告生成 |
 | [skills/content-growth-review](skills/content-growth-review/SKILL.md) | 内容增长复盘：基于抖音/视频号/公众号/小红书数据诊断问题、调整方向、生成选题池 |
 | [skills/paid-content-review](skills/paid-content-review/SKILL.md) | 付费课程 / 专栏 / 文章上线前质检：按 P0/P1/P2 输出结构、准确性、付费价值审查报告 |
+| [skills/weekly-digest](skills/weekly-digest/SKILL.md) | Git 周报生成器：从单项目或多项目 git log 生成结构化中文周报 |
+| [skills/skills-repo-health-check](skills/skills-repo-health-check/SKILL.md) | Skills 仓库健康度检查：按结构、触发、验证、索引、去重、安全等维度审计并给出迭代计划 |
 | [skills/wiki-doc-sink](skills/wiki-doc-sink/SKILL.md) | 讨论沉淀到个人 Wiki（含 `references/` 路由说明，需配置 `<WIKI_ROOT>`） |
 | [skills/markdown-format](skills/markdown-format/SKILL.md) | Pandoc/Word 稿 Markdown 格式化（Obsidian 表格、代码块、标题） |
 | [skills/git-push](skills/git-push/SKILL.md) | 一键 add / 生成 commit / push（Conventional Commits + 安全约束） |
@@ -73,7 +76,25 @@ Claude Code 事件
 
 ## Skills 协作关系
 
-各 skill 不是孤立的，围绕「AI 编程内容稳定输出」形成三条主流水线，并补充课程生产、发布配套和质量审查能力。
+各 skill 不是孤立的，围绕「学习输入 -> 知识沉淀 -> 内容稳定输出」形成三条主流水线，并补充课程生产、发布配套和质量审查能力。
+
+### 主流水线 0：学习目标 / 材料 → 表达卡片 → 知识沉淀
+
+```
+学习主题 / 外部材料 / 临时想法
+        ↓
+ai-learning-loop
+        ↓ 真实问题 + 最小调研包 + 表达卡片
+内置输出评审步骤
+        ↓ 补卡建议
+wiki-doc-sink（需要沉淀时）
+        ↓
+个人 Wiki / topic-bank / studio 内容生产轨
+```
+
+**典型场景**：想学习一个主题但没有资料 → 用 `ai-learning-loop` 先收敛真实问题和最小阅读包 → 产出一张口播/短文表达卡片 → 评审盲区 → 只补一张必要的 `concepts` 或 `playbooks` 卡片。
+
+---
 
 ### 主流水线 A：动态/想法 → 发布
 
@@ -153,6 +174,7 @@ content-creator / kangjian-skill
 |-------|------|--------|-----------|
 | `ai-daily-websearch` / `ai-daily-from-x` | 素材来源 | — | `ai-programming-topic-planner` |
 | `ai-programming-topic-planner` | 选题决策 | 动态/痛点/想法/实战记录 | `content-creator` 对应工作流 |
+| `ai-learning-loop` | 学习闭环总控 | 学习主题/材料/想法 | 表达卡片、评审反馈、补卡建议 / `wiki-doc-sink` |
 | `coding-session-to-tutorial` | 结构化整理 | 原始实战记录 | `content-creator` 工作流 C |
 | `course-scraper` | 外部课程存档 | 在线课程 URL + 账号 | `course-generator`（素材）/ `wiki-doc-sink`（沉淀） |
 | `local-stt-transcription` | 本地音视频转最终校对文字稿 | `.mov` / `.mp4` / `.m4a` 等本地素材 | `raw/studio/transcripts` / `content-creator` / `kangjian-skill` |
@@ -169,6 +191,8 @@ content-creator / kangjian-skill
 | `knowledge-map` | 知识地图生成 | 主题 / 领域 | 单文件 HTML 信息图 |
 | `web-slide` | 演讲稿生成 | 主题/大纲/文档 | 独立发布（HTML） |
 | `ai-coding-weekly-report` | 定期汇总 | 周内动态 | 独立发布 |
+| `weekly-digest` | Git 周报 | 单项目或多项目 git log | 周报摘要 |
+| `skills-repo-health-check` | 仓库治理审计 | skills 仓库 / 新增或迁移后的 skill 集合 | 健康度评分、P0/P1/P2 修复计划 |
 | `wiki-doc-sink` | 知识沉淀 | 讨论结论 | 个人 Wiki |
 | `git-push` | 工程辅助 | 代码变更 | 远程仓库 |
 | `wiki-intelligence` | 知识自动化 | 高价值提示词 + 对话 | wiki 知识库 |

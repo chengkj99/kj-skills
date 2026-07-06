@@ -1,0 +1,23 @@
+{
+  "skill_name": "weekly-digest",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "周报",
+      "expected_output": "在当前 git 仓库中生成本周+上周的结构化 Markdown 周报，包含分类摘要和趋势对比",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "多项目周报，项目包括 /Users/didi/ai_space/loanfe-llm-wiki 和 /Users/didi/Library/Mobile Documents/iCloud~md~obsidian/Documents/kj-llm-wiki",
+      "expected_output": "聚合两个项目的周报，包含项目概览表、各项目详细周报（可折叠）、团队整体趋势",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "只看本周周报，不要上周对比",
+      "expected_output": "仅输出本周周报，不含上周摘要和趋势对比表",
+      "files": []
+    }
+  ]
+}

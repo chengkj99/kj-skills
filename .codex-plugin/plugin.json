@@ -19,14 +19,17 @@
     "course",
     "scraper",
     "ai-coding-weekly-report",
+    "weekly-digest",
+    "skills-repo-health-check",
+    "health-check",
     "markdown",
     "git"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "KJ Skills",
-    "shortDescription": "Personal course, writing, wiki, digest, growth, and engineering skills.",
-    "longDescription": "KJ Skills packages reusable Codex skills for course and web page scraping, personal Wiki capture, AI daily briefs, content creation, growth reviews, paid-content QA, AI coding weekly reports, Markdown cleanup, and Git commit workflows.",
+    "shortDescription": "Personal course scraping, writing, wiki, digest, and engineering skills.",
+    "longDescription": "KJ Skills packages reusable Codex skills for course and web page scraping, personal Wiki capture, AI daily briefs, content creation, AI coding weekly reports, Git weekly digests, skills repository health checks, Markdown cleanup, and Git commit workflows.",
     "developerName": "chengkj99",
     "category": "Productivity",
     "capabilities": [
@@ -40,6 +43,8 @@
       "Use my content creator skill",
       "Review my latest content growth data",
       "Write an AI daily brief",
+      "Generate a Git weekly digest",
+      "Audit this skills repository",
       "Format this Markdown draft"
     ],
     "brandColor": "#2563EB",

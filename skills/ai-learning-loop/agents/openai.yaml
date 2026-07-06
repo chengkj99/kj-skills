@@ -1,0 +1,6 @@
+interface:
+  display_name: "AI Learning Loop"
+  short_description: "Focused learning loops for output-driven growth"
+  default_prompt: "Use $ai-learning-loop to run one learning loop for this topic: "
+policy:
+  allow_implicit_invocation: true

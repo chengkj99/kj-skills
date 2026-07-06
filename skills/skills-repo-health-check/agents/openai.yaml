@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skills Repo Health Check"
+  short_description: "Audit and improve a skills repository."
+  default_prompt: "Use $skills-repo-health-check to audit this skills repository and produce a prioritized improvement plan."
