@@ -1,6 +1,6 @@
 # kj-skills
 
-Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路、个人 Wiki 沉淀、课程生产、增长复盘、付费内容质检、AI 日报、周报、Git 提交推送。目录结构参考 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)。
+Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路、个人 Wiki 沉淀、课程生产、增长复盘、付费内容质检、AI 日报、周报、Git 提交推送。
 
 ## 包含的 Skills
 
@@ -18,6 +18,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/kangjian-skill](skills/kangjian-skill/SKILL.md) | 以康健本人风格创作公众号文章 / 短视频口播 / AI 编程教程 / 演讲稿（去 AI 味门禁） |
 | [skills/tutorial-guide](skills/tutorial-guide/SKILL.md) | 新手教程指南生成：主题 / 链接 → Markdown + Word `.docx` 完整指南（含封面、目录、引流页） |
 | [skills/wechat-companion](skills/wechat-companion/SKILL.md) | 公众号发布配套物料：前言、标题、摘要、封面图提示词、朋友圈和社群转发文案 |
+| [skills/wechat-publish-kit](skills/wechat-publish-kit/SKILL.md) | 公众号发布包：正文 → 配套文案、封面图/提示词、发布用 Markdown、结构优化与可选草稿发布 |
 | [skills/web-slide](skills/web-slide/SKILL.md) | 生成可交互单文件 HTML 演讲稿：键盘翻页、演讲者备注、全局索引、代码高亮、PDF 导出 |
 | [skills/knowledge-map](skills/knowledge-map/SKILL.md) | 知识地图生成：输入一个主题 → 先做 3-5 轮调研，再输出高信息密度的单文件 HTML 信息图（深色卡片网格、阶段流程条、实战工作流，可截图为长图/海报） |
 | [skills/ai-daily-from-x](skills/ai-daily-from-x/SKILL.md) | 每日 AI 情报日报（X 账号采集 + 评分 rubric） |
@@ -185,6 +186,7 @@ content-creator / kangjian-skill
 | `kangjian-skill` | 风格门禁 | 任意初稿 | 发布 |
 | `tutorial-guide` | 新手指南生产 | 主题 / 链接 | Markdown + Word 指南 / `wechat-companion` |
 | `wechat-companion` | 公众号配套物料 | 文章主题 / 摘要 / 初稿 | 标题 / 前言 / 摘要 / 封面 prompt / 转发文案 |
+| `wechat-publish-kit` | 公众号发布包总控 | 正文 Markdown/Word、配套物料、封面 prompt | 发布用 Markdown / 封面图 / 公众号草稿 |
 | `paid-content-review` | 付费内容质检 | 单篇 / 整课 / 发布前材料 | 审查报告 / 改稿清单 |
 | `kangjian-douyin-media` | 抖音归档 | 程序员康健抖音账号数据 | `content-growth-review` |
 | `content-growth-review` | 增长诊断与选题 | 平台数据 / 评论 / 作品归档 | 复盘报告 / 手动选题池 |

@@ -1,0 +1,4 @@
+interface:
+  display_name: "WeChat Publish Kit"
+  short_description: "Prepare WeChat article copy, cover image, and draft assets"
+  default_prompt: "Use $wechat-publish-kit to prepare a WeChat article release package with companion copy, cover image, publish-ready Markdown, and optional draft publishing."
