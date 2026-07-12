@@ -1,6 +1,6 @@
 # kj-skills
 
-Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路、个人 Wiki 沉淀、课程生产、增长复盘、付费内容质检、AI 日报、周报、Git 提交推送。
+Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路、现象洞察、个人 Wiki 沉淀、课程生产、增长复盘、付费内容质检、AI 日报、周报、Git 提交推送。
 
 ## 包含的 Skills
 
@@ -14,6 +14,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/content-illustrator](skills/content-illustrator/SKILL.md) | 内容插图工具（三模式）：① 文字描述 → SVG；② 分析文章识别「看图比看字快」的位置并自动生成插图；③ 批量补全课程文件中的 `[流程图]`/`[对比图]` 占位符 |
 | [skills/course-scraper](skills/course-scraper/SKILL.md) | 课程抓取 & 双语翻译：登录在线课程平台，抓取所有课时存为 Markdown，翻译成中英对照格式 |
 | [skills/content-creator](skills/content-creator/SKILL.md) | 长文 / 短视频 / 小红书等工作流（含 A/B/C/D/E/F 六条分支） |
+| [skills/phenomenon-insight](skills/phenomenon-insight/SKILL.md) | 现象本质洞察：把真实事件/困惑拆成隐含假设、机制、反常识判断和内容观点 |
 | [skills/local-stt-transcription](skills/local-stt-transcription/SKILL.md) | 本地视频/音频转最终校对文字稿：调用 jianchang512/stt，默认 medium + 术语校对润色，高精度 large-v3 + 校对 |
 | [skills/kangjian-skill](skills/kangjian-skill/SKILL.md) | 以康健本人风格创作公众号文章 / 短视频口播 / AI 编程教程 / 演讲稿（去 AI 味门禁） |
 | [skills/tutorial-guide](skills/tutorial-guide/SKILL.md) | 新手教程指南生成：主题 / 链接 → Markdown + Word `.docx` 完整指南（含封面、目录、引流页） |
@@ -104,6 +105,8 @@ ai-daily-websearch / ai-daily-from-x
         ↓ 素材
 ai-programming-topic-planner
         ↓ 角度 + 推荐工作流
+phenomenon-insight（可选，深挖机制/反常识）
+        ↓ 核心洞见 + 内容入口
 content-creator（工作流 B/C/D/F）
         ↓ 初稿
 kangjian-skill（风格润色）
@@ -125,7 +128,7 @@ content-creator / kangjian-skill
     发布（短视频 / 公众号 / 小红书）
 ```
 
-**典型场景**：看到 Claude Code 更新了某功能 → 用 `ai-programming-topic-planner` 找「程序员最关心的切入角度」→ 用 `content-creator` 工作流 B 孵化成文章 → 用 `kangjian-skill` 去 AI 味润色 → 发布。
+**典型场景**：看到 Claude Code 更新了某功能 → 用 `ai-programming-topic-planner` 找「程序员最关心的切入角度」→ 用 `phenomenon-insight` 把现象拆到机制和反常识判断 → 用 `content-creator` 工作流 B 孵化成文章 → 用 `kangjian-skill` 去 AI 味润色 → 发布。
 
 ---
 
@@ -176,6 +179,7 @@ content-creator / kangjian-skill
 | `ai-daily-websearch` / `ai-daily-from-x` | 素材来源 | — | `ai-programming-topic-planner` |
 | `ai-programming-topic-planner` | 选题决策 | 动态/痛点/想法/实战记录 | `content-creator` 对应工作流 |
 | `ai-learning-loop` | 学习闭环总控 | 学习主题/材料/想法 | 表达卡片、评审反馈、补卡建议 / `wiki-doc-sink` |
+| `phenomenon-insight` | 洞察前置层 | 真实现象/困惑/异常反馈/生活观察 | 核心洞见、反常识判断、标题与结构入口 / `content-creator` / `kangjian-skill` |
 | `coding-session-to-tutorial` | 结构化整理 | 原始实战记录 | `content-creator` 工作流 C |
 | `course-scraper` | 外部课程存档 | 在线课程 URL + 账号 | `course-generator`（素材）/ `wiki-doc-sink`（沉淀） |
 | `local-stt-transcription` | 本地音视频转最终校对文字稿 | `.mov` / `.mp4` / `.m4a` 等本地素材 | `raw/studio/transcripts` / `content-creator` / `kangjian-skill` |

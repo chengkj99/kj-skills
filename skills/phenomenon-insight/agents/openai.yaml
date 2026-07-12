@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phenomenon Insight"
+  short_description: "从日常现象中提炼机制洞察与内容观点"
+  default_prompt: "Use $phenomenon-insight to analyze this phenomenon and extract the underlying mechanism, contrarian insight, and content angles."

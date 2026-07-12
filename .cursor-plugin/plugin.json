@@ -1,7 +1,7 @@
 {
   "name": "kj-skills",
   "displayName": "KJ Skills",
-  "description": "康健技能包：Wiki 沉淀、AI 日报、内容创作、AI 编程周报、Git 周报、Skills 仓库健康度检查、Markdown 格式化、Git 提交推送。",
+  "description": "康健技能包：Wiki 沉淀、AI 日报、现象洞察、内容创作、AI 编程周报、Git 周报、Skills 仓库健康度检查、Markdown 格式化、Git 提交推送。",
   "version": "0.1.2",
   "author": {
     "name": "chengkj99"
@@ -13,6 +13,8 @@
     "skills",
     "wiki",
     "content",
+    "insight",
+    "phenomenon-insight",
     "ai-coding-weekly-report",
     "course",
     "growth",

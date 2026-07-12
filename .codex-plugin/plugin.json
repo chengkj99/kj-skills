@@ -1,7 +1,7 @@
 {
   "name": "kj-skills",
   "version": "0.1.2+codex.20260622021524",
-  "description": "康健技能包：课程抓取、Wiki 沉淀、AI 日报、内容创作、增长复盘、付费质检、Markdown 格式化、Git 提交推送。",
+  "description": "康健技能包：课程抓取、Wiki 沉淀、AI 日报、现象洞察、内容创作、增长复盘、付费质检、Markdown 格式化、Git 提交推送。",
   "author": {
     "name": "chengkj99",
     "url": "https://github.com/chengkj99"
@@ -13,6 +13,8 @@
     "skills",
     "wiki",
     "content",
+    "insight",
+    "phenomenon-insight",
     "growth",
     "review",
     "course-scraper",
@@ -28,8 +30,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "KJ Skills",
-    "shortDescription": "Personal course scraping, writing, wiki, digest, and engineering skills.",
-    "longDescription": "KJ Skills packages reusable Codex skills for course and web page scraping, personal Wiki capture, AI daily briefs, content creation, AI coding weekly reports, Git weekly digests, skills repository health checks, Markdown cleanup, and Git commit workflows.",
+    "shortDescription": "Personal insight, writing, wiki, digest, and engineering skills.",
+    "longDescription": "KJ Skills packages reusable Codex skills for course and web page scraping, phenomenon insight, personal Wiki capture, AI daily briefs, content creation, AI coding weekly reports, Git weekly digests, skills repository health checks, Markdown cleanup, and Git commit workflows.",
     "developerName": "chengkj99",
     "category": "Productivity",
     "capabilities": [
@@ -40,6 +42,7 @@
     "websiteURL": "https://github.com/chengkj99/kj-skills",
     "defaultPrompt": [
       "Use course-scraper to fetch a course or link list into Markdown",
+      "Use phenomenon-insight to analyze a confusing phenomenon",
       "Use my content creator skill",
       "Review my latest content growth data",
       "Write an AI daily brief",

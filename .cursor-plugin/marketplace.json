@@ -4,13 +4,13 @@
     "name": "chengkj99"
   },
   "metadata": {
-    "description": "康健个人技能包：Wiki 沉淀、AI 日报、内容创作、课程生产、增长复盘、付费质检、Git 提交推送；兼容 Cursor 插件与 Claude Code 插件。"
+    "description": "康健个人技能包：Wiki 沉淀、AI 日报、现象洞察、内容创作、课程生产、增长复盘、付费质检、Git 提交推送；兼容 Cursor 插件与 Claude Code 插件。"
   },
   "plugins": [
     {
       "name": "kj-skills",
       "source": "./",
-      "description": "wiki-doc-sink、ai-daily、content-creator、course、growth-review、paid-content-review、ai-coding-weekly-report、markdown-format、git-push、kangjian-skill。"
+      "description": "wiki-doc-sink、ai-daily、phenomenon-insight、content-creator、course、growth-review、paid-content-review、ai-coding-weekly-report、markdown-format、git-push、kangjian-skill。"
     }
   ]
 }
