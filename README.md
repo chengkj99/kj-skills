@@ -17,6 +17,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/phenomenon-insight](skills/phenomenon-insight/SKILL.md) | 现象本质洞察：把真实事件/困惑拆成隐含假设、机制、反常识判断和内容观点 |
 | [skills/local-stt-transcription](skills/local-stt-transcription/SKILL.md) | 本地视频/音频转最终校对文字稿：调用 jianchang512/stt，默认 medium + 术语校对润色，高精度 large-v3 + 校对 |
 | [skills/kangjian-skill](skills/kangjian-skill/SKILL.md) | 以康健本人风格创作公众号文章 / 短视频口播 / AI 编程教程 / 演讲稿（去 AI 味门禁） |
+| [skills/humanizer-zh](skills/humanizer-zh/SKILL.md) | 中文去 AI 味：编辑或审阅文本，去除 AI 生成痕迹，使其更自然、更像人写 |
 | [skills/tutorial-guide](skills/tutorial-guide/SKILL.md) | 新手教程指南生成：主题 / 链接 → Markdown + Word `.docx` 完整指南（含封面、目录、引流页） |
 | [skills/wechat-companion](skills/wechat-companion/SKILL.md) | 公众号发布配套物料：前言、标题、摘要、封面图提示词、朋友圈和社群转发文案 |
 | [skills/wechat-publish-kit](skills/wechat-publish-kit/SKILL.md) | 公众号发布包：正文 → 配套文案、封面图/提示词、发布用 Markdown、结构优化与可选草稿发布 |
@@ -27,6 +28,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/ai-coding-weekly-report](skills/ai-coding-weekly-report/SKILL.md) | AI 编程中文周报：采集、筛选、中文摘要、价值影响判断和引用链接 |
 | [skills/industry-best-practices](skills/industry-best-practices/SKILL.md) | 行业最佳实践调研：围绕主题多源检索 + 证据分级 + 时效计权，转译为优化建议、MVP、指标、机会池和行动计划 |
 | [skills/kangjian-douyin-media](skills/kangjian-douyin-media/SKILL.md) | 程序员康健抖音数据增量抓取、归档与评论/作品 Markdown 报告生成 |
+| [skills/kangjian-wechat-media](skills/kangjian-wechat-media/SKILL.md) | 程序员康健公众号 / 视频号数据归档与分析 |
 | [skills/content-growth-review](skills/content-growth-review/SKILL.md) | 内容增长复盘：基于抖音/视频号/公众号/小红书数据诊断问题、调整方向、生成选题池 |
 | [skills/paid-content-review](skills/paid-content-review/SKILL.md) | 付费课程 / 专栏 / 文章上线前质检：按 P0/P1/P2 输出结构、准确性、付费价值审查报告 |
 | [skills/weekly-digest](skills/weekly-digest/SKILL.md) | Git 周报生成器：从单项目或多项目 git log 生成结构化中文周报 |
