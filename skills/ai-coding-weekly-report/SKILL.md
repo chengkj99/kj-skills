@@ -224,3 +224,12 @@ description: AI 编程周报生成器。当用户需要生成 AI 编程周报、
 - **人工确认环节**：Phase 3 必须暂停等待用户确认，这是质量保障的关键节点
 - **幂等性**：每次执行产生独立的新文件，不覆盖历史产出
 - **内容风格**：公众号深度改写遵循人设（康健 / 程序员 AI 破局指南），坚定、专业、去 AI 味、反爹味
+
+## 交付前自检
+
+- [ ] 确认 `output/ai-coding-weekly-report/` 下已生成同一时间戳的四个文件：`weekly_*.md`、`article_*.md`、`script_*.md`、`collect-log_*.json`
+- [ ] 用 `python3 -c "import json; json.load(open('<采集日志路径>'))"` 校验采集日志可解析，且每条 item 的 `url` 字段非空（无有效链接时填 `"N/A"` 并附 `url_note`）
+- [ ] 抽查周报精选稿中至少 3 条 `[来源名称](URL)` 引用链接，确认链接来自 WebSearch 真实结果且可访问
+- [ ] 核对 `article_*.md` 篇幅约 2000 字，并已按 content-creator 的 12 项清单完成去 AI 味检查
+- [ ] 确认 `script_*.md` 含 3-5 个 60-90 秒口播段落，每段开头是 Hook
+- [ ] 确认三格式输出是在 Phase 3 用户确认候选列表之后才生成的

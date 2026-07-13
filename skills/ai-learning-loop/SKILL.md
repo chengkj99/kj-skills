@@ -99,3 +99,11 @@ For one loop, return:
 6. 下一轮问题
 
 Keep the answer concise unless the user asks for a full draft or asks to write files.
+
+## 交付前自检
+
+- [ ] 对照 Output Contract 逐项核对回复包含全部 6 项：今日真实问题、最小输入/调研包、表达卡片、评审反馈、只补哪一张卡、下一轮问题
+- [ ] 无材料请求时，清点调研包数量达标：必读资源恰好 3 个、可选资源不超过 5 个，且含 skip list、阅读顺序和首个输出任务
+- [ ] 检查表达卡片只围绕一个核心判断展开，评审反馈逐条回答了第 4 步列出的 6 个问题
+- [ ] 确认沉淀建议默认不超过一张必要卡片，且沉淀目标与 Gap 对照表（`wiki/concepts/`、`wiki/playbooks/` 等）一致
+- [ ] 在 `kj-llm-wiki` 中执行时，确认未在用户未明确要求的情况下写入 `raw/` 目录

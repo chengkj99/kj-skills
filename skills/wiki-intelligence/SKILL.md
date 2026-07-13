@@ -97,3 +97,11 @@ install.sh
 - `jq` — JSON 解析（`brew install jq`）
 - `python3` — 解析对话记录（macOS 自带）
 - `claude` CLI — AI 分析子进程（Claude Code 自带）
+
+## 交付前自检
+
+- [ ] 运行 `WI_SKIP_CLAUDE_TESTS=1 bash tests/test-wiki-intelligence.sh` 并确认退出码为 0；在 Claude Code 外部改动时再跑一次不带跳过变量的完整测试。
+- [ ] 对照「文件结构」一节核验：`hooks/` 下 `prompt-quality.sh`、`knowledge-capture.sh`、`session-start-cleanup.sh` 与 `hooks/lib/` 下两个共享库均存在且可执行。
+- [ ] 运行 `jq . ~/.claude/wiki-intelligence.config.json` 确认配置是合法 JSON 且退出码为 0，`wiki_path` 指向真实存在的目录。
+- [ ] 确认好提示词只写入 `{wiki_path}/{prompt_collection_path}/` 下的分类文件（`design.md` / `analysis.md` / `planning.md` / `general.md`），未写到 wiki 目录之外。
+- [ ] 若改动了 hook 行为或新增配置字段，确认本文件「配置」表与「文件结构」段已同步更新。

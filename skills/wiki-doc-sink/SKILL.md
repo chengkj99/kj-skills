@@ -83,3 +83,11 @@ disable-model-invocation: false
 ## 显式使用方式
 
 用户在 Cursor / Claude Code 中 **@ 引用本 skill**（或对话里写「按 wiki-doc-sink」）即视为启用本流程；无需依赖模型自动猜测。
+
+## 交付前自检
+
+- [ ] 确认动笔前已按顺序读取 `references/personal-wiki-bridge.md`、`references/routing-notes.md`、`<WIKI_ROOT>/SCHEMA.md`、`<WIKI_ROOT>/CLAUDE.md`。
+- [ ] 检查页面落在 `wiki/` 下正确子目录（`sources/`、`concepts/`、`entities/`、`analysis/`、`synthesis/` 等），页面格式符合 `SCHEMA.md`。
+- [ ] 在 `<WIKI_ROOT>` 运行 `git status`，确认 `raw/` 内没有任何既有文件被修改、删除或移动。
+- [ ] 确认新建或重要更新已同步 `wiki/index.md`，且 `wiki/log.md` 末尾追加了一行记录、未改动既有行。
+- [ ] 核对页面日期为用户环境当前日期、摘要与解析以中文为主，且回复中已注明实际写入的绝对路径与库名（个人 Wiki）。

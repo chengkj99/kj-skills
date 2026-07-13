@@ -164,3 +164,11 @@ Read `references/stt.md` when setup, dependency, API, model, or language details
 are needed.
 Read `references/transcript-polish.md` when choosing default vs high-accuracy
 mode or producing a corrected/polished transcript.
+
+## 交付前自检
+
+- [ ] 确认 `scripts/transcribe_with_stt.py` 以退出码 0 结束；STT 失败时如实报告，不伪造转写结果。
+- [ ] 确认最终产物只有一份润色后的文字稿，且位于 `raw/studio/transcripts/<source-stem>-文字稿.md`（用户另行指定路径或明确要求保留多版本草稿时除外）。
+- [ ] 检查润色稿包含约定元信息：源文件名、语言/模型/格式、所用 raw STT 模型；若生成过字幕，附上 SRT 路径。
+- [ ] 确认最终输出目录中不存在 `-raw.md` 等原始草稿文件，`/tmp/local-stt-transcription/` 下的临时草稿已在润色完成后删除。
+- [ ] 对照 `references/transcript-polish.md` 完成错词校正（如 `体效 -> 提效`、`反攻 -> 返工`）；若发现新的常见错词，已回写到该参考文件。

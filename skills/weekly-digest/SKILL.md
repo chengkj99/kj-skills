@@ -265,3 +265,14 @@ git log --since="$LAST_MONDAY" --until="$THIS_MONDAY" \
 - `assets/templates/single-project.md` — 单项目周报完整模板
 - `assets/templates/multi-project.md` — 多项目周报完整模板
 - `scripts/collect.sh` — 跨平台 git 数据采集脚本
+
+---
+
+## 交付前自检
+
+- [ ] 确认 `scripts/collect.sh`（或 Step 1 的 git log 命令）执行成功且退出码为 0，提交数、+行/-行、文件数均来自真实 git 输出，未做估算。
+- [ ] 对照 `assets/templates/` 模板核验结构：单项目周报含「本周」「上周」「📈 趋势对比」三节；多项目周报含「项目概览」表和「📈 团队整体趋势」表。
+- [ ] 检查提交已按主题分类（新功能 / Bug 修复 / 文档 / 重构 / 测试 / 维护），而非按时间等权罗列；每条摘要写明「为什么重要」。
+- [ ] 核对「趋势对比」表中提交数、新增行、文件变更的变化百分比与上文本周/上周统计数字一致。
+- [ ] 确认总长度达标：单项目 ≤ 100 行，多项目 ≤ 200 行。
+- [ ] 确认 merge commit 已按默认过滤（用户口令「含 merge」时除外）；本周无提交时已输出「本周无提交」并保留上周摘要与趋势。

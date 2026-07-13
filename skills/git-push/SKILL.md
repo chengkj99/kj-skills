@@ -131,3 +131,11 @@ git push -u origin "$(git branch --show-current)"
 
 - [`references/commit-patterns.md`](references/commit-patterns.md) — 按变更类型匹配 commit 模板  
 - [`examples/workflow.sh`](examples/workflow.sh) — 可本地运行的检查与暂存示例（提交/推送需 Agent 按 diff 生成 message 后执行）
+
+## 交付前自检
+
+- [ ] push 后运行 `git status`，确认输出为 working tree clean 且当前分支与远程无 ahead/behind
+- [ ] 核对 commit 标题符合 `<type>(<scope>): <简短描述>` 格式，type 属于 feat/fix/docs/style/refactor/test/chore 之一，长度约 50–72 字符
+- [ ] 对照 `git diff --cached --stat` 的暂存清单，确认未包含 `.env`、`*credentials*`、`*.pem` 等敏感文件
+- [ ] 确认本次未执行 `git config`、`--no-verify`、对 `main`/`master` 的 force push 等硬性约束禁止的命令
+- [ ] 向用户报告 commit hash 与推送到的远程分支名
