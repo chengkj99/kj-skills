@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markdown 整理"
+  short_description: "Clean up exported or messy Markdown into Obsidian-friendly format"
+  default_prompt: "Use $markdown-format to clean up this Markdown file."

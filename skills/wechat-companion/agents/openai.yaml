@@ -1,0 +1,4 @@
+interface:
+  display_name: "公众号配套文案"
+  short_description: "Companion copy for WeChat articles: titles, summary, share text"
+  default_prompt: "Use $wechat-companion to write companion copy for this article."

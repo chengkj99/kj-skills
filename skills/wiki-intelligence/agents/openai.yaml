@@ -1,0 +1,4 @@
+interface:
+  display_name: "提示词质量 Hook"
+  short_description: "Hook system that evaluates prompt quality and archives good prompts"
+  default_prompt: "Use $wiki-intelligence to set up or run prompt quality checks."

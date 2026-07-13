@@ -1,0 +1,4 @@
+interface:
+  display_name: "新手教程指南"
+  short_description: "Generate a complete beginner tutorial guide as a Word document"
+  default_prompt: "Use $tutorial-guide to create a beginner guide docx for this topic."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git 周报"
+  short_description: "Generate a structured Chinese weekly report from git logs"
+  default_prompt: "Use $weekly-digest to generate this week's report from my repos."

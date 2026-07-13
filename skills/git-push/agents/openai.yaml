@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git 提交推送"
+  short_description: "Stage, write Conventional Commits message, commit and push"
+  default_prompt: "Use $git-push to commit and push my current changes."

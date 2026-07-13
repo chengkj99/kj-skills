@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wiki 沉淀"
+  short_description: "Sink documents and notes into the personal LLM wiki with schema rules"
+  default_prompt: "Use $wiki-doc-sink to save this document into my wiki."

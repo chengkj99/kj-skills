@@ -1,0 +1,4 @@
+interface:
+  display_name: "内容插图"
+  short_description: "Generate SVG illustrations or find illustration spots in articles"
+  default_prompt: "Use $content-illustrator to create illustrations for this article."

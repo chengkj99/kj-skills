@@ -1,0 +1,4 @@
+interface:
+  display_name: "中文去 AI 味"
+  short_description: "Remove AI-generated traces from Chinese text"
+  default_prompt: "Use $humanizer-zh to make this text sound natural and human-written."

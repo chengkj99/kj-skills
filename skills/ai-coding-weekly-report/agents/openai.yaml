@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI 编程周报"
+  short_description: "Weekly Chinese report on AI coding news"
+  default_prompt: "Use $ai-coding-weekly-report to generate this week's Chinese AI coding report."

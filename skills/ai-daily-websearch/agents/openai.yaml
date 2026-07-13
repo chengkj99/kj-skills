@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI 前沿日报"
+  short_description: "Daily AI news brief via web search with P0/P1/P2 grading"
+  default_prompt: "Use $ai-daily-websearch to produce today's AI news brief and update the site."

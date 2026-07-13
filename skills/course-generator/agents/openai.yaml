@@ -1,0 +1,4 @@
+interface:
+  display_name: "课程章节生成"
+  short_description: "Generate a publishable course chapter from outline and materials"
+  default_prompt: "Use $course-generator to write this chapter from the outline and references."

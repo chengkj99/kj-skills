@@ -1,0 +1,4 @@
+interface:
+  display_name: "课程抓取"
+  short_description: "Scrape course or web content into structured Markdown with assets"
+  default_prompt: "Use $course-scraper to archive this course page into Markdown."

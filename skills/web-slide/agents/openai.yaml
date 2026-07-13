@@ -1,0 +1,4 @@
+interface:
+  display_name: "HTML 演讲稿"
+  short_description: "Generate an interactive single-file HTML slide deck"
+  default_prompt: "Use $web-slide to turn this content into an interactive HTML deck."

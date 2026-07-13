@@ -1,0 +1,4 @@
+interface:
+  display_name: "康健风格创作"
+  short_description: "Write articles, scripts and tutorials in Kangjian's personal style"
+  default_prompt: "Use $kangjian-skill to write this piece in Kangjian's voice."

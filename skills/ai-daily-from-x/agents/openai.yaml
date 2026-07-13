@@ -1,0 +1,4 @@
+interface:
+  display_name: "X AI 情报日报"
+  short_description: "Daily AI digest from curated X accounts"
+  default_prompt: "Use $ai-daily-from-x to compose today's AI digest from X account activity."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "实战记录转教程"
+  short_description: "Convert raw coding session logs into a structured tutorial draft"
+  default_prompt: "Use $coding-session-to-tutorial to turn my session log into a tutorial draft."

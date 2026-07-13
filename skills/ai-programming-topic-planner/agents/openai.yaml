@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI 编程选题策划"
+  short_description: "Turn AI coding news or pain points into content angles"
+  default_prompt: "Use $ai-programming-topic-planner to turn this update into 3-5 content angles."

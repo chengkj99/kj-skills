@@ -1,0 +1,4 @@
+interface:
+  display_name: "知识地图"
+  short_description: "Research a topic and render a dense single-file HTML knowledge map"
+  default_prompt: "Use $knowledge-map to build a knowledge map for this topic."

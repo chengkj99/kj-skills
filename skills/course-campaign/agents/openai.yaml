@@ -1,0 +1,4 @@
+interface:
+  display_name: "课程批量生产"
+  short_description: "Batch-produce course chapters via course-generator"
+  default_prompt: "Use $course-campaign to produce all chapters of this course in order."

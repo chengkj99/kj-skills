@@ -1,0 +1,4 @@
+interface:
+  display_name: "付费内容质检"
+  short_description: "Pre-release P0/P1/P2 quality review for paid content"
+  default_prompt: "Use $paid-content-review to review this course chapter before release."
