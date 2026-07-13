@@ -25,6 +25,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/ai-daily-from-x](skills/ai-daily-from-x/SKILL.md) | 每日 AI 情报日报（X 账号采集 + 评分 rubric） |
 | [skills/ai-daily-websearch](skills/ai-daily-websearch/SKILL.md) | 每日 AI 前沿日报（WebSearch 采集 + P0/P1/P2 分级 + 网站自动发布） |
 | [skills/ai-coding-weekly-report](skills/ai-coding-weekly-report/SKILL.md) | AI 编程中文周报：采集、筛选、中文摘要、价值影响判断和引用链接 |
+| [skills/industry-best-practices](skills/industry-best-practices/SKILL.md) | 行业最佳实践调研：围绕主题多源检索 + 证据分级 + 时效计权，转译为优化建议、MVP、指标、机会池和行动计划 |
 | [skills/kangjian-douyin-media](skills/kangjian-douyin-media/SKILL.md) | 程序员康健抖音数据增量抓取、归档与评论/作品 Markdown 报告生成 |
 | [skills/content-growth-review](skills/content-growth-review/SKILL.md) | 内容增长复盘：基于抖音/视频号/公众号/小红书数据诊断问题、调整方向、生成选题池 |
 | [skills/paid-content-review](skills/paid-content-review/SKILL.md) | 付费课程 / 专栏 / 文章上线前质检：按 P0/P1/P2 输出结构、准确性、付费价值审查报告 |

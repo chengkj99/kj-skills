@@ -1,0 +1,4 @@
+interface:
+  display_name: "行业最佳实践"
+  short_description: "Industry best practices research and optimization workflow"
+  default_prompt: "Use $industry-best-practices to research industry signals and turn them into product optimization suggestions."
