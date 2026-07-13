@@ -36,6 +36,23 @@ def goto(page, url: str, timeout: int = 60000):
     time.sleep(2)
 
 
+def hydrate_lazy_content(page):
+    """触发懒加载图片/正文块，避免只抓到首屏。"""
+    try:
+        page.evaluate("""async () => {
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            const total = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            for (let y = 0; y <= total; y += 900) {
+                window.scrollTo(0, y);
+                await sleep(120);
+            }
+            window.scrollTo(0, 0);
+            await sleep(300);
+        }""")
+    except Exception:
+        pass
+
+
 def detect_platform(url: str) -> str:
     """根据 URL 判断课程平台类型。"""
     host = urlparse(url).netloc.lower()
@@ -156,34 +173,94 @@ def collect_generic_lesson_links(page, base_url: str) -> list[dict]:
 
 # ── 内容提取 ──────────────────────────────────────────────
 
-def extract_content(page) -> str:
-    """提取课时正文内容，优先找最合适的容器元素。"""
-    selectors = [
-        '.lesson-content', '.course-content', '.content-body',
-        '#lesson-content', '.lesson-body', 'article',
-        '.main-content', 'main'
-    ]
-    for sel in selectors:
-        try:
-            el = page.query_selector(sel)
-            if el:
-                text = el.inner_text().strip()
-                if len(text) > 80:
-                    return text
-        except Exception:
-            continue
+CONTENT_SELECTORS = [
+    '.lesson-content', '.course-content', '.content-body',
+    '#lesson-content', '.lesson-body', 'article',
+    '.main-content', 'main', '[role="main"]'
+]
 
-    # 降级：清理侧边栏后取 body 文本
+
+def extract_content(page) -> tuple[str, str]:
+    """提取课时正文 Markdown，尽量保留图片在原文中的位置。"""
     try:
-        return page.evaluate("""() => {
-            const body = document.body.cloneNode(true);
-            body.querySelectorAll(
-                'nav, header, footer, script, style, iframe, .sidebar, button'
-            ).forEach(e => e.remove());
-            return body.innerText.trim();
-        }""")
+        return page.evaluate("""(selectors) => {
+            const blockTags = new Set([
+                'P', 'DIV', 'SECTION', 'ARTICLE', 'MAIN', 'HEADER', 'FOOTER',
+                'UL', 'OL', 'LI', 'PRE', 'BLOCKQUOTE', 'TABLE', 'TR'
+            ]);
+            const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
+            const noisySelector = [
+                'nav', 'header', 'footer', 'aside', 'script', 'style', 'noscript',
+                'iframe', 'form', 'button', '[aria-hidden="true"]', '[hidden]',
+                '.sidebar', '.comment', '.comments', '.reply', '.share'
+            ].join(',');
+
+            const pickRoot = () => {
+                const candidates = [];
+                for (const selector of selectors) {
+                    for (const node of document.querySelectorAll(selector)) {
+                        const text = (node.innerText || '').replace(/\\s+/g, ' ').trim();
+                        const images = node.querySelectorAll('img').length;
+                        if (text.length < 80 && images === 0) continue;
+                        candidates.push({selector, node, score: text.length + images * 120});
+                    }
+                }
+                if (!candidates.length) return {selector: 'body', node: document.body};
+                candidates.sort((a, b) => b.score - a.score);
+                return candidates[0];
+            };
+
+            const normalizeImage = (img) => {
+                const src =
+                    img.getAttribute('data-src') ||
+                    img.getAttribute('data-original') ||
+                    img.getAttribute('data-lazy-src') ||
+                    img.currentSrc ||
+                    img.getAttribute('src') ||
+                    '';
+                if (!src || src.startsWith('data:') || src.startsWith('blob:')) return '';
+                try { return new URL(src, document.baseURI).href; } catch { return ''; }
+            };
+
+            const render = (node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return (node.textContent || '').replace(/\\s+/g, ' ');
+                }
+                if (node.nodeType !== Node.ELEMENT_NODE) return '';
+                if (node.matches(noisySelector)) return '';
+                const tag = node.tagName;
+                if (tag === 'IMG') {
+                    const src = normalizeImage(node);
+                    if (!src) return '';
+                    const alt = node.getAttribute('alt') || node.getAttribute('title') || 'image';
+                    return `\\n\\n![${alt}](${src})\\n\\n`;
+                }
+                if (tag === 'BR') return '\\n';
+                if (headingTags.has(tag)) {
+                    const level = Number(tag.slice(1));
+                    const text = Array.from(node.childNodes).map(render).join('').trim();
+                    return text ? `\\n\\n${'#'.repeat(level)} ${text}\\n\\n` : '';
+                }
+                if (tag === 'LI') {
+                    const text = Array.from(node.childNodes).map(render).join('').trim();
+                    return text ? `\\n- ${text}` : '';
+                }
+                const inner = Array.from(node.childNodes).map(render).join('');
+                if (blockTags.has(tag)) return `\\n\\n${inner.trim()}\\n\\n`;
+                return inner;
+            };
+
+            const picked = pickRoot();
+            const root = picked.node.cloneNode(true);
+            root.querySelectorAll(noisySelector).forEach((el) => el.remove());
+            const markdown = Array.from(root.childNodes).map(render).join('');
+            return {
+                markdown: markdown.replace(/\\n{3,}/g, '\\n\\n').trim(),
+                selector: picked.selector
+            };
+        }""", CONTENT_SELECTORS)
     except Exception:
-        return ""
+        return "", ""
 
 
 def ext_from_response(url: str, content_type: str) -> str:
@@ -204,16 +281,28 @@ def slug_text(text: str, fallback: str) -> str:
     return (text or fallback)[:48]
 
 
-def collect_image_candidates(page) -> list[dict]:
+def collect_image_candidates(page, root_selector: str = "") -> list[dict]:
     """收集正文区域可见图片 URL，过滤明显图标和 data/blob。"""
-    return page.evaluate("""() => {
-        const container = document.querySelector(
-            '.lesson-content, .course-content, .content-body, #lesson-content, .lesson-body, article, .main-content, main'
-        ) || document.body;
+    return page.evaluate("""({rootSelector, selectors}) => {
+        let container = rootSelector ? document.querySelector(rootSelector) : null;
+        if (!container) {
+            for (const selector of selectors) {
+                container = document.querySelector(selector);
+                if (container && ((container.innerText || '').trim().length > 80 || container.querySelector('img'))) break;
+            }
+        }
+        container = container || document.body;
         const out = [];
         const seen = new Set();
         for (const img of container.querySelectorAll('img')) {
-            const src = img.currentSrc || img.src || img.getAttribute('src') || '';
+            const src =
+                img.getAttribute('data-src') ||
+                img.getAttribute('data-original') ||
+                img.getAttribute('data-lazy-src') ||
+                img.currentSrc ||
+                img.src ||
+                img.getAttribute('src') ||
+                '';
             if (!src || src.startsWith('data:') || src.startsWith('blob:')) continue;
             let url;
             try { url = new URL(src, document.baseURI).href; } catch { continue; }
@@ -231,20 +320,30 @@ def collect_image_candidates(page) -> list[dict]:
             });
         }
         return out;
-    }""")
+    }""", {"rootSelector": root_selector, "selectors": CONTENT_SELECTORS})
 
 
-def download_images(context, page, output_dir: Path, page_slug: str, max_images: int = 80) -> tuple[list[dict], int]:
-    candidates = collect_image_candidates(page)[:max_images]
+def is_image_response(content_type: str) -> bool:
+    ctype = (content_type or "").split(";", 1)[0].strip().lower()
+    return ctype.startswith("image/") or ctype == "image/svg+xml"
+
+
+def download_images(context, page, output_dir: Path, page_slug: str, root_selector: str = "", max_images: int = 80) -> tuple[list[dict], int]:
+    candidates = collect_image_candidates(page, root_selector)[:max_images]
     asset_dir = output_dir / "_assets" / page_slug
     downloaded: list[dict] = []
     seen_hashes = set()
     for img in candidates:
         url = img["url"]
+        fetch_url = url.split("#", 1)[0]
         try:
-            response = context.request.get(url, timeout=20000)
+            response = context.request.get(fetch_url, timeout=20000, headers={"Referer": page.url})
             if not response.ok:
                 img["error"] = f"HTTP {response.status}"
+                continue
+            content_type = response.headers.get("content-type", "")
+            if not is_image_response(content_type):
+                img["error"] = f"non-image {content_type or 'unknown'}"
                 continue
             body = response.body()
             if not body:
@@ -255,7 +354,7 @@ def download_images(context, page, output_dir: Path, page_slug: str, max_images:
                 continue
             seen_hashes.add(digest)
             asset_dir.mkdir(parents=True, exist_ok=True)
-            ext = ext_from_response(url, response.headers.get("content-type", ""))
+            ext = ext_from_response(fetch_url, content_type)
             name = f"{len(downloaded) + 1:02d}-{slug_text(img.get('alt', ''), 'image')}{ext}"
             path = asset_dir / name
             path.write_bytes(body)
@@ -266,8 +365,24 @@ def download_images(context, page, output_dir: Path, page_slug: str, max_images:
     return downloaded, len(candidates)
 
 
+def localize_markdown_images(content: str, images: list[dict]) -> str:
+    content = content or ""
+    for img in images:
+        local = img.get("local")
+        if not local:
+            continue
+        for remote_url in {img["url"], img["url"].split("#", 1)[0]}:
+            remote = re.escape(remote_url)
+            content = re.sub(rf"!\[([^\]]*)\]\({remote}(?:\s+\"[^\"]*\")?\)", rf"![\1]({local})", content)
+            content = content.replace(remote_url, local)
+        content = re.sub(rf"(\({re.escape(local)})#[^)]+(\))", rf"\1\2", content)
+    return content
+
+
 def append_image_gallery(content: str, images: list[dict]) -> str:
     if not images:
+        return content
+    if any(img.get("local") and img["local"] in (content or "") for img in images):
         return content
     lines = ["", "", "## 图片 / Images", ""]
     for img in images:
@@ -401,12 +516,15 @@ def scrape(url: str, email: str, password: str, output_dir: Path, no_login: bool
             )
             print(f"  [{i+1}/{len(urls_to_visit)}] {lesson_url}")
             goto(page, lesson_url)
+            hydrate_lazy_content(page)
 
             title = get_lesson_title(page, sidebar_title)
-            content = extract_content(page)
+            extracted = extract_content(page)
+            content = extracted.get('markdown', '') if isinstance(extracted, dict) else extracted[0]
+            root_selector = extracted.get('selector', '') if isinstance(extracted, dict) else extracted[1]
             page_slug = f"{i+1:02d}-{slugify(title)}"
-            images, image_candidates = download_images(context, page, output_dir, page_slug)
-            content = append_image_gallery(content, images)
+            images, image_candidates = download_images(context, page, output_dir, page_slug, root_selector=root_selector)
+            content = append_image_gallery(localize_markdown_images(content, images), images)
             print(f"    标题: {title} | 内容: {len(content)} 字符 | 图片: {len(images)}/{image_candidates}")
 
             all_lessons.append({
@@ -426,11 +544,14 @@ def scrape(url: str, email: str, password: str, output_dir: Path, no_login: bool
                 visited.add(next_url)
                 steps += 1
                 goto(page, next_url)
+                hydrate_lazy_content(page)
                 title = get_lesson_title(page)
-                content = extract_content(page)
+                extracted = extract_content(page)
+                content = extracted.get('markdown', '') if isinstance(extracted, dict) else extracted[0]
+                root_selector = extracted.get('selector', '') if isinstance(extracted, dict) else extracted[1]
                 page_slug = f"{len(all_lessons)+1:02d}-{slugify(title)}"
-                images, image_candidates = download_images(context, page, output_dir, page_slug)
-                content = append_image_gallery(content, images)
+                images, image_candidates = download_images(context, page, output_dir, page_slug, root_selector=root_selector)
+                content = append_image_gallery(localize_markdown_images(content, images), images)
                 if content:
                     print(f"    补漏: {title} ({len(content)} 字符, 图片 {len(images)}/{image_candidates})")
                     all_lessons.append({

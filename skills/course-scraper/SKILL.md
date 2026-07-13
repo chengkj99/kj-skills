@@ -31,12 +31,26 @@ description: >-
 两个脚本都必须把图片作为正文资产的一部分处理：
 
 - 图片保存位置：每篇文章/课时旁边的 `_assets/<文件slug>/`
-- Markdown 写法：正文里的远程图片链接改成本地相对路径，例如 `![](./_assets/xx/01-image.png)` 或 `![](_assets/xx/01-image.png)`
-- 如果正文提取器没有保留图片位置，脚本会在文末追加 `## 图片 / Images` 区块，至少保证图片不丢。
+- Markdown 写法：正文里的远程图片链接改成本地相对路径，例如 `![](./_assets/xx/01-image.png)` 或 `![](_assets/xx/01-image.png)`。
+- **图片必须尽量插回正文原位置**：优先在正文容器内按 DOM 顺序转换 Markdown，让图出现在对应段落/步骤附近，形成可读的图文资料。
+- 只有当正文提取器无法保留图片位置时，才允许在文末追加 `## 图片 / Images` 区块；这种情况必须在报告或文件头体现，方便后续人工复核。
 - 文件头或报告中记录图片数量：`图片 / Images: 已下载数/候选数`
-- 跳过 `data:`、`blob:` 与明显小图标；下载失败不阻塞正文抓取，但必须在报告中体现下载数量。
+- 跳过 `data:`、`blob:`、明显小图标、头像、二维码、评论区、页脚分享图等非正文图片；下载失败不阻塞正文抓取，但必须在报告中体现下载数量。
+- 下载图片后必须校验响应类型，`text/html` / 验证页 / 错误页不能冒充图片落盘；若下载失败，保留正文并在报告中记录。
 
 > 经验教训：早期版本只抓正文，`scrape.py` 甚至只取 `inner_text()`，会把课程截图、流程图、UI 图全部丢掉。后续任何抓取都要把“图片本地化”作为验收项。
+> 经验教训：很多站点会把头像、二维码、作者卡片、评论区、推荐阅读、分享按钮、广告和页脚混在 `body` 里。抓取时必须优先锁定正文容器（如 `article`、`main`、`[role=main]`、`.markdown-body`、`.post-content`、`.lesson-content`，以及少数站点的正文容器如 `#js_content`），不要从 `body img` 全量收图。
+
+## 正文清洗规则（默认开启）
+
+抓取目标不是“整页备份”，而是“可阅读、可沉淀的正文资料”。脚本输出必须满足：
+
+- 优先选择通用正文容器：`article`、`main`、`[role=main]`、`.markdown-body`、`.post-content`、`.entry-content`、`.article-content`、`.lesson-content` 等；站点特定容器（如 `#js_content`）只能作为补充选择器，不能让脚本退化为某个平台专用。
+- 不要把导航栏、页脚、作者卡片、二维码、评论/留言入口、分享按钮、推荐阅读、订阅/登录 CTA、搜索/投诉/跳转提示、登录运行时提示当作正文。
+- 若 `trafilatura` 抽取结果偏薄或混入运行时文案，必须回到 Playwright DOM，读取正文容器并二次清洗。
+- 文件头里的 `抓取方式` 要写明使用了 `dom-container:<selector>`、`trafilatura` 还是 `markdownify-fallback`，不要把兜底产物伪装成高质量正文。
+- 如果正文和图片位置明显错位，优先修脚本或做容器级重抓；不要只把图片堆到文末交付。
+- 如果输出里出现验证码、安全验证、异常环境页、`security verification`，或 `markdownify-fallback` 产物包含大量 CSS/JS（如 `window.`、`document.`、`@media`），即使字符数很多也必须标为 `THIN/ERROR`，不能算 `OK`。
 
 ---
 
@@ -165,8 +179,8 @@ python3 <skill_dir>/scripts/fetch_links.py \
   [--subdir 01-official-docs] [--limit N]
 ```
 
-脚本会：解析清单里的链接（Markdown 表格自动取标题）→ 逐个 Playwright 渲染 → trafilatura 提取
-→ markdownify 兜底 → 下载可见正文图片并本地化 Markdown 图片链接 → 存为 `01-<slug>.md` …
+脚本会：解析清单里的链接（Markdown 表格自动取标题）→ 逐个 Playwright 渲染 → 优先定位正文容器并按 DOM 顺序转换 Markdown
+→ trafilatura / markdownify 兜底 → 下载正文容器图片并本地化 Markdown 图片链接 → 存为 `01-<slug>.md` …
 → 写 `_fetch_report.json`（含每条 ok/thin/error 与图片下载数量）。
 
 > 大清单建议 `run_in_background` 跑（几十页约 5–8 分钟），完成后读 `_fetch_report.json` 核对。
@@ -204,6 +218,14 @@ rg -n '!\[[^\]]*\]\(https?://' <输出目录> --glob '*.md'
 ```
 
 若有输出，说明仍有远程图片链接，需要补下载或在文件头标注原因。
+
+同时检查图片是否只堆在文末：
+
+```bash
+rg -n '^## 图片 / Images' <输出目录> --glob '*.md'
+```
+
+若有输出，先抽查原网页正文。如果原网页图片本来穿插在步骤/段落之间，应修正提取逻辑或做正文容器重抓，把图片插回对应位置；只有无法定位原位置时才保留文末图库。
 
 ### 第六步：翻译（可选，见下方「翻译为双语格式」）
 
