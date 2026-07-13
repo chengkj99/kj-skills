@@ -13,27 +13,48 @@ from typing import Any
 TRIGGER_WORDS = (
     "use when",
     "when to use",
+    "used when",
+    "when the user",
     "trigger",
     "用户",
     "当用户",
     "适用",
     "触发",
+    "时使用",
+    "使用本",
+    "使用此",
 )
+
+_KEY_RE = re.compile(r"^([A-Za-z0-9_-]+):\s*(.*)$")
 
 
 def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
+    """解析 frontmatter，支持 YAML 块标量（>、>-、|、|-）和缩进折行。"""
     if not text.startswith("---\n"):
         return {}, text
     end = text.find("\n---", 4)
     if end == -1:
         return {}, text
-    raw = text[4:end].strip().splitlines()
+    lines = text[4:end].strip().splitlines()
     data: dict[str, str] = {}
-    for line in raw:
-        if ":" not in line:
+    i = 0
+    while i < len(lines):
+        match = _KEY_RE.match(lines[i])
+        if not match:
+            i += 1
             continue
-        key, value = line.split(":", 1)
-        data[key.strip()] = value.strip().strip('"').strip("'")
+        key, value = match.groups()
+        parts: list[str] = []
+        if value.strip() not in {">", ">-", "|", "|-", ""}:
+            parts.append(value.strip())
+        # 吸收缩进的续行（块标量内容或 plain scalar 折行）
+        j = i + 1
+        while j < len(lines) and (not lines[j].strip() or lines[j][:1] in (" ", "\t")):
+            if lines[j].strip():
+                parts.append(lines[j].strip())
+            j += 1
+        data[key] = " ".join(parts).strip().strip('"').strip("'")
+        i = j
     return data, text[end + 4 :]
 
 
