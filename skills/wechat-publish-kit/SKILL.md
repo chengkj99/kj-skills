@@ -1,7 +1,7 @@
 ---
 name: wechat-publish-kit
 description: >-
-  Prepare a complete WeChat Official Account article release package from an existing article, tutorial, Word/Markdown draft, or source document. Use when the user asks for 公众号发布素材、公众号配套、封面图、发布稿、公众号草稿、标题/前言/摘要/转发文案, or wants to turn an article into a publish-ready WeChat package with generated cover image, companion copy, publish-safe Markdown, title-selection handoff, and optional draft publishing.
+  Prepare a complete WeChat Official Account article release package from an existing article, tutorial, Word/Markdown draft, or source document. Use when the user asks for 公众号发布素材、公众号配套、封面图、发布稿、公众号草稿, or wants to turn an article into a publish-ready WeChat package with generated cover image, companion copy, publish-safe Markdown, title-selection handoff, and optional draft publishing. 这是公众号发布的默认总控入口；若用户明确只要标题/前言/摘要/转发文案等纯文案物料、不需要生成封面图片和发布稿，改用 wechat-companion。
 ---
 
 # WeChat Publish Kit
