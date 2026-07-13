@@ -47,6 +47,12 @@ link_skill() {
     return
   fi
 
+  # 目录必须包含 SKILL.md 才视为 skill，避免把工作区等杂项目录注册进去
+  if [ -d "$skill_path" ] && [ ! -f "$skill_path/SKILL.md" ]; then
+    echo "  skipped (no SKILL.md): $skill_name"
+    return
+  fi
+
   local dst="$SKILLS_DST/$skill_name"
   if [ -e "$dst" ] || [ -L "$dst" ]; then
     skipped=$((skipped + 1))

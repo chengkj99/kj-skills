@@ -1,4 +1,6 @@
 .DS_Store
+# skill-creator 的 eval 工作区不放在 skills/ 下
+skills/*-workspace/
 .omc/
 .env
 .env.*
