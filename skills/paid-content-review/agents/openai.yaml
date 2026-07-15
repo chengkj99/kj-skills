@@ -1,4 +1,4 @@
 interface:
   display_name: "付费内容质检"
-  short_description: "Pre-release P0/P1/P2 quality review for paid content"
-  default_prompt: "Use $paid-content-review to review this course chapter before release."
+  short_description: "知识星球基础内容发布前质检：深度价值/专业易懂/逻辑清晰 + P0/P1/P2"
+  default_prompt: "Use $paid-content-review to review this course chapter before release. Check U1 depth/value, U2 professional-yet-clear, U3 narrative logic for 知识星球."
