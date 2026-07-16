@@ -16,6 +16,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/content-creator](skills/content-creator/SKILL.md) | 长文 / 短视频 / 小红书等工作流（含 A/B/C/D/E/F 六条分支） |
 | [skills/phenomenon-insight](skills/phenomenon-insight/SKILL.md) | 现象本质洞察：把真实事件/困惑拆成隐含假设、机制、反常识判断和内容观点 |
 | [skills/local-stt-transcription](skills/local-stt-transcription/SKILL.md) | 本地视频/音频转最终校对文字稿：调用 jianchang512/stt，默认 medium + 术语校对润色，高精度 large-v3 + 校对 |
+| [skills/extract-conversation-insights](skills/extract-conversation-insights/SKILL.md) | 录音对话价值挖掘：保留证据、质疑推断，提炼知识、内容选题、行动实验与关系跟进 |
 | [skills/kangjian-skill](skills/kangjian-skill/SKILL.md) | 以康健本人风格创作公众号文章 / 短视频口播 / AI 编程教程 / 演讲稿（去 AI 味门禁） |
 | [skills/humanizer-zh](skills/humanizer-zh/SKILL.md) | 中文去 AI 味：编辑或审阅文本，去除 AI 生成痕迹，使其更自然、更像人写 |
 | [skills/tutorial-guide](skills/tutorial-guide/SKILL.md) | 新手教程指南生成：主题 / 链接 → Markdown + Word `.docx` 完整指南（含封面、目录、引流页） |
@@ -117,19 +118,23 @@ kangjian-skill（风格润色）
     发布（公众号 / 短视频 / 小红书）
 ```
 
-短视频原始素材可先经过：
+音视频与对话素材可先经过：
 
 ```
 本地视频/音频
         ↓
 local-stt-transcription（medium/large-v3 + 术语校对）
-        ↓ 已发布内容的最终校对文字稿
-raw/studio/transcripts（已发布短视频内容资产）
-        ↓ 连载选题规划：系列主题 / 下一集角度 / 未展开分支
-content-creator / kangjian-skill
+        ↓ 转写稿
+extract-conversation-insights
+        ↓ 证据观察 + 待验证假设 + 质疑卡
+        ├─→ wiki-doc-sink（知识/方法沉淀）
+        ├─→ content-creator / kangjian-skill（选题与成稿）
+        └─→ 行动实验 / 关系跟进
         ↓
-    发布（短视频 / 公众号 / 小红书）
+复盘结果回到知识库与下一轮内容
 ```
+
+已发布短视频的最终校对文字稿仍进入 `raw/studio/transcripts`，再按连载选题机制复盘；私人聊天、会议、访谈与听分享的转写先由 `extract-conversation-insights` 做证据化提炼和隐私分流。
 
 **典型场景**：看到 Claude Code 更新了某功能 → 用 `ai-programming-topic-planner` 找「程序员最关心的切入角度」→ 用 `phenomenon-insight` 把现象拆到机制和反常识判断 → 用 `content-creator` 工作流 B 孵化成文章 → 用 `kangjian-skill` 去 AI 味润色 → 发布。
 
@@ -185,7 +190,8 @@ content-creator / kangjian-skill
 | `phenomenon-insight` | 洞察前置层 | 真实现象/困惑/异常反馈/生活观察 | 核心洞见、反常识判断、标题与结构入口 / `content-creator` / `kangjian-skill` |
 | `coding-session-to-tutorial` | 结构化整理 | 原始实战记录 | `content-creator` 工作流 C |
 | `course-scraper` | 外部课程存档 | 在线课程 URL + 账号 | `course-generator`（素材）/ `wiki-doc-sink`（沉淀） |
-| `local-stt-transcription` | 本地音视频转最终校对文字稿 | `.mov` / `.mp4` / `.m4a` 等本地素材 | `raw/studio/transcripts` / `content-creator` / `kangjian-skill` |
+| `local-stt-transcription` | 本地音视频转最终校对文字稿 | `.mov` / `.mp4` / `.m4a` 等本地素材 | `extract-conversation-insights` / `raw/studio/transcripts` |
+| `extract-conversation-insights` | 录音证据化挖掘与路由 | 聊天/会议/访谈/分享录音或转写稿 | `wiki-doc-sink` / `content-creator` / 行动实验 |
 | `course-generator` | 课程章节生产 | 章节大纲 + 参考材料 | `kangjian-skill` / 直接发布 |
 | `course-campaign` | 批量课程编排 | 章节清单 / 课程计划 | `course-generator` / 图片完成度报告 |
 | `content-illustrator` | 插图补全 | 描述 / 文章 / 课程占位符 | SVG 插图 / 课程正文 |
