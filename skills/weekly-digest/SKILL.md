@@ -26,6 +26,8 @@ description: >
 | **周报** / **本周总结** / **生成周报** | 同上 |
 | **多项目周报** / **团队周报** | 聚合多个项目输出周报 |
 | **只看本周** | 仅输出本周，不含上周对比 |
+| **按人分类** / **按贡献者分类** / **按作者分类** | 以贡献者为一级分组输出周报 |
+| **按人统计** | 在主题周报后追加贡献者统计表 |
 | **周报 2026-05-19** | 指定周起始日期 |
 
 ---
@@ -58,6 +60,10 @@ description: >
 3. 多项目模式下，确定项目列表来源：
    - 用户显式列出了路径 → 使用用户列表
    - 否则 → 读取配置文件 `~/.claude/weekly-digest-projects.json`（见 references/projects-config.md）
+4. 判断分类视图：
+   - 包含「按人分类」「按贡献者分类」「按作者分类」→ **贡献者视图**，按 Git author（姓名 + 邮箱）分组
+   - 包含「按人统计」→ 保留默认主题视图，并追加贡献者汇总表
+   - 未指定 → **主题视图**（默认）
 
 ### Step 1：采集 git 数据
 
@@ -84,6 +90,9 @@ git log --since="$THIS_MONDAY" --until="$(date -v+1d +%Y-%m-%d)" \
 # 代码统计（上周）
 git log --since="$LAST_MONDAY" --until="$THIS_MONDAY" \
   --shortstat --format="" | awk '/files? changed/ {f+=$1; i+=$4; d+=$6} END {print "files:"f" insertions:"i" deletions:"d}'
+
+# 按贡献者采集（脚本会同时汇总提交数和代码行数）
+./scripts/collect.sh . | jq -r '.this_week.contributors'
 ```
 
 > macOS 与 Linux 的 date 命令语法不同，脚本需兼容两种平台。详见 `scripts/collect.sh`。
@@ -94,16 +103,17 @@ git log --since="$LAST_MONDAY" --until="$THIS_MONDAY" \
 
 **分类规则**（按优先级）：
 
-1. **按 scope 分组**：从 conventional commits 的 `scope` 字段提取（如 `feat(auth): ...` → auth）
-2. **按关键词归类**：扫描 commit message 中的关键词，归入预设类别：
+1. **贡献者视图优先**：按 `author_name + author_email` 分组；同名不同邮箱视为不同贡献者。每位贡献者下再按主题合并其提交，避免逐条罗列。
+2. **按 scope 分组**：从 conventional commits 的 `scope` 字段提取（如 `feat(auth): ...` → auth）
+3. **按关键词归类**：扫描 commit message 中的关键词，归入预设类别：
    - `feat` / `新增` / `实现` → 新功能
    - `fix` / `修复` / `bug` → Bug 修复
    - `docs` / `文档` / `README` → 文档
    - `refactor` / `重构` / `调整` → 重构
    - `test` / `测试` / `eval` → 测试
    - `chore` / `维护` / `CI` / `build` → 维护/基础设施
-3. **合并微小提交**：同一主题的多个小提交（如连续 fix）合并为一条
-4. **提取亮点**：标记影响面大或用户可见的变更（新增行数 > 200、涉及核心 API、新模块等）
+4. **合并微小提交**：同一主题的多个小提交（如连续 fix）合并为一条
+5. **提取亮点**：标记影响面大或用户可见的变更（新增行数 > 200、涉及核心 API、新模块等）
 
 **摘要撰写**：每条不简单复述 commit message，而是提炼：
 - 做了什么（What）
@@ -194,7 +204,7 @@ git log --since="$LAST_MONDAY" --until="$THIS_MONDAY" \
 
 根据用户偏好，可追加以下内容（默认不输出，用户口令触发）：
 
-- **贡献者维度**：按 author 分组统计（口令：「按人统计」）
+- **贡献者维度**：按 author 分组统计（口令：「按人统计」）；如使用「按人分类」，贡献者成为周报正文的一级结构而不是追加表。
 - **PR/Issue 关联**：通过 `gh` CLI 关联 GitHub PR 和 Issue（口令：「关联 PR」）
 - **导出文件**：将周报写入文件（口令：「导出周报」→ 写入 `docs/weekly-digest/{week}.md`）
 
@@ -276,3 +286,4 @@ git log --since="$LAST_MONDAY" --until="$THIS_MONDAY" \
 - [ ] 核对「趋势对比」表中提交数、新增行、文件变更的变化百分比与上文本周/上周统计数字一致。
 - [ ] 确认总长度达标：单项目 ≤ 100 行，多项目 ≤ 200 行。
 - [ ] 确认 merge commit 已按默认过滤（用户口令「含 merge」时除外）；本周无提交时已输出「本周无提交」并保留上周摘要与趋势。
+- [ ] 使用贡献者视图时，确认每个一级分组均来自 Git author，提交数及 +/- 行统计来自 `collect.sh` 的 `contributors` 数据；同名不同邮箱不可静默合并。

@@ -65,6 +65,39 @@ collect_stats() {
     | awk '/files? changed/ {f+=$1; i+=$4; d+=$6} END {print f,i,d}'
 }
 
+# 输出：姓名|邮箱|提交数|新增行|删除行（每位 author 独立汇总）
+collect_contributors() {
+  local since="$1" until="$2"
+  git log --since="$since" --until="$until" --no-merges \
+    --format='__AUTHOR__%an|%ae' --shortstat 2>/dev/null \
+    | awk '
+      /^__AUTHOR__/ {
+        split(substr($0, 11), author, "|")
+        key = author[1] SUBSEP author[2]
+        names[key] = author[1]
+        emails[key] = author[2]
+        commits[key]++
+        current = key
+        next
+      }
+      /files? changed/ && current != "" {
+        if ($4 ~ /^[0-9]+$/) insertions[current] += $4
+        if ($6 ~ /^[0-9]+$/) deletions[current] += $6
+      }
+      END {
+        for (key in commits) {
+          printf "%s|%s|%d|%d|%d\\n", names[key], emails[key], commits[key], insertions[key], deletions[key]
+        }
+      }
+    ' | sort -t'|' -k3,3nr -k1,1
+}
+
+# 将多行文本编码为 JSON 字符串内容（换行转义为字面量 \\n）。
+json_escape() {
+  sed -e 's/\\\\/\\\\\\\\/g' -e 's/"/\\\\"/g' \
+    | awk 'BEGIN { first = 1 } { if (!first) printf "\\\\n"; printf "%s", $0; first = 0 }'
+}
+
 # ─── 输出 JSON ───
 
 # 项目名
@@ -77,6 +110,7 @@ THIS_WEEK_FILES=$(echo "$THIS_WEEK_STATS" | awk '{print $1}')
 THIS_WEEK_INSERTS=$(echo "$THIS_WEEK_STATS" | awk '{print $2}')
 THIS_WEEK_DELETES=$(echo "$THIS_WEEK_STATS" | awk '{print $3}')
 THIS_WEEK_COUNT=$(echo "$THIS_WEEK_COMMITS" | grep -c '.' 2>/dev/null || echo 0)
+THIS_WEEK_CONTRIBUTORS=$(collect_contributors "$THIS_WEEK_START" "$THIS_WEEK_END")
 
 # 上周
 LAST_WEEK_COMMITS=$(collect_commits "$LAST_WEEK_START" "$THIS_WEEK_START")
@@ -85,10 +119,11 @@ LAST_WEEK_FILES=$(echo "$LAST_WEEK_STATS" | awk '{print $1}')
 LAST_WEEK_INSERTS=$(echo "$LAST_WEEK_STATS" | awk '{print $2}')
 LAST_WEEK_DELETES=$(echo "$LAST_WEEK_STATS" | awk '{print $3}')
 LAST_WEEK_COUNT=$(echo "$LAST_WEEK_COMMITS" | grep -c '.' 2>/dev/null || echo 0)
+LAST_WEEK_CONTRIBUTORS=$(collect_contributors "$LAST_WEEK_START" "$THIS_WEEK_START")
 
 cat <<EOF
 {
-  "project": "$PROJECT_NAME",
+  "project": "$(printf '%s' "$PROJECT_NAME" | json_escape)",
   "this_week": {
     "start": "$THIS_WEEK_START",
     "end": "$THIS_WEEK_END",
@@ -96,7 +131,8 @@ cat <<EOF
     "files_changed": ${THIS_WEEK_FILES:-0},
     "insertions": ${THIS_WEEK_INSERTS:-0},
     "deletions": ${THIS_WEEK_DELETES:-0},
-    "commits": "$(echo "$THIS_WEEK_COMMITS" | sed 's/"/\\"/g' | tr '\n' '\\n')"
+    "commits": "$(printf '%s' "$THIS_WEEK_COMMITS" | json_escape)",
+    "contributors": "$(printf '%s' "$THIS_WEEK_CONTRIBUTORS" | json_escape)"
   },
   "last_week": {
     "start": "$LAST_WEEK_START",
@@ -105,7 +141,8 @@ cat <<EOF
     "files_changed": ${LAST_WEEK_FILES:-0},
     "insertions": ${LAST_WEEK_INSERTS:-0},
     "deletions": ${LAST_WEEK_DELETES:-0},
-    "commits": "$(echo "$LAST_WEEK_COMMITS" | sed 's/"/\\"/g' | tr '\n' '\\n')"
+    "commits": "$(printf '%s' "$LAST_WEEK_COMMITS" | json_escape)",
+    "contributors": "$(printf '%s' "$LAST_WEEK_CONTRIBUTORS" | json_escape)"
   }
 }
 EOF
