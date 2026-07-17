@@ -1,4 +1,4 @@
 interface:
   display_name: "Git 周报"
-  short_description: "Generate a structured Chinese weekly report from git logs"
-  default_prompt: "Use $weekly-digest to generate this week's report from my repos."
+  short_description: "扫描活跃 Git 仓库并生成可核验的中文周报"
+  default_prompt: "使用 $weekly-digest 扫描 /path/to/workspace，列出本周有变更的项目后让我选择，再生成周报。"
