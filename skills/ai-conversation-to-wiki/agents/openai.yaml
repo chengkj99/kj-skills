@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Conversation to Wiki"
+  short_description: "将重要 AI 对话保真分析并分层沉淀到个人 Wiki"
+  default_prompt: "Use $ai-conversation-to-wiki to analyze this AI conversation, preview a deposition manifest, and write it to my Wiki only after confirmation."
