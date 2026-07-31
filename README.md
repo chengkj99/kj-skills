@@ -14,6 +14,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/content-illustrator](skills/content-illustrator/SKILL.md) | 内容插图工具（三模式）：① 文字描述 → SVG；② 分析文章识别「看图比看字快」的位置并自动生成插图；③ 批量补全课程文件中的 `[流程图]`/`[对比图]` 占位符 |
 | [skills/course-scraper](skills/course-scraper/SKILL.md) | 课程抓取 & 双语翻译：登录在线课程平台，抓取所有课时存为 Markdown，翻译成中英对照格式 |
 | [skills/content-creator](skills/content-creator/SKILL.md) | 长文 / 短视频 / 小红书等工作流（含 A/B/C/D/E/F 六条分支） |
+| [skills/research-backed-content-loop](skills/research-backed-content-loop/SKILL.md) | 研究驱动内容闭环总控：真实问题 → 已有内容检查 → 用户与证据调研 → 成稿 → 证据配图 → 双视角评审 → 沉淀决策 → 下一篇 |
 | [skills/phenomenon-insight](skills/phenomenon-insight/SKILL.md) | 现象本质洞察：把真实事件/困惑拆成隐含假设、机制、反常识判断和内容观点 |
 | [skills/local-stt-transcription](skills/local-stt-transcription/SKILL.md) | 本地视频/音频转最终校对文字稿：调用 jianchang512/stt，默认 medium + 术语校对润色，高精度 large-v3 + 校对 |
 | [skills/extract-conversation-insights](skills/extract-conversation-insights/SKILL.md) | 录音对话价值挖掘：保留证据、质疑推断，提炼知识、内容选题、行动实验与关系跟进 |
@@ -99,6 +100,30 @@ wiki-doc-sink（需要沉淀时）
 ```
 
 **典型场景**：想学习一个主题但没有资料 → 用 `ai-learning-loop` 先收敛真实问题和最小阅读包 → 产出一张口播/短文表达卡片 → 评审盲区 → 只补一张必要的 `concepts` 或 `playbooks` 卡片。
+
+---
+
+### 总控入口：真实问题 / 草稿 → 研究型内容闭环
+
+```
+真实问题 / 用户困惑 / 已有草稿
+        ↓
+research-backed-content-loop（总控）
+        ├─→ ai-programming-topic-planner（连载与去重）
+        ├─→ phenomenon-insight（机制与反常识）
+        ├─→ industry-best-practices（外部证据与时效）
+        ├─→ content-creator（正文）
+        ├─→ kangjian-skill（作者语气）
+        ├─→ content-illustrator（证据配图）
+        ├─→ wiki-doc-sink（明确要求知识化时）
+        └─→ wechat-publish-kit（发布包）
+        ↓
+正文 + 证据账本 + 配图 + 评审修改 + 沉淀决策 + 下一篇
+```
+
+**典型场景**：从“为什么学了很多 AI，工作方式还是没变”这个真实困惑出发 → 检查已有内容 → 调研用户问题和研究证据 → 写成公众号文章 → 为报告和关键数据补对应图片 → 从用户与作者视角改稿 → 自然引出知识库 → 规划下一篇案例。
+
+这个 skill 只做总控编排，不复制其他 skill 的专业规则。素材、角度已经明确且只需成稿时，仍直接使用 `content-creator`。
 
 ---
 
@@ -196,6 +221,7 @@ content-creator / kangjian-skill
 | `course-campaign` | 批量课程编排 | 章节清单 / 课程计划 | `course-generator` / 图片完成度报告 |
 | `content-illustrator` | 插图补全 | 描述 / 文章 / 课程占位符 | SVG 插图 / 课程正文 |
 | `content-creator` | 内容生产 | 角度/素材/初稿 | `kangjian-skill` |
+| `research-backed-content-loop` | 研究型内容闭环总控 | 真实问题/用户困惑/已有草稿 | 正文、证据配图、双视角评审、沉淀决策和下一篇 |
 | `kangjian-skill` | 风格门禁 | 任意初稿 | 发布 |
 | `tutorial-guide` | 新手指南生产 | 主题 / 链接 | Markdown + Word 指南 / `wechat-companion` |
 | `wechat-companion` | 公众号配套物料 | 文章主题 / 摘要 / 初稿 | 标题 / 前言 / 摘要 / 封面 prompt / 转发文案 |

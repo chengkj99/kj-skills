@@ -2,12 +2,14 @@
 """行业最佳实践报告校验器。
 
 按输出契约（brief / deep / digest）检查 Markdown 报告的章节标题是否齐全，
-并检查若干全局要求（实时验证状态、MVP、指标）。
+并检查若干全局要求（实时验证状态、MVP、指标）。使用 --strict 时还会
+检查标准调研的最低信息密度，防止仅有标题或占位表格的报告通过校验。
 
 用法：
     python3 validate_report.py report.md --contract brief
     python3 validate_report.py report.md --contract deep
     python3 validate_report.py report.md --contract digest
+    python3 validate_report.py report.md --contract brief --strict
 
 契约与模板的对应关系：
     brief  -> assets/templates/research-brief.md
@@ -74,9 +76,60 @@ GLOBAL_MARKERS: list[tuple[str, list[str]]] = [
 ]
 
 HEADING_RE = re.compile(r"^#{1,6}\s+(.*)$", re.MULTILINE)
+URL_RE = re.compile(r'https?://[^\s)>"]+')
+TABLE_ROW_RE = re.compile(r"^\|.*\|\s*$", re.MULTILINE)
 
 
-def validate(text: str, contract: str) -> dict:
+def non_placeholder_rows(text: str, required_cells: int = 3) -> list[str]:
+    """Return content table rows, excluding separators and unreplaced templates."""
+    rows = []
+    for row in TABLE_ROW_RE.findall(text):
+        if "---" in row or "{{" in row:
+            continue
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        if sum(bool(cell) for cell in cells) >= required_cells:
+            rows.append(row)
+    return rows
+
+
+def section_body(text: str, keyword: str) -> str:
+    """Return an H2 section body so row counts do not leak across tables."""
+    match = re.search(
+        rf"^## [^\n]*{re.escape(keyword)}[^\n]*\n(.*?)(?=^## |\Z)",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    return match.group(1) if match else ""
+
+
+def strict_density_issues(text: str, contract: str) -> list[str]:
+    """Check the minimum density promised by the standard-report contract."""
+    if contract != "brief":
+        return []
+    issues: list[str] = []
+    urls = set(URL_RE.findall(text))
+    signal_rows = [
+        row for row in non_placeholder_rows(section_body(text, "信号地图")) if re.search(r"S\d{3}", row)
+    ]
+    recommendation_rows = [
+        row
+        for row in non_placeholder_rows(section_body(text, "优化建议池"))
+        if any(token in row for token in ("P0", "P1", "P2", "高", "中", "低"))
+    ]
+    detail_headings = [h for h in HEADING_RE.findall(text) if re.search(r"S\d{3}", h)]
+
+    if len(signal_rows) < 6:
+        issues.append(f"信号地图有效行不足：{len(signal_rows)}/6")
+    if len(detail_headings) < 3:
+        issues.append(f"重点信号解析不足：{len(detail_headings)}/3")
+    if len(recommendation_rows) < 3:
+        issues.append(f"优化建议有效行不足：{len(recommendation_rows)}/3")
+    if len(urls) < 4:
+        issues.append(f"独立来源链接不足：{len(urls)}/4")
+    return issues
+
+
+def validate(text: str, contract: str, strict: bool = False) -> dict:
     headings = HEADING_RE.findall(text)
     missing_sections = []
     for label, keywords in CONTRACT_SECTIONS[contract]:
@@ -89,12 +142,15 @@ def validate(text: str, contract: str) -> dict:
         if not any(kw.lower() in text.lower() for kw in keywords)
     ]
 
+    density_issues = strict_density_issues(text, contract) if strict else []
     return {
-        "ok": not missing_sections and not missing_markers,
+        "ok": not missing_sections and not missing_markers and not density_issues,
         "contract": contract,
         "headings_found": len(headings),
         "missing_sections": missing_sections,
         "missing_global_markers": missing_markers,
+        "strict": strict,
+        "density_issues": density_issues,
     }
 
 
@@ -107,9 +163,14 @@ def main() -> None:
         default="brief",
         help="输出契约类型（默认 brief）",
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="校验标准调研的最低信息密度（交付真实 brief 时使用）",
+    )
     args = parser.parse_args()
     text = Path(args.path).read_text(encoding="utf-8")
-    result = validate(text, args.contract)
+    result = validate(text, args.contract, args.strict)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     sys.exit(0 if result["ok"] else 1)
 
