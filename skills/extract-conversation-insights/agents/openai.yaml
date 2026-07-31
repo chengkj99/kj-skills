@@ -1,0 +1,4 @@
+interface:
+  display_name: "录音对话价值挖掘"
+  short_description: "从聊天与会议录音中提炼可验证洞见、内容选题和具体行动"
+  default_prompt: "Use $extract-conversation-insights to extract evidence-backed insights, content opportunities, and actions from this recording or transcript."

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI实战派 — Logo 设计探索</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #FAFAFA;
+      color: #1A1A1A;
+      -webkit-font-smoothing: antialiased;
+      padding: 4rem 1.5rem 6rem;
+    }
+    .header { text-align: center; max-width: 42rem; margin: 0 auto 4rem; }
+    .header h1 { font-size: 2.5rem; font-weight: 200; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+    .header .tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      opacity: 0.45;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .header p { font-size: 0.95rem; line-height: 1.7; opacity: 0.65; font-weight: 300; }
+    .divider { width: 3rem; height: 1px; background: #1A1A1A; opacity: 0.25; margin: 1.5rem auto 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 3rem;
+      max-width: 72rem;
+      margin: 0 auto;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: default;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card:hover { transform: translateY(-4px); }
+    .canvas {
+      width: 14rem;
+      height: 14rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .canvas svg {
+      width: 7rem;
+      height: 7rem;
+      color: #1A1A1A;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card:hover .canvas svg { transform: scale(1.06); }
+    .card h2 { font-size: 1rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.35rem; }
+    .card h3 { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; opacity: 0.45; letter-spacing: 0.15em; margin-bottom: 1rem; }
+    .card p { font-size: 0.85rem; line-height: 1.65; opacity: 0.7; font-weight: 300; text-align: left; width: 100%; padding: 0 0.5rem; }
+    .card .line { width: 0; height: 1px; background: #1A1A1A; opacity: 0.15; margin-top: 1.25rem; transition: width 0.5s ease; }
+    .card:hover .line { width: 100%; }
+    .recommend {
+      max-width: 42rem;
+      margin: 4rem auto 0;
+      padding: 1.5rem 2rem;
+      border: 1px solid rgba(26,26,26,0.08);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .recommend h2 { font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; opacity: 0.5; margin-bottom: 0.75rem; text-transform: uppercase; }
+    .recommend p { font-size: 0.9rem; line-height: 1.7; opacity: 0.75; font-weight: 300; }
+    .nav { text-align: center; margin: 2rem 0 0; }
+    .nav a { font-size: 0.8rem; color: inherit; opacity: 0.5; }
+    footer { text-align: center; margin-top: 4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; opacity: 0.35; letter-spacing: 0.15em; line-height: 2; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>AI实战派</h1>
+    <p class="tagline">Learn · Practice · Transform</p>
+    <p>帮助普通人和职场人掌握 AI 工作方式，通过真实项目和持续实践，把 AI 知识转化为实际成果。</p>
+    <div class="divider"></div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="canvas">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="currentColor" stroke-linecap="round">
+            <path d="M 28 62 A 28 28 0 1 1 72 38" stroke-width="3.5"/>
+            <circle cx="72" cy="38" r="4.5" fill="currentColor" stroke="none"/>
+          </g>
+        </svg>
+      </div>
+      <h2>实战弧</h2>
+      <h3>Practice Arc · 01</h3>
+      <p>开放圆弧指向前方，前导圆点象征「正在发生的行动」。不闭合的环暗示持续循环：学→做→改→再学。极简、有动势，适合 favicon 和 App 图标。</p>
+      <div class="line"></div>
+    </div>
+
+    <div class="card">
+      <div class="canvas">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="currentColor">
+            <circle cx="28" cy="72" r="3" opacity="0.35"/>
+            <circle cx="38" cy="62" r="3.5" opacity="0.5"/>
+            <circle cx="50" cy="50" r="4" opacity="0.7"/>
+            <circle cx="62" cy="38" r="4.5" opacity="0.85"/>
+            <circle cx="74" cy="26" r="5.5"/>
+          </g>
+        </svg>
+      </div>
+      <h2>点阵上升</h2>
+      <h3>Ascending Dots · 02</h3>
+      <p>五个递进的点，由小到大、由淡到浓，对应「知识→练习→成果」的转化路径。刻意不对称的斜向排列，避免呆板网格感，传达成长而非静态积累。</p>
+      <div class="line"></div>
+    </div>
+
+    <div class="card">
+      <div class="canvas">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="currentColor">
+            <path d="M 24 72 Q 42 68, 50 50 T 76 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="24" cy="72" r="3.5" opacity="0.45"/>
+            <circle cx="50" cy="50" r="4.5"/>
+            <circle cx="76" cy="28" r="5"/>
+          </g>
+        </svg>
+      </div>
+      <h2>知识流</h2>
+      <h3>Knowledge Flow · 03</h3>
+      <p>曲线连接三个节点：起点（知识）、中点（实战）、终点（成果）。S 形流动感呼应「在实战中学习、在实战中成长、在实战中改变」的品牌核心。</p>
+      <div class="line"></div>
+    </div>
+
+    <div class="card">
+      <div class="canvas">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 32 68 L 50 28 L 68 68 Z" stroke-width="3.5"/>
+            <line x1="50" y1="42" x2="50" y2="58" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+      <h2>实战楔</h2>
+      <h3>Action Chevron · 04</h3>
+      <p>向上锐角三角形 + 中心竖线，抽象「战」字的行动感与突破感。结构稳定、识别度高，在小尺寸下轮廓清晰，适合社区徽章和头像。</p>
+      <div class="line"></div>
+    </div>
+
+    <div class="card">
+      <div class="canvas">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="currentColor" stroke-width="3">
+            <circle cx="42" cy="50" r="22"/>
+            <circle cx="58" cy="50" r="22"/>
+          </g>
+          <circle cx="50" cy="50" r="3.5" fill="currentColor"/>
+        </svg>
+      </div>
+      <h2>转化交汇</h2>
+      <h3>Transform Vesica · 05</h3>
+      <p>两圆交集形成的透镜形，中心点为融合点——AI 知识与真实项目的交汇。对称但非 AI cliché（无大脑、无闪电），适合强调「转化」而非「工具」。</p>
+      <div class="line"></div>
+    </div>
+
+    <div class="card">
+      <div class="canvas">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="currentColor" stroke="currentColor" stroke-linecap="round">
+            <line x1="50" y1="50" x2="50" y2="28" stroke-width="3" fill="none"/>
+            <line x1="50" y1="50" x2="30" y2="68" stroke-width="3" fill="none"/>
+            <line x1="50" y1="50" x2="70" y2="68" stroke-width="3" fill="none"/>
+            <circle cx="50" cy="50" r="5.5"/>
+            <circle cx="50" cy="28" r="3.5" opacity="0.7"/>
+            <circle cx="30" cy="68" r="3.5" opacity="0.7"/>
+            <circle cx="70" cy="68" r="3.5" opacity="0.7"/>
+          </g>
+        </svg>
+      </div>
+      <h2>社区枢纽</h2>
+      <h3>Community Hub · 06</h3>
+      <p>中心节点连接三个方向：向上（成长）、左下（学习）、右下（改变）。体现社区属性——不是单人学习工具，而是连接人与实战的枢纽。</p>
+      <div class="line"></div>
+    </div>
+
+  </div>
+
+  <div class="recommend">
+    <h2>推荐方向</h2>
+    <p>若追求<strong>长期品牌辨识度 + 极简</strong>，优先推荐 <strong>#01 实战弧</strong> 或 <strong>#04 实战楔</strong>：单元素、高留白、小尺寸清晰、不依赖 AI 视觉 cliché。<br><br>
+    若强调<strong>「转化」叙事</strong>，推荐 <strong>#03 知识流</strong> 或 <strong>#05 转化交汇</strong>。<br><br>
+    若强调<strong>社区属性</strong>，推荐 <strong>#06 社区枢纽</strong>。</p>
+  </div>
+
+  <p class="nav"><a href="preview-kj.html">查看 KJ 融合方案（07–12）→</a></p>
+
+  <footer>
+    AI实战派 Logo 设计探索 · 2026<br>
+    Generated with logo-generator skill
+  </footer>
+
+</body>
+</html>

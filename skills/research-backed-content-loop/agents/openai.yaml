@@ -1,0 +1,4 @@
+interface:
+  display_name: "研究驱动内容闭环"
+  short_description: "从真实问题、证据和配图到成稿、沉淀与下一篇"
+  default_prompt: "Use $research-backed-content-loop to turn this topic or draft into a researched, illustrated, publishable content loop."

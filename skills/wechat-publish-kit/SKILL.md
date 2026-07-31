@@ -8,6 +8,18 @@ description: >-
 
 把一篇文章从“正文已写好”推进到“可以发公众号”：生成配套文案、自动生成封面图、打包发布用 Markdown，引导用户从备选标题中选择一个标题，并在标题确认后继续把标题、正文、封面图片、摘要简介保存为公众号草稿。
 
+## Direct-publish shortcut
+
+用户已经给出最终标题，或直接说“发布到公众号草稿箱 / 保存草稿 / 用 API 发布”时，不再要求他重新选择标题，直接进入发布流程；但不能跳过封面生成、摘要检查和 API dry run。
+
+直接发布仍按以下顺序执行：
+
+1. 检查最终标题、正文与摘要；
+2. 解析封面路径并执行封面预检；
+3. 没有合格封面时自动生成；
+4. 运行 API dry run；
+5. 创建新草稿，或使用已知 `media_id` 更新原草稿。
+
 ## Core Workflow
 
 1. **Read the source article**
@@ -35,15 +47,27 @@ description: >-
      - forward copy
 
 3. **Generate the cover image by default**
-   - Default behavior: generate a usable cover image, not only a prompt.
+   - Default behavior: generate a usable cover image, not only a prompt。即使用户直接要求发布草稿、没有经过标题选择环节，也必须执行本步骤。
+   - Resolve the cover in this order:
+     1. 用户明确指定的封面；
+     2. 当前文章资产目录里已经存在且尺寸合格的 `cover.png`；
+     3. 根据最终标题、文章核心冲突和读者对象自动生成的新封面。
+   - 正文首图、数据图或流程图不自动等同于封面。只有用户明确指定，或它本身就是已验证的 2.35:1 封面时才能复用，避免发布脚本静默采用正文第一张图。
    - Use the image generation tool after drafting the cover prompt.
    - Store the final usable cover under the article’s WeChat asset folder:
      `raw/studio/funnel/formatted/wechat/assets/<yyyy-mm-dd-slug>/cover.png`.
    - If the generated image is returned outside the workspace, copy or move the final selected image into the asset folder.
    - Verify the file exists and inspect image metadata with `file`, `sips -g pixelWidth -g pixelHeight`, or an equivalent metadata command.
-   - Use 2.35:1 when possible. If the generator cannot guarantee exact dimensions, accept close wide cover output only when it is visually usable for WeChat cover cropping.
+   - Generate a wide composition close to 2.35:1, then normalize the final file to `900 × 383` when local image tooling is available. Keep the subject and visual conflict inside the safe center area so desktop and mobile crops both work.
+   - 默认不把文章长标题画进图片，避免错字和移动端缩小后不可读；公众号标题栏会承载文字。只有用户明确要求“封面带字”时才生成文字版。
+   - 封面要表达文章的核心冲突或结果，不要只堆 AI Logo、机器人、代码雨或通用科技元素。
    - Only skip image generation when the user explicitly says “只要提示词 / 不生成图片 / no image”.
    - If image generation is unavailable, keep the cover prompt and mark the companion file `cover_status: 未生成（缺少可用图像生成工具）`; do not pretend a cover exists.
+   - Before publishing, verify:
+     - `cover.png` exists;
+     - dimensions are `900 × 383` or aspect ratio is close to 2.35:1;
+     - frontmatter `cover` resolves to this file;
+     - API receives this file as its thumb/cover argument.
 
 4. **Create a publish-ready Markdown copy**
    - Do not modify the canonical source article unless explicitly asked.
@@ -77,6 +101,8 @@ description: >-
    - Use the `baoyu-post-to-wechat` skill/tooling if available.
    - Prefer API publishing for Markdown drafts when credentials are configured.
    - Always run a dry run first if the workflow supports it.
+   - Run a cover preflight immediately before the API call. If the cover path is empty, missing, points to a body image by fallback, or has an unsuitable aspect ratio, return to step 3 and generate the cover before publishing.
+   - Do not rely on the publisher’s “use first body image as cover” fallback in the normal workflow.
    - Then create or update the WeChat draft with:
      - title: chosen title
      - digest/summary: final summary
@@ -127,6 +153,7 @@ After the user chooses, do not repeat the whole package. Continue the draft publ
 - Summary is under 120 Chinese characters.
 - Cover prompt has `--ar 47:20` or explicitly says 2.35:1.
 - Cover image exists at `assets/<yyyy-mm-dd-slug>/cover.png`, unless the user explicitly requested prompt-only mode or image generation is unavailable.
+- Cover image is `900 × 383` or close to 2.35:1, and is passed explicitly to the API rather than inferred from the first body image.
 - Companion file includes the generated cover image path and title-selection status.
 - Publish copy has no Markdown TOC anchor list.
 - Publish copy frontmatter cover points to the generated cover image.

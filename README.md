@@ -14,8 +14,10 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/content-illustrator](skills/content-illustrator/SKILL.md) | 内容插图工具（三模式）：① 文字描述 → SVG；② 分析文章识别「看图比看字快」的位置并自动生成插图；③ 批量补全课程文件中的 `[流程图]`/`[对比图]` 占位符 |
 | [skills/course-scraper](skills/course-scraper/SKILL.md) | 课程抓取 & 双语翻译：登录在线课程平台，抓取所有课时存为 Markdown，翻译成中英对照格式 |
 | [skills/content-creator](skills/content-creator/SKILL.md) | 长文 / 短视频 / 小红书等工作流（含 A/B/C/D/E/F 六条分支） |
+| [skills/research-backed-content-loop](skills/research-backed-content-loop/SKILL.md) | 研究驱动内容闭环总控：真实问题 → 已有内容检查 → 用户与证据调研 → 成稿 → 证据配图 → 双视角评审 → 沉淀决策 → 下一篇 |
 | [skills/phenomenon-insight](skills/phenomenon-insight/SKILL.md) | 现象本质洞察：把真实事件/困惑拆成隐含假设、机制、反常识判断和内容观点 |
 | [skills/local-stt-transcription](skills/local-stt-transcription/SKILL.md) | 本地视频/音频转最终校对文字稿：调用 jianchang512/stt，默认 medium + 术语校对润色，高精度 large-v3 + 校对 |
+| [skills/extract-conversation-insights](skills/extract-conversation-insights/SKILL.md) | 录音对话价值挖掘：保留证据、质疑推断，提炼知识、内容选题、行动实验与关系跟进 |
 | [skills/kangjian-skill](skills/kangjian-skill/SKILL.md) | 以康健本人风格创作公众号文章 / 短视频口播 / AI 编程教程 / 演讲稿（去 AI 味门禁） |
 | [skills/humanizer-zh](skills/humanizer-zh/SKILL.md) | 中文去 AI 味：编辑或审阅文本，去除 AI 生成痕迹，使其更自然、更像人写 |
 | [skills/tutorial-guide](skills/tutorial-guide/SKILL.md) | 新手教程指南生成：主题 / 链接 → Markdown + Word `.docx` 完整指南（含封面、目录、引流页） |
@@ -101,6 +103,30 @@ wiki-doc-sink（需要沉淀时）
 
 ---
 
+### 总控入口：真实问题 / 草稿 → 研究型内容闭环
+
+```
+真实问题 / 用户困惑 / 已有草稿
+        ↓
+research-backed-content-loop（总控）
+        ├─→ ai-programming-topic-planner（连载与去重）
+        ├─→ phenomenon-insight（机制与反常识）
+        ├─→ industry-best-practices（外部证据与时效）
+        ├─→ content-creator（正文）
+        ├─→ kangjian-skill（作者语气）
+        ├─→ content-illustrator（证据配图）
+        ├─→ wiki-doc-sink（明确要求知识化时）
+        └─→ wechat-publish-kit（发布包）
+        ↓
+正文 + 证据账本 + 配图 + 评审修改 + 沉淀决策 + 下一篇
+```
+
+**典型场景**：从“为什么学了很多 AI，工作方式还是没变”这个真实困惑出发 → 检查已有内容 → 调研用户问题和研究证据 → 写成公众号文章 → 为报告和关键数据补对应图片 → 从用户与作者视角改稿 → 自然引出知识库 → 规划下一篇案例。
+
+这个 skill 只做总控编排，不复制其他 skill 的专业规则。素材、角度已经明确且只需成稿时，仍直接使用 `content-creator`。
+
+---
+
 ### 主流水线 A：动态/想法 → 发布
 
 ```
@@ -117,19 +143,23 @@ kangjian-skill（风格润色）
     发布（公众号 / 短视频 / 小红书）
 ```
 
-短视频原始素材可先经过：
+音视频与对话素材可先经过：
 
 ```
 本地视频/音频
         ↓
 local-stt-transcription（medium/large-v3 + 术语校对）
-        ↓ 已发布内容的最终校对文字稿
-raw/studio/transcripts（已发布短视频内容资产）
-        ↓ 连载选题规划：系列主题 / 下一集角度 / 未展开分支
-content-creator / kangjian-skill
+        ↓ 转写稿
+extract-conversation-insights
+        ↓ 证据观察 + 待验证假设 + 质疑卡
+        ├─→ wiki-doc-sink（知识/方法沉淀）
+        ├─→ content-creator / kangjian-skill（选题与成稿）
+        └─→ 行动实验 / 关系跟进
         ↓
-    发布（短视频 / 公众号 / 小红书）
+复盘结果回到知识库与下一轮内容
 ```
+
+已发布短视频的最终校对文字稿仍进入 `raw/studio/transcripts`，再按连载选题机制复盘；私人聊天、会议、访谈与听分享的转写先由 `extract-conversation-insights` 做证据化提炼和隐私分流。
 
 **典型场景**：看到 Claude Code 更新了某功能 → 用 `ai-programming-topic-planner` 找「程序员最关心的切入角度」→ 用 `phenomenon-insight` 把现象拆到机制和反常识判断 → 用 `content-creator` 工作流 B 孵化成文章 → 用 `kangjian-skill` 去 AI 味润色 → 发布。
 
@@ -185,11 +215,13 @@ content-creator / kangjian-skill
 | `phenomenon-insight` | 洞察前置层 | 真实现象/困惑/异常反馈/生活观察 | 核心洞见、反常识判断、标题与结构入口 / `content-creator` / `kangjian-skill` |
 | `coding-session-to-tutorial` | 结构化整理 | 原始实战记录 | `content-creator` 工作流 C |
 | `course-scraper` | 外部课程存档 | 在线课程 URL + 账号 | `course-generator`（素材）/ `wiki-doc-sink`（沉淀） |
-| `local-stt-transcription` | 本地音视频转最终校对文字稿 | `.mov` / `.mp4` / `.m4a` 等本地素材 | `raw/studio/transcripts` / `content-creator` / `kangjian-skill` |
+| `local-stt-transcription` | 本地音视频转最终校对文字稿 | `.mov` / `.mp4` / `.m4a` 等本地素材 | `extract-conversation-insights` / `raw/studio/transcripts` |
+| `extract-conversation-insights` | 录音证据化挖掘与路由 | 聊天/会议/访谈/分享录音或转写稿 | `wiki-doc-sink` / `content-creator` / 行动实验 |
 | `course-generator` | 课程章节生产 | 章节大纲 + 参考材料 | `kangjian-skill` / 直接发布 |
 | `course-campaign` | 批量课程编排 | 章节清单 / 课程计划 | `course-generator` / 图片完成度报告 |
 | `content-illustrator` | 插图补全 | 描述 / 文章 / 课程占位符 | SVG 插图 / 课程正文 |
 | `content-creator` | 内容生产 | 角度/素材/初稿 | `kangjian-skill` |
+| `research-backed-content-loop` | 研究型内容闭环总控 | 真实问题/用户困惑/已有草稿 | 正文、证据配图、双视角评审、沉淀决策和下一篇 |
 | `kangjian-skill` | 风格门禁 | 任意初稿 | 发布 |
 | `tutorial-guide` | 新手指南生产 | 主题 / 链接 | Markdown + Word 指南 / `wechat-companion` |
 | `wechat-companion` | 公众号配套物料 | 文章主题 / 摘要 / 初稿 | 标题 / 前言 / 摘要 / 封面 prompt / 转发文案 |
