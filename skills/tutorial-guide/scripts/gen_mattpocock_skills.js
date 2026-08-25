@@ -39,7 +39,7 @@ const C = {
 const chapters = [
   {
     title: "第一章  先搞清楚 mattpocock/skills 解决什么问题",
-    intro: "我第一次看这个仓库时，差点把它当成“提示词合集”。后来读完 README 才发现，它真正想解决的是另一个问题：我们把 Agent 当实习生用，却很少给它稳定的工作方法。",
+    intro: "这个仓库不是“提示词合集”。它真正想解决的是另一个问题：我们把 Agent 当实习生用，却很少给它稳定的工作方法。",
     sections: [
       {
         title: "1.1  它不是大而全流程，而是一组小工具",
@@ -51,7 +51,7 @@ const chapters = [
         list: ["需求不清时先用 grilling 类技能", "要写代码时让 TDD 约束反馈环", "Bug 很硬时切到 diagnosing-bugs", "项目变乱时用 architecture 技能做设计体检"],
         code: ["# 这个仓库的安装入口", "npx skills@latest add mattpocock/skills"],
         note: "💡小贴士：把它理解成“工程方法工具箱”，比理解成“提示词市场”更接近原作者的意图。",
-        pitfall: "我当时踩的坑是直接想找“万能技能”。结果越找越乱。这个仓库更适合按场景拿工具：先对齐、再实现、再诊断、再治理。"
+        pitfall: "常见误区是直接想找“万能技能”，结果反而越找越乱。这个仓库更适合按场景拿工具：先对齐、再实现、再诊断、再治理。"
       },
       {
         title: "1.2  两类技能：你主动叫的，和模型自动拿的",
@@ -61,13 +61,13 @@ const chapters = [
         ],
         code: ["# 一个典型工作流", "/grill-with-docs", "/to-prd", "/to-issues", "# 然后在每个 issue 上使用 tdd / diagnosing-bugs"],
         note: "✅最佳实践：第一次用时先读 README 的 Reference 表，别急着全装全用。先挑 3 个高频入口就够了。",
-        pitfall: "常见误区是把所有 Skill 都塞进一次对话里。表现通常是 Agent 开始长篇解释流程，但代码一点没动。我的习惯是一个阶段只让一个主技能主导。"
+        pitfall: "常见误区是把所有 Skill 都塞进一次对话里。表现通常是 Agent 开始长篇解释流程，但代码一点没动。一个阶段只让一个主技能主导，边界会更清楚。"
       }
     ]
   },
   {
     title: "第二章  安装与第一次配置",
-    intro: "真正卡人的地方往往不是安装命令，而是装完以后不知道下一步做什么。我第一次给项目接 Skill 时，就漏跑了 setup，后面 triage 和 docs 相关命令全都缺上下文。",
+    intro: "真正卡人的地方往往不是安装命令，而是装完以后不知道下一步做什么。如果漏跑 setup，后面 triage 和 docs 相关命令就会缺少上下文。",
     sections: [
       {
         title: "2.1  用 skills.sh 安装仓库",
@@ -84,11 +84,11 @@ const chapters = [
         title: "2.2  跑一次 `/setup-matt-pocock-skills`",
         body: [
           "setup 会问三个关键问题：你用哪个 issue tracker、triage 标签怎么配、文档放在哪里。这一步决定后续 `/triage`、`/grill-with-docs`、ADR 和共享语言文档写到哪。",
-          "如果你在团队项目里用，我建议文档目录选项目内的 `docs/` 或类似位置；个人实验项目可以先选本地文件。"
+          "团队项目可以把文档目录放在项目内的 `docs/` 或类似位置；个人实验项目可以先选本地文件。"
         ],
         code: ["/setup-matt-pocock-skills", "# 按提示选择：GitHub / Linear / local files", "# 设置 triage labels", "# 设置 docs 保存目录"],
         note: "✅最佳实践：setup 的答案最好和团队真实流程一致。别为了演示随便选，否则后面生成的 issue 和文档会散。",
-        pitfall: "我见过的坑是装完直接用 `/triage`，然后 Agent 反问一堆本该 setup 里回答的问题。表现是流程启动了，但缺少 issue tracker 和标签配置。"
+        pitfall: "如果安装完就直接用 `/triage`，Agent 可能会反问一堆本该在 setup 里回答的问题。流程虽然启动了，却缺少 issue tracker 和标签配置。"
       }
     ]
   },
@@ -115,7 +115,7 @@ const chapters = [
         list: ["术语名", "一句话定义", "反例或易混概念", "相关模块或文件", "典型场景"],
         code: ["# CONTEXT.md 示例", "## Materialization Cascade", "A lesson becoming real on disk triggers section ordering, metadata sync, and render cache updates."],
         note: "✅最佳实践：术语文档要短。一个术语如果要解释十行，通常说明你还没找到真正的名字。",
-        pitfall: "我踩过的坑是把 glossary 写成百科全书。Agent 读完仍然抓不到重点。更好的写法是“名字 + 边界 + 代码位置”。"
+        pitfall: "把 glossary 写成百科全书，会让 Agent 读完仍然抓不到重点。更好的写法是“名字 + 边界 + 代码位置”。"
       }
     ]
   },
@@ -142,7 +142,7 @@ const chapters = [
         list: ["每个 issue 都有用户可见结果", "每个 issue 都能独立验证", "每个 issue 都尽量小", "issue 之间依赖关系清楚"],
         code: ["/to-issues", "# 输入：已生成的 PRD 或当前计划", "# 输出：可独立实现的 issue 列表"],
         note: "✅最佳实践：一个 issue 如果只能在合并其他 5 个 issue 后验证，通常还没有切对。",
-        pitfall: "我以前很爱按技术层拆任务，结果 review 时每个 PR 都“还不能跑”。Agent 更容易在这种结构里迷路。"
+        pitfall: "如果只按技术层拆任务，review 时每个 PR 都可能“还不能跑”。Agent 也更容易在这种结构里迷路。"
       }
     ]
   },
@@ -164,7 +164,7 @@ const chapters = [
         title: "5.2  每次只做一个垂直切片",
         body: [
           "TDD 最怕任务太大。你让 Agent 一次做完整导入系统，它会同时改 UI、服务、校验、状态和测试，失败时很难定位。",
-          "我的习惯是把每个切片压到一个明确行为：输入是什么、输出是什么、错误是什么。"
+          "可以把每个切片压到一个明确行为：输入是什么、输出是什么、错误是什么。"
         ],
         list: ["先选一个行为", "写失败测试", "跑测试确认失败原因对", "写最小实现", "跑测试通过", "重构命名和边界"],
         code: ["pnpm test -- user-import", "# 或者只跑相关测试文件", "pnpm vitest src/user-import/validate-csv.test.ts"],
@@ -181,7 +181,7 @@ const chapters = [
         title: "6.1  复现、缩小、假设、埋点",
         body: [
           "`/diagnosing-bugs` 把调试拆成一个很朴素的循环：先复现，再缩小范围，再提出假设，再加日志或断点验证。这个顺序听起来慢，但比盲改快。",
-          "我建议你把错误现场尽量完整给 Agent：输入、期望、实际、日志、最近改动、能否稳定复现。"
+          "把错误现场尽量完整地给 Agent：输入、期望、实际、日志、最近改动、能否稳定复现。"
         ],
         code: ["/diagnosing-bugs", "页面保存后偶发回到列表页，但接口返回 200。请先复现和缩小范围，不要直接改。"],
         note: "⚠️注意：如果 Agent 一上来就要改 5 个文件，让它停下来先写“当前最小复现是什么”。",
@@ -196,7 +196,7 @@ const chapters = [
         list: ["记录根因", "补最小回归测试", "跑相关测试", "说明为什么这个测试能防止复发"],
         code: ["pnpm test -- changed-feature", "pnpm lint", "# 手动验证：保存表单后停留在详情页，并显示成功 toast"],
         note: "✅最佳实践：修 Bug 的提交信息里写出根因，比只写 `fix bug` 更有价值。",
-        pitfall: "我踩过的坑是修完没补测试，两周后同一个行为在另一个入口复发。Agent 跑得快，重复犯错也快。"
+        pitfall: "修完后不补测试，同一个行为可能在另一个入口再次出现。Agent 跑得快，重复犯错也快。"
       }
     ]
   },
@@ -208,11 +208,11 @@ const chapters = [
         title: "7.1  用 `/improve-codebase-architecture` 做体检",
         body: [
           "README 里提到，Agent 会加速软件熵。`/improve-codebase-architecture` 的用途就是扫描代码库，找那些能让模块更深、接口更小、边界更清楚的机会。",
-          "我不会每天都跑，但在一个功能连续迭代几天后跑一次很有价值。它能把“这里有点乱”的感觉变成可讨论的报告。"
+          "不必每天都跑。一个功能连续迭代几天后跑一次，可以把“这里有点乱”的感觉变成可讨论的报告。"
         ],
         code: ["/improve-codebase-architecture", "# 让 Agent 扫描当前代码库，生成可视化 HTML 报告，然后选择一个点继续 grill"],
         note: "💡小贴士：架构优化不要和业务功能混在一个 PR 里。先让报告列候选，再挑一个小点做。",
-        pitfall: "常见误区是看到报告就全改。结果 PR 巨大，风险也巨大。我的习惯是一次只改一个边界。"
+        pitfall: "常见误区是看到报告就全改，结果 PR 巨大，风险也巨大。一次只改一个边界，更容易验证和回滚。"
       },
       {
         title: "7.2  深模块、浅接口、可测试边界",
@@ -235,7 +235,7 @@ const chapters = [
         title: "8.1  先改触发条件，再改流程",
         body: [
           "一个 Skill 最关键的是它什么时候该被用。触发条件太宽，Agent 会乱用；触发条件太窄，你又想不起来用它。",
-          "我改 Skill 时会先看三件事：description 是否清楚、输入条件是否明确、完成标准是否可验证。"
+          "修改 Skill 时可以先看三件事：description 是否清楚、输入条件是否明确、完成标准是否可验证。"
         ],
         code: ["---", "name: my-debug-loop", "description: Use when a bug is reproducible but the root cause is unclear; force reproduce -> isolate -> instrument -> fix -> regression test.", "---"],
         note: "💡小贴士：description 要写“何时使用”，不要只写“这个 Skill 很有用”。",
@@ -250,7 +250,7 @@ const chapters = [
         list: ["SKILL.md 放触发条件和主流程", "references 放详细规范", "scripts 放可复跑操作", "examples 放好坏样例"],
         code: ["skills/my-skill/", "  SKILL.md", "  references/checklist.md", "  scripts/generate-report.js", "  examples/good-output.md"],
         note: "✅最佳实践：每次改 Skill 后，用一个小任务实测。Skill 是工作流代码，也需要回归验证。",
-        pitfall: "我踩过的坑是把所有细节堆在 SKILL.md，最后 Agent 每次读完都抓不住主线。拆文件之后反而更稳定。"
+        pitfall: "把所有细节堆在 SKILL.md，会让 Agent 每次读完都难以抓住主线。把条件性细节拆到 references 后，入口文件会更聚焦。"
       }
     ]
   },
@@ -277,7 +277,7 @@ const chapters = [
         list: ["跑偏：先 grill", "啰嗦：补共享语言", "代码不稳：用 TDD", "Bug 反复：用 diagnosing-bugs", "项目变乱：做 architecture scan"],
         code: ["# 一个排错决策表", "if requirement_unclear: /grill-with-docs", "if failing_behavior_unclear: /diagnosing-bugs", "if implementation_large: /to-issues + /tdd"],
         note: "✅最佳实践：每次只修一个问题类型。别同时要求 Agent 对齐需求、重构架构、修 Bug、写测试。",
-        pitfall: "我见过最常见的问题是“一个提示词塞完所有目标”。这会让 Skill 的边界失效，最后谁也没主导流程。"
+        pitfall: "常见问题是“一个提示词塞完所有目标”。这会让 Skill 的边界失效，最后谁也没主导流程。"
       }
     ]
   },
@@ -304,7 +304,7 @@ const chapters = [
         ],
         code: ["# 一个简单规则", "如果同一句提醒说了 3 次，把它写进 Skill 或项目 AGENTS.md。"],
         note: "✅最佳实践：团队 Skill 要有 owner。没人维护的流程文档，很快就会变成摆设。",
-        pitfall: "我以前把所有提醒都留在聊天里。换一个线程就丢。后来发现，能沉淀进 Skill 的经验，才算真正降低了下次成本。"
+        pitfall: "把所有提醒都留在聊天里，换一个线程就可能丢失。能沉淀进 Skill 的经验，才能真正降低后续的重复成本。"
       }
     ]
   }

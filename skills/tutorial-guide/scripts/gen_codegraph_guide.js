@@ -29,7 +29,7 @@ const sources = [
 const chapters = [
   {
     title: "第一章  先搞懂 CodeGraph 解决的真实问题",
-    intro: "我第一次看 CodeGraph 的 README 时，最打动我的不是“省 token”，而是它把 Agent 最浪费时间的一步拿掉了：一遍遍 grep、Read、猜调用链。",
+    intro: "CodeGraph 的价值不只是“省 token”，它还减少了 Agent 反复 grep、Read 和猜测调用链的时间。",
     sections: [
       {
         title: "1.1  它不是另一个聊天插件",
@@ -41,7 +41,7 @@ const chapters = [
         list: ["本地索引项目代码", "通过 MCP 暴露给 Claude Code、Codex、Cursor 等 Agent", "用 `codegraph_explore` 返回相关源码、调用路径和影响半径", "文件变化后自动同步图谱"],
         code: ["# 一句话体验入口", "npx @colbymchenry/codegraph"],
         note: "💡小贴士：把 CodeGraph 理解成“给 Agent 用的代码地图”，比理解成“更快的 grep”更准确。",
-        pitfall: "我当时的误区是期待它替代所有阅读。后来发现最合理的用法是：先让 CodeGraph 找结构，再对正在编辑的少量文件做人工级确认。"
+        pitfall: "常见误区是期待它替代所有阅读。更合理的用法是：先让 CodeGraph 找结构，再对正在编辑的少量文件做人工级确认。"
       },
       {
         title: "1.2  什么时候值得装",
@@ -85,7 +85,7 @@ const chapters = [
         ],
         code: ["codegraph install", "# 非交互场景", "codegraph install --target=codex,claude --yes", "# 只打印某个 Agent 配置片段", "codegraph install --print-config codex"],
         note: "✅最佳实践：团队脚本里可以用 `--target` 和 `--yes` 固化安装选择，个人机器第一次用交互模式更稳。",
-        pitfall: "我见过最常见的误会是：跑完 `codegraph install` 就问 Agent 项目结构。结果 Agent 仍然提示没有索引，因为你还没在项目里跑 `codegraph init`。"
+        pitfall: "常见误会是：跑完 `codegraph install` 就问 Agent 项目结构。Agent 仍然会提示没有索引，因为项目里还没有执行 `codegraph init`。"
       }
     ]
   },
@@ -138,7 +138,7 @@ const chapters = [
         title: "4.2  MCP 工具和 CLI 命令怎么对应",
         body: [
           "MCP 默认主要显示 `codegraph_explore`。其他工具如 node、search、callers、callees、impact、files、status 仍可用，只是默认不全部列在 MCP 表面。",
-          "如果你需要更多 MCP 工具，可以设置 `CODEGRAPH_MCP_TOOLS`。日常使用里，我建议先让 Agent 用 explore，必要时再扩展。"
+          "如果需要更多 MCP 工具，可以设置 `CODEGRAPH_MCP_TOOLS`。日常使用可先让 Agent 用 explore，必要时再扩展。"
         ],
         code: [
           "# 重新暴露部分 MCP 工具",
@@ -155,7 +155,7 @@ const chapters = [
   },
   {
     title: "第五章  自动同步与“图谱会不会过期”",
-    intro: "我最开始担心 CodeGraph 的点是：Agent 一边改代码，一边查图谱，图谱会不会落后？官方设计里专门处理了这个问题。",
+    intro: "Agent 一边改代码、一边查图谱时，图谱会不会落后？CodeGraph 的官方设计专门处理了这个问题。",
     sections: [
       {
         title: "5.1  文件 watcher 会自动更新索引",
@@ -276,7 +276,7 @@ const chapters = [
       {
         title: "8.2  改代码前先做影响分析",
         body: [
-          "我建议把 CodeGraph 放到“改之前”的环节，而不是“改坏以后”的补救环节。尤其是共享工具函数、权限逻辑、支付/风控链路，先看调用方很值得。",
+          "CodeGraph 更适合放到“改之前”的环节，而不是“改坏以后”的补救环节。尤其是共享工具函数、权限逻辑、支付/风控链路，先看调用方很值得。",
           "影响分析不是让你不改，而是让你知道哪里要测，哪里要小心。"
         ],
         code: [
@@ -316,7 +316,7 @@ const chapters = [
           "codegraph status"
         ],
         note: "✅最佳实践：把“安装 CLI、接 Agent、初始化项目、重启 Agent”写成团队 onboarding 清单。",
-        pitfall: "我最常见的漏步是忘记重启 Agent。MCP 配置已经写进去了，但当前会话没加载，所以工具列表里还是没有。"
+        pitfall: "容易漏掉的一步是重启 Agent。MCP 配置已经写入，但当前会话没有重新加载，所以工具列表里仍然看不到。"
       }
     ]
   },
@@ -474,7 +474,7 @@ function buildChildren() {
     p("前言", { heading: "Heading1", size: 36, bold: true, color: C.primary }),
     p("CodeGraph 是一个面向 AI 编程 Agent 的本地代码知识图谱工具。它把代码库里的符号、调用关系、文件和路由预先组织好，让 Agent 不必每次都从 grep、glob、Read 开始探索。"),
     p("这份指南适合三类读者：已经在用 Claude Code、Codex、Cursor 等 Agent 的开发者；维护中大型项目、希望降低 AI 探索成本的团队；以及想理解“代码知识图谱 + MCP”怎么落到日常开发的人。"),
-    p("我会按真实上手顺序写：先理解价值，再安装接入，再初始化项目，最后讲提问方式、配置、排错和团队落地。")
+    p("本文按上手顺序展开：先理解价值，再安装接入，然后初始化项目，最后讲提问方式、配置、排错和团队落地。")
   );
 
   chapters.forEach((ch) => {
@@ -541,7 +541,7 @@ function generateMarkdown() {
     "",
     "这份指南适合三类读者：已经在用 Claude Code、Codex、Cursor 等 Agent 的开发者；维护中大型项目、希望降低 AI 探索成本的团队；以及想理解“代码知识图谱 + MCP”怎么落到日常开发的人。",
     "",
-    "我会按真实上手顺序写：先理解价值，再安装接入，再初始化项目，最后讲提问方式、配置、排错和团队落地。",
+    "本文按上手顺序展开：先理解价值，再安装接入，然后初始化项目，最后讲提问方式、配置、排错和团队落地。",
     "",
   ];
 
