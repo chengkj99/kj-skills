@@ -83,6 +83,36 @@ description: >-
      - Keep follow/CTA text natural, short, and link-free.
      - Do not inline the cover image in the article body unless the user explicitly wants it; the cover should normally be used as the WeChat API thumb image.
 
+4a. **Append the standard follow CTA**
+   - Add this module to every WeChat publish copy unless the user explicitly opts out or asks for different account copy. Never add it to the canonical source article.
+   - Insert it immediately before `## 调研来源`, `## 参考资料`, or an equivalent source section. If no source section exists, append it at the end of the article body.
+   - If the publish copy already contains `## 关于我` or the same account-follow copy, keep the existing module and do not add a duplicate.
+   - Use this copy verbatim by default:
+
+```markdown
+## 关于我
+
+我是康健，持续研究 AI 编程、Agent 实战和个人如何借助 AI 完成职业破局。
+
+如果你希望看到的不只是工具新闻，而是能够真正执行的教程、案例和工作流，欢迎关注公众号「程序员AI破局指南」。
+
+![关注公众号「程序员AI破局指南」](assets/shared/qr-programmer-ai-guide.jpg)
+```
+
+   - The reusable QR source is `assets/qr-programmer-ai-guide.jpg` inside this skill. For the `kj-llm-wiki` Studio workflow, copy it to `raw/studio/funnel/formatted/wechat/assets/shared/qr-programmer-ai-guide.jpg` when that destination does not already exist, then keep the relative Markdown path shown above.
+   - For another repository, copy the QR into an equivalent publish-local asset directory and use a relative path that the publishing tool can upload. Do not reference the skill installation path or a temporary clipboard path from the article.
+   - Do not add unverified keyword replies, menus, download promises, community links, or other conversion claims. If the user provides different confirmed CTA copy or a different account asset, that explicit choice takes precedence.
+
+4b. **Preflight rendered length and preserve complete content**
+   - Treat the canonical source as the coverage baseline. Do not silently shorten, summarize away, or drop chapters, examples, code blocks, cautions, or source notes merely to fit a publishing limit.
+   - Before publishing, render the Markdown with the same theme and citation settings that the publishing step will use, then measure the rendered HTML `content` length. Markdown character count is not a reliable proxy because inline styles and code blocks can expand it substantially.
+   - When the selected API or publishing path imposes a limit, use a safety buffer. For a 20,000-character `content` limit, target at most 18,000 rendered HTML characters per article.
+   - If the complete article exceeds the safe target, split it into a numbered series at top-level section boundaries. Keep code fences, examples, warnings, and their explanatory text together. Prefer more short, valid parts over one near-limit part.
+   - Every part must be independently publishable: unique title and summary, series position, source path, cover, exactly one standard follow CTA and QR, plus a short previous/next-series handoff when useful.
+   - Verify coverage by mapping every canonical top-level section to exactly one series part. Removing a generated table of contents, changing heading style, deduplicating an accidental repeated line, or fixing an unbalanced code fence does not count as content loss; record any other intentional omission.
+   - Render and measure every part again after adding frontmatter, series handoff, CTA, QR, citation conversion, and theme styles. Do not publish a part that still exceeds the safe target.
+   - If an earlier incomplete draft already exists, update that draft as part 1 instead of creating a duplicate, then create drafts for the remaining parts. Maintain a series manifest with each part's source-section range, rendered HTML length, publish file, `media_id`, and draft status.
+
 5. **Ask the user to choose a title**
    - Stop after the first packaging pass and present only:
      - the 5 title options
@@ -119,6 +149,7 @@ For the `kj-llm-wiki` studio workflow, use:
 - Companion materials: `raw/studio/funnel/formatted/wechat/<yyyy-mm-dd-slug>-wechat-companion.md`
 - Cover and article assets: `raw/studio/funnel/formatted/wechat/assets/<yyyy-mm-dd-slug>/`
 - Generated cover image: `raw/studio/funnel/formatted/wechat/assets/<yyyy-mm-dd-slug>/cover.png`
+- Shared follow QR: `raw/studio/funnel/formatted/wechat/assets/shared/qr-programmer-ai-guide.jpg`
 
 If the user is outside `kj-llm-wiki`, either follow the current repo’s publishing convention or ask once for the target directory.
 
@@ -156,8 +187,13 @@ After the user chooses, do not repeat the whole package. Continue the draft publ
 - Cover image is `900 × 383` or close to 2.35:1, and is passed explicitly to the API rather than inferred from the first body image.
 - Companion file includes the generated cover image path and title-selection status.
 - Publish copy has no Markdown TOC anchor list.
+- Complete source coverage is verified, or every intentional omission is explicitly recorded.
+- Rendered HTML for each article is below the active publishing limit and its configured safety target.
 - Publish copy frontmatter cover points to the generated cover image.
-- Follow CTA exists when the user expects growth/引流 content, but it does not contain raw external links or QR instructions unless publishing manually.
+- Publish copy contains exactly one `## 关于我` module unless the user explicitly opted out or supplied replacement CTA copy.
+- The CTA names the account as `程序员AI破局指南`; it does not contain unverified keyword replies, menus, download promises, or community links.
+- The QR image exists at the publish-local relative path and can be uploaded by the selected publishing method.
+- The CTA exists only in the publish copy; the canonical source remains unchanged.
 - After title confirmation, publish copy title and H1 exactly match the chosen title.
 - If publishing through API, report the new `media_id` and note if older drafts also exist.
 
