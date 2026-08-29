@@ -1,3 +1,5 @@
+
+
 # kj-skills
 
 Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路、现象洞察、个人 Wiki 沉淀、课程生产、增长复盘、付费内容质检、AI 日报、周报、Git 提交推送。
@@ -35,6 +37,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/paid-content-review](skills/paid-content-review/SKILL.md) | 付费课程 / 专栏 / 文章上线前质检：按 P0/P1/P2 输出结构、准确性、付费价值审查报告 |
 | [skills/weekly-digest](skills/weekly-digest/SKILL.md) | Git 周报生成器：从单项目或多项目 git log 生成结构化中文周报 |
 | [skills/skills-repo-health-check](skills/skills-repo-health-check/SKILL.md) | Skills 仓库健康度检查：按结构、触发、验证、索引、去重、安全等维度审计并给出迭代计划 |
+| [skills/ai-conversation-to-wiki](skills/ai-conversation-to-wiki/SKILL.md) | AI 对话 Wiki 沉淀：保真分析重要 AI 对话，预览沉淀清单，确认后分层写入个人 Wiki |
 | [skills/wiki-doc-sink](skills/wiki-doc-sink/SKILL.md) | 讨论沉淀到个人 Wiki（含 `references/` 路由说明，需配置 `<WIKI_ROOT>`） |
 | [skills/markdown-format](skills/markdown-format/SKILL.md) | Pandoc/Word 稿 Markdown 格式化（Obsidian 表格、代码块、标题） |
 | [skills/git-push](skills/git-push/SKILL.md) | 一键 add / 生成 commit / push（Conventional Commits + 安全约束） |
