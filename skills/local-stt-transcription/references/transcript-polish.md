@@ -75,6 +75,20 @@ Use context, not blind global replacement.
 | clear, Clear | `clear` |
 | compact, Compact | `compact` |
 | 拆废 | 拆分 |
+| 分析出来 when sharing content | 分享出来 |
+| 成成了 when describing a loop | 形成了 |
+| 失去成长 when listing a growth loop | 再去成长 |
+| 发生信号 | 发出信号 |
+| 全站 when discussing fullstack | 全栈 |
+| 提子器 | 提词器 |
+| 北嫖 | 北漂 |
+| 次元 when discussing Token | 词元 |
+| 五万分析法 | 5 Why 分析法 |
+| 一北正经 | 一本正经 |
+| 买客 when discussing courses | 买课 |
+| Cloud when discussing Claude | Claude |
+| 扣带, Codex | Codex |
+| 可乐 when discussing Claude | Claude |
 
 ## Publishable Transcript Shape
 
@@ -97,7 +111,8 @@ Use this structure for a cleaned Markdown transcript:
 Before finishing:
 
 - Search for likely leftovers: `5WH`, `Watt`, `体效`, `反攻`, `AI搜`, `号怎么做`,
-  `closed code`, `海库`, `善亚威`, `圣下威尼`, `绘画`, `格度`, `拆废`.
+  `closed code`, `海库`, `善亚威`, `圣下威尼`, `绘画`, `格度`, `拆废`, `分析出来`,
+  `成成了`, `失去成长`, `发生信号`.
 - Compare suspicious phrases against the raw transcript context.
 - Confirm the final transcript directory contains the polished artifact. Remove
   temporary raw drafts unless the user explicitly asked to keep them.
