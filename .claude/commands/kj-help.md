@@ -11,7 +11,7 @@ description: 自动扫描并列出 kj-skills 插件内所有 skill 的用途与 
    ```bash
    for f in skills/*/SKILL.md; do
      d=$(basename "$(dirname "$f")")
-     desc=$(awk '/^description:/{flag=1; sub(/^description:[ ]*/,""); print; next} flag&&/^[a-zA-Z_-]+:/{exit} flag{print}' "$f" | tr '\n' ' ' | sed 's/^[">|-]*[ ]*//')
+     desc=$(awk '/^description:/{flag=1; sub(/^description:[ ]*/,""); print; next} flag&&(/^[a-zA-Z_-]+:/||/^---$/){exit} flag{print}' "$f" | tr '\n' ' ' | sed 's/^[">|-]*[ ]*//')
      echo "$d :: $desc"
    done
    ```

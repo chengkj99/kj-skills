@@ -1,0 +1,4 @@
+interface:
+  display_name: "录音稿批判性分析"
+  short_description: "把分享会/对话录音稿读成可信判断：事实与观点分层、断言台账、压力测试、自检问题"
+  default_prompt: "Use $transcript-critical-analysis to analyze this transcript: separate verifiable facts from opinions, build a claim ledger with confidence levels, stress-test the frameworks, and produce self-check questions and a verification list."
