@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI 阅读教练"
+  short_description: "按阅读障碍选择图解、实例与练习，帮助准确理解、独立应用并完成延迟复习"
+  default_prompt: "请用 $ai-reading-coach 帮我读懂当前材料，选择合适的表达形式，并根据我的回答检查理解和应用能力。"

@@ -8,6 +8,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 |------|------|
 | [skills/ai-programming-topic-planner](skills/ai-programming-topic-planner/SKILL.md) | AI 编程内容选题策略：输入动态/痛点/想法，输出 3-5 个内容角度 + 推荐工作流 |
 | [skills/ai-learning-loop](skills/ai-learning-loop/SKILL.md) | AI 学习闭环：从主题/材料出发，生成真实问题、最小调研包、表达卡片、评审反馈和补卡决策 |
+| [skills/ai-reading-coach](skills/ai-reading-coach/SKILL.md) | AI 阅读教练：章节共读、难段图解、理解检查、迁移应用与延迟复习 |
 | [skills/coding-session-to-tutorial](skills/coding-session-to-tutorial/SKILL.md) | 实战记录转教程：原始命令/报错/过程 → 结构化 AI 编程教程初稿 |
 | [skills/course-generator](skills/course-generator/SKILL.md) | 单章节课程正文生成：章节大纲 + 参考材料 → 可直接发布的课程正文（口语化、工程视角、无 AI 味）；写完后自动为 `[流程图]`/`[对比图]` 生成 SVG 插图 |
 | [skills/course-campaign](skills/course-campaign/SKILL.md) | 批量章节编排（工头）：按清单逐章调用 course-generator，负责顺序管理、上下文衔接、进度持久化、里程碑 compact、收尾图片规范化审计 |
@@ -218,6 +219,7 @@ content-creator / kangjian-skill
 | `ai-daily-websearch` / `ai-daily-from-x` | 素材来源 | — | `ai-programming-topic-planner` |
 | `ai-programming-topic-planner` | 选题决策 | 动态/痛点/想法/实战记录 | `content-creator` 对应工作流 |
 | `ai-learning-loop` | 学习闭环总控 | 学习主题/材料/想法 | 表达卡片、评审反馈、补卡建议 / `wiki-doc-sink` |
+| `ai-reading-coach` | 阅读理解与掌握 | 书籍章节、摘录、读者复述与阅读记录 | 图解与实例、理解反馈、应用和复习证据；需要表达创作时再接 `ai-learning-loop` |
 | `phenomenon-insight` | 洞察前置层 | 真实现象/困惑/异常反馈/生活观察 | 核心洞见、反常识判断、标题与结构入口 / `content-creator` / `kangjian-skill` |
 | `coding-session-to-tutorial` | 结构化整理 | 原始实战记录 | `content-creator` 工作流 C |
 | `course-scraper` | 外部课程存档 | 在线课程 URL + 账号 | `course-generator`（素材）/ `wiki-doc-sink`（沉淀） |
