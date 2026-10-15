@@ -25,6 +25,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/tutorial-guide](skills/tutorial-guide/SKILL.md) | 新手教程指南生成：主题 / 链接 → Markdown + Word `.docx` 完整指南（含封面、目录、引流页） |
 | [skills/wechat-companion](skills/wechat-companion/SKILL.md) | 公众号发布配套物料：前言、标题、摘要、封面图提示词、朋友圈和社群转发文案 |
 | [skills/wechat-publish-kit](skills/wechat-publish-kit/SKILL.md) | 公众号发布包：正文 → 配套文案、封面图/提示词、发布用 Markdown、结构优化与可选草稿发布 |
+| [skills/story-ppt](skills/story-ppt/SKILL.md) | 故事型视觉 PPT：原稿 → 分镜 → 三类样稿 → 逐页视觉与原生文字组装；默认 16:9，优先可编辑 PPTX、PNG 与完整备注 |
 | [skills/web-slide](skills/web-slide/SKILL.md) | 生成可交互单文件 HTML 演讲稿：键盘翻页、演讲者备注、全局索引、代码高亮、PDF 导出 |
 | [skills/knowledge-map](skills/knowledge-map/SKILL.md) | 知识地图生成：输入一个主题 → 先做 3-5 轮调研，再输出高信息密度的单文件 HTML 信息图（深色卡片网格、阶段流程条、实战工作流，可截图为长图/海报） |
 | [skills/ai-daily-from-x](skills/ai-daily-from-x/SKILL.md) | 每日 AI 情报日报（X 账号采集 + 评分 rubric） |
