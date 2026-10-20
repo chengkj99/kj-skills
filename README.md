@@ -9,6 +9,7 @@ Claude / Cursor / Codex **Agent Skills** 集合：AI 编程内容创作全链路
 | [skills/ai-programming-topic-planner](skills/ai-programming-topic-planner/SKILL.md) | AI 编程内容选题策略：输入动态/痛点/想法，输出 3-5 个内容角度 + 推荐工作流 |
 | [skills/ai-learning-loop](skills/ai-learning-loop/SKILL.md) | AI 学习闭环：从主题/材料出发，生成真实问题、最小调研包、表达卡片、评审反馈和补卡决策 |
 | [skills/ai-reading-coach](skills/ai-reading-coach/SKILL.md) | AI 阅读教练：章节共读、难段图解、理解检查、迁移应用与延迟复习 |
+| [skills/english-reading-studio](skills/english-reading-studio/SKILL.md) | 英文文章三模式阅读：全文双语、逐段精读、中文支持的英语练习，生成离线 HTML |
 | [skills/coding-session-to-tutorial](skills/coding-session-to-tutorial/SKILL.md) | 实战记录转教程：原始命令/报错/过程 → 结构化 AI 编程教程初稿 |
 | [skills/course-generator](skills/course-generator/SKILL.md) | 单章节课程正文生成：章节大纲 + 参考材料 → 可直接发布的课程正文（口语化、工程视角、无 AI 味）；写完后自动为 `[流程图]`/`[对比图]` 生成 SVG 插图 |
 | [skills/course-campaign](skills/course-campaign/SKILL.md) | 批量章节编排（工头）：按清单逐章调用 course-generator，负责顺序管理、上下文衔接、进度持久化、里程碑 compact、收尾图片规范化审计 |

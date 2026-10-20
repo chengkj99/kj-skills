@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>@@TITLE@@ · 阅读工作室</title><style>@@CSS@@</style></head>
+<body><a class="skip" href="#main">跳到正文</a><header class="hero"><div class="eyebrow">ENGLISH READING STUDIO · 英文阅读工作室</div><h1>@@TITLE@@</h1><p class="meta">@@META@@</p><p>同一篇文章，按你的目标阅读。保留原文，随时回查。</p></header>
+<div class="toolbar"><div role="tablist" aria-label="阅读模式"><button id="tab-quick" role="tab" aria-controls="panel-quick" aria-selected="true" tabindex="0" data-mode="quick">01 快速获取知识</button><button id="tab-deep" role="tab" aria-controls="panel-deep" aria-selected="false" tabindex="-1" data-mode="deep">02 深度精读</button><button id="tab-language" role="tab" aria-controls="panel-language" aria-selected="false" tabindex="-1" data-mode="language">03 英语提升</button></div><div class="controls"><button id="toggle-translation" aria-pressed="false">隐藏译文</button><label>字号 <select id="font-size"><option value="17">标准</option><option value="19">大</option><option value="21">更大</option></select></label></div></div>
+<div class="layout"><aside aria-label="原文段落导航"><strong>原文位置</strong><nav>@@NAV@@</nav><p>三个模式共用段落编号。点击编号回到对应原文。</p></aside><main id="main">@@PANELS@@</main></div>
+<footer>阅读材料由 AI 辅助生成。解释与练习用于帮助理解，关键结论请回查原文。页面不会自动判定你已掌握。</footer>
+<div id="status" role="status" aria-live="polite"></div><dialog id="copy-dialog"><h2>复制本段追问</h2><p>复制以下内容，回到 AI 对话继续讨论。</p><textarea aria-label="可复制的追问内容"></textarea><button id="close-dialog">关闭</button></dialog>
+<noscript><p>请启用 JavaScript 使用模式切换。快速阅读正文仍可直接阅读。</p></noscript><script type="application/json" id="reading-data">@@DATA@@</script><script>@@JS@@</script></body></html>

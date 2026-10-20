@@ -1,0 +1,119 @@
+{
+  "title": "Small Experiments, Better Meetings",
+  "author": "English Reading Studio · 自编教学示例",
+  "source": "原创教学文章；案例与数字均为虚构，不是研究结果",
+  "source_date": "2026-10-20",
+  "overview": "一个团队想缩短会议，于是先做两周的小实验。文章说明如何提出可检查的问题、同时观察收益与代价，以及为什么不能把短期变化直接当成因果证明。",
+  "conclusions": [
+    {"text": "先把模糊的改善愿望变成范围有限、可观察的问题。", "paragraph_ids": ["p1", "p2"]},
+    {"text": "会议变短只是一个结果，还要检查决策是否清楚、会后工作是否增加。", "paragraph_ids": ["p3", "p4"]},
+    {"text": "小实验可以帮助决定下一步，但这里的两周数据不能证明新格式造成了改善。", "paragraph_ids": ["p5", "p6"]}
+  ],
+  "paragraphs": [
+    {
+      "id": "p1",
+      "original": "When a team says, “Our meetings take too long,” it is naming a problem, not testing a solution. A manager might immediately cut every meeting in half. But a shorter meeting is not necessarily a better meeting. Before changing the whole calendar, the team can run a small experiment with one weekly planning meeting.",
+      "translation": "当一个团队说“我们的会议太长了”时，它是在指出问题，还没有在检验解决办法。经理可能会立刻把每场会议的时间减半。但会议更短，不一定就更好。在调整整个会议日程之前，团队可以先拿每周的一场计划会做个小实验。",
+      "deep": {
+        "meaning": "指出问题、采取措施和验证措施，是不同的事情。作者建议先缩小尝试范围。",
+        "role": "提出问题，并用一个可能过于仓促的做法引出文章主张。",
+        "connection": "下一段把“小实验”具体化为一个可以检查的问题。",
+        "details": [{"label": "关键限定", "text": "not necessarily 是否定“必然更好”，不是断言“更短一定不好”。"}, {"label": "作者的建议", "text": "先改一场会议是本文提出的实践建议；本段没有提供证明这一建议效果的研究。"}],
+        "question": "作者是否认为缩短会议没有价值？请找出限制语。",
+        "answer": "不是。not necessarily 只表示不能从“更短”直接推出“更好”；缩短时间仍可能有价值。"
+      }
+    },
+    {
+      "id": "p2",
+      "original": "First, turn the complaint into a question: “If we share a short agenda the day before, can we finish within thirty minutes without leaving decisions unclear?” This question names both a change and a condition for success. The team agrees to try the agenda for two weeks and then decide whether to continue.",
+      "translation": "首先，把抱怨变成一个问题：“如果我们提前一天分享一份简短议程，能不能在三十分钟内结束会议，同时不让决策变得含糊？”这个问题既指出了要做的改变，也规定了成功的条件。团队约定试行两周，然后再决定是否继续。",
+      "deep": {
+        "meaning": "实验不仅要说做什么，还要说怎样才算成功，并约定检查时间。",
+        "role": "给出第一步操作及具体问题示例。",
+        "connection": "承接上一段的小范围尝试；下一段展示试行后的观察结果。",
+        "details": [{"label": "两个条件", "text": "within thirty minutes 是时间目标；without leaving decisions unclear 是质量约束。两者需要同时考虑。"}, {"label": "试行期限", "text": "两周是这个虚构案例的约定，不是作者证明过的最佳实验时长。"}],
+        "question": "如果会议只开了二十分钟，但没人知道最后决定了什么，算成功吗？",
+        "answer": "不算。它满足时间条件，却没有满足决策清晰的条件。"
+      }
+    },
+    {
+      "id": "p3",
+      "original": "In this fictional example, the previous four meetings lasted forty minutes on average. The next two last thirty minutes each. That is ten minutes less per meeting, or a twenty-five percent reduction from the earlier average. The numbers look encouraging, but they do not tell us whether the decisions improved.",
+      "translation": "在这个虚构案例中，之前四场会议平均持续四十分钟。接下来的两场会议各持续三十分钟。也就是说，每场少了十分钟，比之前的平均时长减少了百分之二十五。这些数字看起来令人鼓舞，但它们没有告诉我们决策是否改善了。",
+      "deep": {
+        "meaning": "时间指标有所改善，但单靠它无法判断决策质量。",
+        "role": "呈现量化结果，紧接着限制这些数字能支持的结论。",
+        "connection": "回应上一段的时间目标，也为下一段检查其他指标作铺垫。",
+        "details": [{"label": "计算依据", "text": "减少比例为 (40−30)÷40＝25%，分母是此前的平均时长四十分钟。"}, {"label": "证据范围", "text": "数据来自自编案例，仅用于练习推理和比例表达；不是实际团队的测量结果。"}],
+        "question": "为什么减少十分钟是 25%，而不是约 33%？",
+        "answer": "因为比较基准是之前的四十分钟，10÷40＝25%；用三十分钟作分母会改变比较基准。"
+      }
+    },
+    {
+      "id": "p4",
+      "original": "So the team checks three things: time spent in the meeting, clarity about who will do what, and time spent on follow-up messages. Each person writes down the next action before leaving. If people give different answers, the team has found a problem that the clock alone could not reveal. Saving meeting time may simply move work elsewhere.",
+      "translation": "因此，团队检查三件事：开会花的时间、谁负责做什么是否清楚，以及会后跟进消息花的时间。每个人都在离开前写下下一步行动。如果大家给出的答案不同，团队就发现了一个单看时钟发现不了的问题。节省会议时间，可能只是把工作转移到了别处。",
+      "deep": {
+        "meaning": "同时检查时间、理解是否一致和会后成本，才能避免只看到局部节省。",
+        "role": "提出补充检查办法，并解释为什么单一指标不够。",
+        "connection": "补上上一段指出的证据缺口；下一段进一步讨论因果判断的限制。",
+        "details": [{"label": "三个观察项", "text": "时间、分工清晰度、跟进消息耗时，是这里的检查清单。它并不声称覆盖了会议质量的所有方面。"}, {"label": "可能而非必然", "text": "may simply move 表示可能发生工作转移，并未断言这个团队已经发生了这种情况。"}],
+        "question": "会议缩短后，大家却花更多时间发消息确认任务，这支持什么判断？",
+        "answer": "它提示成本可能被转移到会后，需要比较总投入；不能只凭会议变短就宣布成功。"
+      }
+    },
+    {
+      "id": "p5",
+      "original": "There is another limit. Two weeks of results cannot prove that the agenda caused the change. Perhaps the work was easier, or a difficult topic was postponed. A small experiment can guide the next decision without settling every question. The team should record these alternative explanations and repeat the trial during a busier period.",
+      "translation": "还有一个限制：两周的结果不能证明是议程带来了变化。可能是工作更简单了，也可能是一个棘手议题被推迟了。小实验可以帮助团队作出下一步决定，但不必解决所有疑问。团队应该记录这些其他可能的解释，并在更忙的一段时期再次试行。",
+      "deep": {
+        "meaning": "先后发生不等于存在因果关系；短期观察仍可用于决定下一步怎么验证。",
+        "role": "说明证据限制，提出竞争性解释和后续验证建议。",
+        "connection": "从上一段的“是否真正改善”推进到“改善是否由议程造成”。",
+        "details": [{"label": "其他解释", "text": "任务更简单、困难议题被推迟，都可能在没有议程作用的情况下让会议变短。"}, {"label": "补充说明", "text": "在忙碌期重试有助于检查适用性，但重复试行本身也不等于严格证明因果。此句是教学补充。"}],
+        "question": "重复试行的结果也不错，是否就能排除所有其他解释？",
+        "answer": "不能。重复结果可增加参考价值，但仍需检查任务难度、参会者等其他变化。"
+      }
+    },
+    {
+      "id": "p6",
+      "original": "The aim is not to collect impressive numbers. It is to learn enough to choose a sensible next step. Keep the new format if it saves effort while preserving clarity; adjust it if the benefits come with hidden costs. A useful experiment ends with a decision, a reason for that decision, and one question that remains open.",
+      "translation": "目的不是收集漂亮的数字，而是获得足够的认识，以便选择合理的下一步。如果新形式在保持清晰度的同时节省精力，就保留它；如果好处伴随着隐藏成本，就调整它。一个有用的实验，结束时应留下一个决定、作出这个决定的理由，以及一个仍未解决的问题。",
+      "deep": {
+        "meaning": "把实验结果转成有条件的行动，并保留对未知问题的认识。",
+        "role": "总结文章主张，给出如何处理结果的判断标准。",
+        "connection": "结合前文的时间、清晰度、隐藏成本和证据限制，收束为下一步决策。",
+        "details": [{"label": "有条件的建议", "text": "keep 与 adjust 各有条件，作者没有建议所有团队一律采用新格式。"}, {"label": "开放问题", "text": "留下未解决的问题，是承认证据边界，并为下一次验证保留方向。"}],
+        "question": "用自己的话说，这篇文章怎样定义一个“有用的实验”？",
+        "answer": "参考：它提供足以支持下一步决定的观察，说明决定的理由，同时明确仍不知道什么；并非只得到一个漂亮数字。"
+      }
+    }
+  ],
+  "language": {
+    "intro": "先理解故事：团队提前发议程，会议变短了，但还要检查质量与原因。先借助译文读完，再挑三个句子练习；不必一次记住所有词。",
+    "phrases": [
+      {"text": "not necessarily", "meaning": "不一定；用来否定必然关系，而不是完全否定可能性。", "paragraph_id": "p1", "example": "A longer report is not necessarily more useful.", "example_translation": "更长的报告不一定更有用。（自编迁移例句）"},
+      {"text": "turn the complaint into a question", "meaning": "把抱怨转化为问题；turn A into B 表示把 A 转变成 B。", "paragraph_id": "p2", "example": "Turn your idea into a simple question.", "example_translation": "把你的想法转化为一个简单问题。（自编迁移例句）"},
+      {"text": "on average", "meaning": "平均而言；这里修饰过去四场会议的时长。", "paragraph_id": "p3", "example": "I read for twenty minutes a day on average.", "example_translation": "我平均每天读二十分钟。（自编迁移例句）"},
+      {"text": "follow-up messages", "meaning": "后续跟进消息；本文指会后为确认或推进事项发送的消息。", "paragraph_id": "p4", "example": "The summary reduced follow-up messages.", "example_translation": "这份总结减少了后续跟进消息。（自编迁移例句）"},
+      {"text": "remains open", "meaning": "仍未解决；本文中的 open 不是“打开着”，而是尚无定论。", "paragraph_id": "p6", "example": "The question of cost remains open.", "example_translation": "成本问题仍未解决。（自编迁移例句）"}
+    ],
+    "sentences": [
+      {"paragraph_id": "p1", "original": "But a shorter meeting is not necessarily a better meeting.", "chunks": [{"text": "But", "meaning": "但是"}, {"text": "a shorter meeting", "meaning": "一场更短的会议（主语）"}, {"text": "is not necessarily", "meaning": "不一定是"}, {"text": "a better meeting.", "meaning": "一场更好的会议（表语）"}], "explanation": "主干是 A is B，not necessarily 限定两者的关系。试着用 a longer report / a better report 替换两端，保留“不一定”的意思。"},
+      {"paragraph_id": "p4", "original": "If people give different answers, the team has found a problem that the clock alone could not reveal.", "chunks": [{"text": "If people give different answers,", "meaning": "如果大家给出不同答案（条件）"}, {"text": "the team has found a problem", "meaning": "团队就发现了一个问题（主句）"}, {"text": "that the clock alone could not reveal.", "meaning": "这个问题是单看时钟无法发现的（修饰 problem）"}], "explanation": "先读主句 the team has found a problem。开头 If 提供条件，末尾 that 引导的部分说明是哪种问题；alone 强调只看时间这一个指标。"},
+      {"paragraph_id": "p5", "original": "Two weeks of results cannot prove that the agenda caused the change.", "chunks": [{"text": "Two weeks of results", "meaning": "两周的结果（主语）"}, {"text": "cannot prove", "meaning": "不能证明（谓语）"}, {"text": "that the agenda caused the change.", "meaning": "是议程造成了变化（要证明的内容）"}], "explanation": "cannot prove 不等于 prove ... did not：没有证明议程有效，也没有证明议程无效。that 后面是一个完整的小句，作 prove 的宾语。"}
+    ],
+    "exercises": [
+      {"type": "choice", "prompt": "原文中 not necessarily 最接近哪个意思？", "options": ["一定不是", "不一定是", "通常就是"], "answer": "不一定是", "explanation": "它否定必然关系，仍保留“可能更好”的空间。", "paragraph_id": "p1"},
+      {"type": "cloze", "prompt": "填入原文中的两个词：The previous four meetings lasted forty minutes ___ ___.", "options": [], "answer": "on average", "explanation": "on average 表示“平均而言”；并不要求每场恰好四十分钟。", "paragraph_id": "p3"},
+      {"type": "choice", "prompt": "cannot prove that the agenda caused the change 表示什么？", "options": ["议程肯定没有作用", "现有结果不足以证明因果关系", "会议时长没有变化"], "answer": "现有结果不足以证明因果关系", "explanation": "cannot prove 说明证据不足，不能改写成已经证明没有作用。", "paragraph_id": "p5"},
+      {"type": "open", "prompt": "用 not necessarily 写一句关于阅读或工作的英文。可以先用中文想：更长的文章不一定更好。", "options": [], "answer": "参考：A longer article is not necessarily a better article.", "explanation": "自查：是否有完整主语和谓语？not necessarily 是否表达“不一定”？例句仅作参考，不自动判断你的答案。", "paragraph_id": "p1"}
+    ],
+    "review": [
+      "今天：隐藏 p1 的译文，解释 not necessarily 的含义，再重新阅读整段。",
+      "今天：不看讲解，用中文说明“会议变短”为什么不能直接证明“新议程有效”。",
+      "次日：先不看译文重读 p3 和 p5，回忆比例的比较基准及 cannot prove 的意思，再展开译文核对。",
+      "迁移检查：找一篇新英文文章，独立识别一个条件或限制语；记录用了几次辅助，以及能否说明它限制了什么。"
+    ]
+  }
+}

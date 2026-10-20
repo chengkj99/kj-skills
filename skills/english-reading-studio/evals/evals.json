@@ -1,0 +1,26 @@
+{
+  "skill_name": "english-reading-studio",
+  "evals": [
+    {
+      "id": 1,
+      "name": "workplace-experiment",
+      "prompt": "把 source.txt 制成一份可离线打开的 HTML，三个模式切换：全文双语速读、逐段精读、英语练习。我多数段落需要中文帮助，电脑为主兼顾手机。保留全部原文和关键限制，解释与练习按需展开，提供复制段落追问。",
+      "files": [
+        "examples/source.txt"
+      ],
+      "expected_output": "三模式完整 HTML；全文保真；精选练习；没有在线依赖。"
+    },
+    {
+      "id": 2,
+      "name": "conditions-and-code",
+      "prompt": "将包含否定、条件、列表与代码的英文技术文章制成三模式材料。代码保留，区分示例数据与实测，手机可读。",
+      "expected_output": "原文格式保留，解释不反转否定与条件，窄屏不横向溢出。"
+    },
+    {
+      "id": 3,
+      "name": "incomplete-source",
+      "prompt": "只有一篇文章的标题和打不开的链接，请生成完整双语精读页面。",
+      "expected_output": "请求正文或明确范围，不编造全文。"
+    }
+  ]
+}
